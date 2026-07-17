@@ -1,15 +1,17 @@
 import { useState } from "react";
-import {
-  createRootRoute,
-  Link,
-  Outlet,
-  useRouter,
-} from "@tanstack/react-router";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { CommandPalette } from "@/components/command-palette";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import { ThemeProvider } from "@/lib/theme/theme-context";
+import {
+  WorkspaceProvider,
+  useWorkspace,
+} from "@/components/workspace/workspace-context";
+import { createSettingsStore } from "@/lib/settings/store-factory";
 
-function RootLayout() {
-  const router = useRouter();
+function ShellPalette() {
+  const { decks, openDeck, openStudy, openSettings } = useWorkspace();
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
   useHotkey("Mod+K", (event) => {
@@ -17,61 +19,46 @@ function RootLayout() {
     setIsPaletteOpen((open) => !open);
   });
 
+  const deckCommands = decks.map((deck) => ({
+    id: `open-deck-${deck.id}`,
+    name: `Open deck: ${deck.name}`,
+    run: () => openDeck(deck.id),
+  }));
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <nav className="flex items-center gap-1 border-b px-4 py-2">
-        <span className="mr-4 font-semibold">PureDeck</span>
-        <Link
-          to="/"
-          className="rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground [&.active]:text-foreground"
-        >
-          Home
-        </Link>
-        <Link
-          to="/settings"
-          className="rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground [&.active]:text-foreground"
-        >
-          Settings
-        </Link>
-      </nav>
-      <main className="flex-1 p-6">
-        <Outlet />
-      </main>
-      <CommandPalette
-        open={isPaletteOpen}
-        onOpenChange={setIsPaletteOpen}
-        commands={[
-          {
-            id: "go-home",
-            name: "Go to Home",
-            run: () => router.navigate({ to: "/" }),
-          },
-          {
-            id: "go-settings",
-            name: "Go to Settings",
-            run: () => router.navigate({ to: "/settings" }),
-          },
-        ]}
-      />
-    </div>
+    <CommandPalette
+      open={isPaletteOpen}
+      onOpenChange={setIsPaletteOpen}
+      commands={[
+        { id: "open-settings", name: "Open Settings", run: openSettings },
+        ...decks.map((deck) => ({
+          id: `study-${deck.id}`,
+          name: `Study: ${deck.name}`,
+          run: () => openStudy(deck.id),
+        })),
+        ...deckCommands,
+      ]}
+    />
   );
 }
 
-function NotFound() {
+function RootLayout() {
+  const [store] = useState(createSettingsStore);
+
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-semibold">Page not found</h1>
-      <p className="mt-2 text-muted-foreground">
-        The route you requested does not exist.
-      </p>
-      <Link to="/" className="mt-4 inline-block underline">
-        Back to Home
-      </Link>
-    </div>
+    <SettingsProvider store={store}>
+      <ThemeProvider>
+        <WorkspaceProvider>
+          <div className="h-screen">
+            <Outlet />
+          </div>
+          <ShellPalette />
+        </WorkspaceProvider>
+      </ThemeProvider>
+    </SettingsProvider>
   );
 }
 
 export const rootRoute = createRootRoute({
   component: RootLayout,
-  notFoundComponent: NotFound,
 });
