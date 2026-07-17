@@ -229,15 +229,17 @@ Verdict: pz-codebase-design applies (interface/seam design); pz-ddd + pz-archety
 
 | AC | Test(s) / Evidence | Status |
 |----|--------------------|--------|
-| AC-001 | layout-shell: split + resize handle present | (pending) |
-| AC-002 | layout-shell: collapse hides sidebar + persists | (pending) |
-| AC-003 | layout-shell: sidebar brand + deck rows + open | (pending) |
-| AC-004 | layout-shell: tab open/switch/close/reorder | (pending) |
-| AC-005 | deck-view: toolbar flush action + full-bleed grid | (pending) |
-| AC-006 | study-view: flip + grade advance | (pending) |
-| AC-007 | settings-view: separate section panes | (pending) |
-| AC-008 | theme: mode switch toggles `.dark` + persists | (pending) |
-| AC-009 | settings-store: round-trip + merge; reload restores | (pending) |
-| AC-010 | layout-shell: empty state when no tabs | (pending) |
-| AC-011 | layout-shell: single route; palette opens tabs | (pending) |
-| AC-012 | `npm run lint` / `typecheck` / `test` exit 0 | (pending) |
+| AC-001 | layout-shell `should render a resize handle between the sidebar and main` (+ brand/deck render) | Pass |
+| AC-002 | layout-shell `should hide the sidebar if collapse is toggled and restore it if toggled again` | Pass |
+| AC-003 | layout-shell `should render the PureDeck brand and a row per demo deck`; `should open a deck as a tab if its sidebar row is clicked` | Pass |
+| AC-004 | layout-shell `should open a deck as a tab...`, `should switch the active tab...`, `should close a tab...`, `should reflect a new tab order if the open tabs are reordered` | Pass |
+| AC-005 | deck-view `should render the deck title and card count...`, `...editable grid with a row per card...`, `...a Study action...`, `...a trailing blank input row...` | Pass |
+| AC-006 | study-view `should show the front...and hide the grade buttons`, `...reveal the back...when clicked`, `...when Space is pressed`, `...advance to the next card...`, `...progress label` | Pass |
+| AC-007 | settings-view `should show only the Theme section by default...`, `should switch to the Shortcuts section...` | Pass |
+| AC-008 | theme `should add the dark class...if dark`, `...remove...if light`, `...follow the OS preference if system...`, `...react to an OS preference change...` | Pass |
+| AC-009 | settings-store `should return the saved Settings...`, `...sane defaults`, `...fill missing fields...`, `...coerce a garbage...blob`, `...preserve valid...values` | Pass |
+| AC-010 | layout-shell `should show the No deck open empty state if no tabs are open` | Pass |
+| AC-011 | shell-router `should serve exactly one route...`, `should render the shell empty state at /...`, `should open the Settings tab if the palette command is run...` | Pass |
+| AC-012 | `npm run lint` (0 errors, 4 accepted refresh warnings), `npm run typecheck` (exit 0), `npm test` (8 files, 35 tests, exit 0) | Pass |
+
+Full suite: 35 tests / 8 files pass. `cargo build` (src-tauri, plugin-store) exit 0. Fresh-verifier subagent confirmation pending.
