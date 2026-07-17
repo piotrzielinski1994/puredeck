@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PureDeck - layout wireframe v4 (requi design system)</title>
+<style>
+  :root {
+    --radius: 0rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+  }
+  html.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; border-color: var(--border); scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--foreground) 25%, transparent) transparent; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: color-mix(in oklch, var(--foreground) 20%, transparent); border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--background); color: var(--foreground);
+    -webkit-font-smoothing: antialiased; padding: 26px 30px 36px;
+  }
+  .stage-title { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-foreground); margin: 0 0 10px 2px; }
+
+  .app { display: grid; grid-template-columns: var(--sidebar-w, 220px) 1px 1fr; height: 560px; border: 1px solid var(--border); background: var(--background); overflow: hidden; }
+  .app.collapsed { --sidebar-w: 0px; }
+  .app.collapsed .handle { display: none; }
+  .handle { background: var(--border); }
+
+  /* Sidebar */
+  .sidebar { display: flex; flex-direction: column; background: color-mix(in oklch, var(--muted) 30%, transparent); min-width: 0; }
+  .sidebar-head { height: 36px; display: flex; align-items: center; padding-left: 12px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; }
+  .tree { padding: 4px 0; overflow: auto; }
+  .deck { display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 6px; font-size: 13px; color: var(--foreground); cursor: pointer; white-space: nowrap; }
+  .deck:hover { background: var(--accent); }
+  .deck.selected { background: var(--accent); }
+  .deck .name { overflow: hidden; text-overflow: ellipsis; }
+
+  /* Main */
+  .main { display: flex; flex-direction: column; min-width: 0; }
+  .tabstrip { height: 36px; display: flex; align-items: stretch; border-bottom: 1px solid var(--border); background: color-mix(in oklch, var(--muted) 30%, transparent); overflow-x: auto; }
+  .tab { display: flex; align-items: center; gap: 6px; padding: 0 12px; font-size: 13px; color: var(--muted-foreground); cursor: pointer; border-right: 1px solid var(--border); background: transparent; white-space: nowrap; }
+  .tab:hover { background: var(--accent); }
+  .tab.active { background: var(--accent); color: var(--foreground); box-shadow: inset 0 -2px 0 0 var(--primary); }
+  .tab .x { display: grid; place-items: center; width: 16px; height: 16px; font-size: 12px; color: var(--muted-foreground); }
+  .tab .x:hover { background: var(--accent); color: var(--foreground); }
+  .tab-new { padding: 0 8px; border: 0; background: transparent; color: var(--muted-foreground); cursor: pointer; font-size: 16px; }
+  .tab-new:hover { color: var(--foreground); }
+
+  .content { flex: 1; overflow: auto; min-height: 0; }
+  .view { display: none; height: 100%; }
+  .view.show { display: flex; flex-direction: column; }
+
+  /* Deck view: a pane-toolbar (h-10.25 border-b bg-muted/30) then a full-bleed grid glued to pane edges */
+  /* pane-toolbar: items-stretch, ZERO padding; children own their box + border-l/r, flush to edges */
+  .deck-toolbar { height: 41px; display: flex; align-items: stretch; border-bottom: 1px solid var(--border); background: color-mix(in oklch, var(--muted) 30%, transparent); flex: none; }
+  .deck-toolbar .title { display: flex; align-items: center; padding: 0 12px; font-size: 13px; font-weight: 600; flex: 1; min-width: 0; }
+  .deck-toolbar .title .count { font-weight: 400; color: var(--muted-foreground); margin-left: 8px; font-size: 12px; }
+  /* icon-only action flush to bar's right edge: square h-full, border-l, no radius/margin (requi Send button - icon only) */
+  .bar-action { display: grid; place-items: center; height: 100%; width: 41px; border: 0; border-left: 1px solid var(--border); background: var(--primary); color: var(--primary-foreground); cursor: pointer; }
+  .bar-action:hover { filter: brightness(0.92); }
+  .bar-action svg { width: 16px; height: 16px; }
+  .btn { font-size: 12.5px; font-weight: 500; padding: 6px 12px; border: 1px solid var(--border); background: transparent; color: var(--foreground); cursor: pointer; }
+  .btn:hover { background: var(--accent); }
+  .btn.primary { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+  .btn.primary:hover { filter: brightness(0.92); }
+
+  /* Full-bleed KV grid - border-t border-l only (right/bottom come from cells), NO outer padding/margin */
+  .kv { display: grid; grid-template-columns: 1fr 1fr 2.25rem; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+  .kv .cell { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--background); }
+  .kv .cell input { height: 36px; width: 100%; background: var(--background); padding: 0 10px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--foreground); border: 0; outline: none; }
+  .kv .cell input::placeholder { color: var(--muted-foreground); }
+  .kv .cell input:focus { box-shadow: inset 0 0 0 1px var(--ring); }
+  .kv .cell.del { display: grid; place-items: center; color: var(--muted-foreground); }
+  .kv .cell.del button { border: 0; background: transparent; color: var(--muted-foreground); cursor: pointer; font-size: 13px; display: grid; place-items: center; }
+  .kv .cell.del button:hover { color: var(--foreground); }
+
+  /* Study */
+  .study { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 28px 24px; }
+  .progress { font-size: 12px; color: var(--muted-foreground); letter-spacing: .04em; }
+  .flashcard { width: min(430px, 92%); min-height: 210px; border: 1px solid var(--border); background: var(--card); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 30px; cursor: pointer; }
+  .flashcard .face-front { font-size: 28px; font-weight: 520; }
+  .flashcard .divider { width: 56px; height: 1px; background: var(--border); display: none; }
+  .flashcard .face-back { font-size: 20px; color: var(--muted-foreground); display: none; }
+  .flashcard.flipped .face-back, .flashcard.flipped .divider { display: block; }
+  .flashcard .hint { font-size: 11.5px; color: var(--muted-foreground); }
+  .grades { display: none; gap: 8px; }
+  .grades.show { display: flex; }
+  .grades .btn { min-width: 82px; text-align: center; justify-content: center; }
+
+  /* Settings: sub-tab bar + one pane per section */
+  .settings-bar { height: 41px; display: flex; align-items: stretch; border-bottom: 1px solid var(--border); background: color-mix(in oklch, var(--muted) 30%, transparent); flex: none; }
+  .settings-bar .stab { display: flex; align-items: center; padding: 0 14px; font-size: 13px; color: var(--muted-foreground); border-right: 1px solid var(--border); cursor: pointer; }
+  .settings-bar .stab.active { background: var(--accent); color: var(--foreground); box-shadow: inset 0 -1px 0 0 var(--primary); }
+  .sec-body { display: none; padding: 24px; overflow: auto; }
+  .sec-body.show { display: block; }
+  h2.sec { font-size: 17px; font-weight: 500; }
+  .sub { color: var(--muted-foreground); font-size: 12.5px; margin-top: 4px; }
+  .seg { display: inline-flex; margin-top: 12px; }
+  .seg button { font-size: 12.5px; padding: 7px 16px; background: transparent; color: var(--foreground); border: 1px solid var(--border); border-left-width: 0; cursor: pointer; }
+  .seg button:first-child { border-left-width: 1px; }
+  .seg button.on { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+  .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; background: var(--secondary); border: 1px solid var(--border); padding: 2px 6px; }
+  .sc-list { margin-top: 12px; }
+  .sc-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .sc-row:last-child { border-bottom: 0; }
+
+  /* Empty */
+  .empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: var(--muted-foreground); }
+  .empty .big { font-size: 15px; color: var(--foreground); font-weight: 550; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 2px 0; align-items: center; }
+  .toolbar .lbl { font-size: 12px; color: var(--muted-foreground); margin-right: 2px; }
+  .toolbar button { font-size: 12px; padding: 6px 11px; border: 1px solid var(--border); background: transparent; color: var(--foreground); cursor: pointer; }
+  .toolbar button:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+  <p class="stage-title">PureDeck layout v4 - requi design system (grid full-bleed, glued to pane)</p>
+  <div class="app" id="app">
+    <aside class="sidebar">
+      <div class="sidebar-head">PureDeck</div>
+      <div class="tree">
+        <div class="deck selected" data-deck="Spanish"><span class="name">Spanish</span></div>
+        <div class="deck" data-deck="Capitals"><span class="name">Capitals</span></div>
+        <div class="deck" data-deck="Verbs"><span class="name">Verbs</span></div>
+      </div>
+    </aside>
+
+    <div class="handle"></div>
+
+    <section class="main">
+      <div class="tabstrip" id="tabstrip">
+        <div class="tab active" data-view="deck"><span class="name">Spanish</span><span class="x">&times;</span></div>
+        <div class="tab" data-view="study"><span class="name">Study: Spanish</span><span class="x">&times;</span></div>
+        <div class="tab" data-view="settings"><span class="name">Settings</span><span class="x">&times;</span></div>
+        <button class="tab-new" title="New tab">+</button>
+      </div>
+
+      <div class="content">
+        <!-- Deck view: toolbar bar, then full-bleed grid glued to edges -->
+        <div class="view show" id="view-deck">
+          <div class="deck-toolbar">
+            <div class="title">Spanish<span class="count">42 cards</span></div>
+            <button class="bar-action" title="Study" aria-label="Study">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>
+            </button>
+          </div>
+          <div class="kv">
+            <div class="cell"><input value="hola" readonly></div>
+            <div class="cell"><input value="hello" readonly></div>
+            <div class="cell del"><button title="Remove">&#128465;</button></div>
+
+            <div class="cell"><input value="gato" readonly></div>
+            <div class="cell"><input value="cat" readonly></div>
+            <div class="cell del"><button title="Remove">&#128465;</button></div>
+
+            <div class="cell"><input value="perro" readonly></div>
+            <div class="cell"><input value="dog" readonly></div>
+            <div class="cell del"><button title="Remove">&#128465;</button></div>
+
+            <div class="cell"><input value="gracias" readonly></div>
+            <div class="cell"><input value="thank you" readonly></div>
+            <div class="cell del"><button title="Remove">&#128465;</button></div>
+
+            <!-- trailing blank row: type to add a card -->
+            <div class="cell"><input placeholder="front"></div>
+            <div class="cell"><input placeholder="back"></div>
+            <div class="cell del"></div>
+          </div>
+        </div>
+
+        <!-- Study -->
+        <div class="view" id="view-study">
+          <div class="study">
+            <div class="progress">Card 3 / 42</div>
+            <div class="flashcard" id="flashcard">
+              <div class="face-front">gato</div>
+              <div class="divider"></div>
+              <div class="face-back">cat</div>
+              <div class="hint">Click card or press <span class="kbd">Space</span> to flip</div>
+            </div>
+            <div class="grades" id="studyGrades">
+              <button class="btn">Again</button>
+              <button class="btn">Hard</button>
+              <button class="btn">Good</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="view" id="view-settings">
+          <div class="settings-bar" id="settingsBar">
+            <div class="stab active" data-sec="theme">Theme</div>
+            <div class="stab" data-sec="shortcuts">Shortcuts</div>
+          </div>
+          <div class="sec-body show" id="sec-theme">
+            <h2 class="sec">Theme</h2>
+            <p class="sub">Choose the app appearance, or follow your OS preference.</p>
+            <div class="seg" id="themeSeg">
+              <button data-theme="light">Light</button>
+              <button data-theme="dark">Dark</button>
+              <button data-theme="system" class="on">System</button>
+            </div>
+          </div>
+          <div class="sec-body" id="sec-shortcuts">
+            <h2 class="sec">Keyboard Shortcuts</h2>
+            <p class="sub">Bindings for common actions.</p>
+            <div class="sc-list">
+              <div class="sc-row"><span>Command palette</span><span class="kbd">Cmd K</span></div>
+              <div class="sc-row"><span>Flip card</span><span class="kbd">Space</span></div>
+              <div class="sc-row"><span>Toggle sidebar</span><span class="kbd">Cmd B</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty -->
+        <div class="view" id="view-empty">
+          <div class="empty">
+            <div class="big">No deck open</div>
+            <div>Pick a deck on the left, or create one to begin.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toolbar">
+    <span class="lbl">Jump to state:</span>
+    <button onclick="show('deck')">Deck view</button>
+    <button onclick="show('study')">Study (front)</button>
+    <button onclick="flipStudy()">Study (flipped)</button>
+    <button onclick="show('settings')">Settings</button>
+    <button onclick="show('empty')">Empty</button>
+    <button onclick="toggleCollapse()">Toggle sidebar</button>
+    <button onclick="toggleTheme()">Toggle light/dark</button>
+  </div>
+
+<script>
+  const views = ['deck','study','settings','empty'];
+  function setGrades(on){ document.getElementById('studyGrades').classList.toggle('show', on); }
+  function show(v){
+    views.forEach(x => document.getElementById('view-'+x).classList.toggle('show', x===v));
+    document.querySelectorAll('.tab[data-view]').forEach(t => t.classList.toggle('active', t.dataset.view===v));
+    const c = document.getElementById('flashcard');
+    if (v !== 'study') { c.classList.remove('flipped'); setGrades(false); }
+  }
+  function flipStudy(){ show('study'); document.getElementById('flashcard').classList.add('flipped'); setGrades(true); }
+  document.getElementById('flashcard').addEventListener('click', () => {
+    const on = document.getElementById('flashcard').classList.toggle('flipped'); setGrades(on);
+  });
+  document.querySelectorAll('.tab[data-view]').forEach(t => t.addEventListener('click', () => show(t.dataset.view)));
+  document.getElementById('settingsBar').addEventListener('click', e => {
+    const s = e.target.dataset.sec; if (!s) return;
+    document.querySelectorAll('#settingsBar .stab').forEach(x => x.classList.toggle('active', x.dataset.sec===s));
+    document.getElementById('sec-theme').classList.toggle('show', s==='theme');
+    document.getElementById('sec-shortcuts').classList.toggle('show', s==='shortcuts');
+  });
+  function toggleCollapse(){ document.getElementById('app').classList.toggle('collapsed'); }
+  function toggleTheme(){ document.documentElement.classList.toggle('dark'); }
+  document.getElementById('themeSeg').addEventListener('click', e => {
+    if (e.target.dataset.theme){ document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.remove('on')); e.target.classList.add('on'); }
+  });
+  document.querySelectorAll('.deck').forEach(d => d.addEventListener('click', () => {
+    document.querySelectorAll('.deck').forEach(x=>x.classList.remove('selected')); d.classList.add('selected');
+    document.querySelector('.tab[data-view="deck"] .name').textContent = d.dataset.deck;
+    document.querySelector('#view-deck .title').firstChild.textContent = d.dataset.deck;
+    show('deck');
+  }));
+</script>
+</body>
+</html>
