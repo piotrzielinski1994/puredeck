@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { formatForDisplay } from "@tanstack/hotkeys";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme/theme-context";
+import { useSettings } from "@/lib/settings/settings-context";
 import type { ThemeMode } from "@/lib/settings/settings";
+import { SHORTCUT_ACTIONS } from "@/lib/shortcuts/registry";
+import { resolveShortcuts } from "@/lib/shortcuts/resolve";
 
 type Section = "theme" | "shortcuts";
 
@@ -9,12 +13,6 @@ const MODES: { id: ThemeMode; label: string }[] = [
   { id: "light", label: "Light" },
   { id: "dark", label: "Dark" },
   { id: "system", label: "System" },
-];
-
-const SHORTCUTS: { action: string; keys: string }[] = [
-  { action: "Command palette", keys: "Cmd K" },
-  { action: "Flip card", keys: "Space" },
-  { action: "Toggle sidebar", keys: "Cmd B" },
 ];
 
 function SubTab({
@@ -74,19 +72,22 @@ function ThemeSection() {
 }
 
 function ShortcutsSection() {
+  const { settings } = useSettings();
+  const effective = resolveShortcuts(settings.shortcuts);
+
   return (
     <section className="flex flex-col gap-1 p-6">
       <h2 className="text-lg font-medium">Keyboard Shortcuts</h2>
       <p className="text-sm text-muted-foreground">Bindings for common actions.</p>
       <dl className="mt-3">
-        {SHORTCUTS.map((shortcut) => (
+        {SHORTCUT_ACTIONS.map((action) => (
           <div
-            key={shortcut.action}
+            key={action.id}
             className="flex items-center justify-between border-b py-2.5 text-sm last:border-b-0"
           >
-            <dt>{shortcut.action}</dt>
+            <dt>{action.name}</dt>
             <dd className="border bg-secondary px-1.5 py-0.5 font-mono text-xs">
-              {shortcut.keys}
+              {formatForDisplay(effective[action.id])}
             </dd>
           </div>
         ))}

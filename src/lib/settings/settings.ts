@@ -1,3 +1,10 @@
+import {
+  SHORTCUT_ACTIONS,
+  type ShortcutActionId,
+  type ShortcutOverrides,
+} from "@/lib/shortcuts/registry";
+import { safeNormalize } from "@/lib/shortcuts/resolve";
+
 export type PanelGroupKey = "workspace";
 
 export type PanelLayout = Record<string, number>;
@@ -15,6 +22,8 @@ export type Settings = {
   openTabIds: string[];
   activeTabId: string | null;
   theme: ThemeSettings;
+  shortcuts: ShortcutOverrides;
+  collectionPath?: string;
 };
 
 export type SettingsStore = {
@@ -29,11 +38,16 @@ export const DEFAULT_SETTINGS: Settings = {
   openTabIds: [],
   activeTabId: null,
   theme: { mode: "system" },
+  shortcuts: {},
 };
 
 const THEME_MODES: readonly ThemeMode[] = ["light", "dark", "system"];
 
 const GROUP_KEYS: readonly PanelGroupKey[] = ["workspace"];
+
+const ACTION_IDS = new Set<string>(
+  SHORTCUT_ACTIONS.map((action) => action.id),
+);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -76,6 +90,24 @@ function mergeStringArray(base: string[], persisted: unknown): string[] {
   return persisted.filter((item): item is string => typeof item === "string");
 }
 
+function mergeShortcuts(persisted: unknown): ShortcutOverrides {
+  if (!isRecord(persisted)) {
+    return {};
+  }
+  return Object.entries(persisted).reduce<ShortcutOverrides>(
+    (acc, [id, value]) => {
+      if (!ACTION_IDS.has(id) || typeof value !== "string") {
+        return acc;
+      }
+      const normalized = safeNormalize(value);
+      return normalized === null
+        ? acc
+        : { ...acc, [id as ShortcutActionId]: normalized };
+    },
+    {},
+  );
+}
+
 export function mergeSettings(base: Settings, persisted: unknown): Settings {
   if (!isRecord(persisted)) {
     return base;
@@ -93,5 +125,10 @@ export function mergeSettings(base: Settings, persisted: unknown): Settings {
         ? persisted.activeTabId
         : base.activeTabId,
     theme: mergeTheme(base.theme, persisted.theme),
+    shortcuts: mergeShortcuts(persisted.shortcuts),
+    collectionPath:
+      typeof persisted.collectionPath === "string"
+        ? persisted.collectionPath
+        : base.collectionPath,
   };
 }

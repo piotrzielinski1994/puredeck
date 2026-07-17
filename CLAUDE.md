@@ -2,6 +2,15 @@
 
 Briefing for Claude Code. Read [README.md](README.md) first - setup, commands, repo layout. This file lists conventions and the non-obvious bits not visible from reading individual files.
 
+## Platform targets (mobile is a first-class target)
+
+PureDeck must be usable on mobile - **especially Android** - not just desktop. Tauri 2 supports mobile targets, so treat phone/tablet as a shipping platform, not an afterthought:
+
+- **Responsive by default.** Every layout must degrade gracefully to a narrow, touch-first viewport. The requi-style resizable sidebar-beside-content shell assumes a wide screen and a pointer; on a phone it must collapse to a single-column, stack/drawer, or tab-switched layout. Never ship a screen that only works at desktop widths.
+- **Touch-first interaction.** Hit targets must be finger-sized; do not rely on hover, right-click, or a physical keyboard for any core action. Every keyboard shortcut needs an on-screen affordance (button/menu) that reaches the same action, since a phone has no `Mod+K`.
+- **No desktop-only assumptions.** Features that lean on the filesystem (e.g. the `collections/` directory, hand-editing JSON), a menu bar, window chrome, or multi-window must have a mobile-viable path or degrade cleanly. Check the Android/iOS story before wiring a desktop-only API.
+- When building or reviewing any UI, verify it works at a phone breakpoint (~360-400px wide) with touch, not only in the desktop webview.
+
 ## Communication
 
 - Keep replies short and to the point. No filler, no pleasantries, no recap of what the user just said.

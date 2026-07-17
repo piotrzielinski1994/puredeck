@@ -2,7 +2,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useState,
   type ReactNode,
 } from "react";
 import { useSettings } from "@/lib/settings/settings-context";
@@ -13,7 +15,8 @@ import {
   studyTabId,
   type Deck,
 } from "@/lib/workspace/model";
-import { DEMO_DECKS } from "@/lib/workspace/demo-data";
+import type { CollectionStore } from "@/lib/workspace/collection";
+import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
 
 export type TabKind = "deck" | "study" | "settings";
 
@@ -55,12 +58,35 @@ function neighbourAfterClose(
 
 export function WorkspaceProvider({
   children,
-  decks = DEMO_DECKS,
+  decks: decksProp,
+  store,
 }: {
   children: ReactNode;
   decks?: Deck[];
+  store?: CollectionStore;
 }) {
   const { settings, saveOpenTabs } = useSettings();
+  const [collectionStore] = useState(
+    () => store ?? createCollectionStore(settings.collectionPath),
+  );
+  const [loadedDecks, setLoadedDecks] = useState<Deck[]>(decksProp ?? []);
+
+  useEffect(() => {
+    if (decksProp) {
+      return;
+    }
+    let isMounted = true;
+    collectionStore.load().then((loaded) => {
+      if (isMounted) {
+        setLoadedDecks(loaded);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [collectionStore, decksProp]);
+
+  const decks = decksProp ?? loadedDecks;
   const { openTabIds } = settings;
   const activeTabId =
     settings.activeTabId !== null && openTabIds.includes(settings.activeTabId)

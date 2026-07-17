@@ -33,8 +33,11 @@ export default defineConfig(async () => ({
         }
       : undefined,
     watch: {
-      // 3. tell Vite to ignore watching `src-tauri`
-      ignored: ["**/src-tauri/**"],
+      // 3. tell Vite to ignore watching `src-tauri` and the private notes dir
+      //    (`.pzielinski/settings` is a symlink to the live app-data store; the
+      //    running app rewrites settings.json/keymap.json there, which would
+      //    otherwise trigger a full page reload loop - the app flickering black).
+      ignored: ["**/src-tauri/**", "**/.pzielinski/**"],
     },
   },
 }));

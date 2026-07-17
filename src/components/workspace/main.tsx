@@ -1,4 +1,4 @@
-import { useHotkey } from "@tanstack/react-hotkeys";
+import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 import { useSettings } from "@/lib/settings/settings-context";
 import { useWorkspace } from "@/components/workspace/workspace-context";
 import { ContentTabs } from "@/components/workspace/content-tabs";
@@ -38,9 +38,8 @@ function ActiveSurface() {
 export function Main() {
   const { settings, saveSidebarCollapsed } = useSettings();
 
-  useHotkey("Mod+B", (event) => {
-    event.preventDefault();
-    saveSidebarCollapsed(!settings.sidebarCollapsed);
+  useActionHotkeys({
+    "toggle-sidebar": () => saveSidebarCollapsed(!settings.sidebarCollapsed),
   });
 
   return (

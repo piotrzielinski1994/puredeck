@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useHotkey } from "@tanstack/react-hotkeys";
+import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 import type { Deck } from "@/lib/workspace/model";
 
 const GRADES = ["Again", "Hard", "Good"] as const;
@@ -17,10 +17,7 @@ export function StudyView({ deck }: { deck: Deck }) {
     setIndex((current) => (current + 1) % deck.cards.length);
   };
 
-  useHotkey("Space", (event) => {
-    event.preventDefault();
-    flip();
-  });
+  useActionHotkeys({ "flip-card": flip });
 
   if (!card) {
     return (

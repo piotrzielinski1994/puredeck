@@ -6,19 +6,29 @@ import {
   screen,
   type RenderResult,
 } from "@testing-library/react";
+import { formatForDisplay } from "@tanstack/hotkeys";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { DEFAULT_SETTINGS, type Settings } from "@/lib/settings/settings";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 import { SettingsView } from "@/components/workspace/settings-view";
+import { SHORTCUT_ACTIONS } from "@/lib/shortcuts/registry";
+import { resolveShortcuts } from "@/lib/shortcuts/resolve";
+import type { ShortcutOverrides } from "@/lib/shortcuts/registry";
 
-function renderSettings(): RenderResult {
+function renderSettings(overrides: ShortcutOverrides = {}): RenderResult {
+  const seeded: Settings = { ...DEFAULT_SETTINGS, shortcuts: overrides };
   return render(
-    <SettingsProvider store={createInMemorySettingsStore()}>
+    <SettingsProvider store={createInMemorySettingsStore(seeded)}>
       <ThemeProvider>
         <SettingsView />
       </ThemeProvider>
     </SettingsProvider>,
   );
+}
+
+async function openShortcuts(): Promise<void> {
+  fireEvent.click(await screen.findByRole("tab", { name: /shortcuts/i }));
 }
 
 afterEach(() => {
@@ -38,7 +48,7 @@ describe("SettingsView (AC-007 / TC-007)", () => {
   it("should switch to the Shortcuts section when its sub-tab is clicked", async () => {
     renderSettings();
 
-    fireEvent.click(await screen.findByRole("tab", { name: /shortcuts/i }));
+    await openShortcuts();
 
     expect(screen.getByText(/flip card/i)).toBeInTheDocument();
     expect(
@@ -64,5 +74,41 @@ describe("SettingsView (AC-007 / TC-007)", () => {
     });
 
     expect(systemControl).toHaveAttribute("aria-pressed", "true");
+  });
+});
+
+describe("SettingsView Shortcuts pane is registry-driven (AC-012 / TC-010)", () => {
+  it("should render one row per registry action showing its name", async () => {
+    renderSettings();
+
+    await openShortcuts();
+
+    SHORTCUT_ACTIONS.forEach((action) => {
+      expect(screen.getByText(action.name)).toBeInTheDocument();
+    });
+  });
+
+  it("should show each action's effective default binding as a display label", async () => {
+    renderSettings();
+
+    await openShortcuts();
+
+    const effective = resolveShortcuts({});
+    SHORTCUT_ACTIONS.forEach((action) => {
+      expect(
+        screen.getByText(formatForDisplay(effective[action.id])),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("should show the override's display label if an action is rebound", async () => {
+    renderSettings({ "flip-card": "Enter" });
+
+    await openShortcuts();
+
+    expect(screen.getByText(formatForDisplay("Enter"))).toBeInTheDocument();
+    expect(
+      screen.queryByText(formatForDisplay("Space")),
+    ).not.toBeInTheDocument();
   });
 });
