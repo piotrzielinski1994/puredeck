@@ -18,13 +18,14 @@ import {
   useWorkspace,
 } from "@/components/workspace/workspace-context";
 import { WorkspaceLayout } from "@/components/workspace/workspace-layout";
+import { DEMO_DECKS } from "@/lib/workspace/demo-data";
 
 function renderShell(store: SettingsStore = createInMemorySettingsStore()) {
   return render(
     <AppProviders>
       <SettingsProvider store={store}>
         <ThemeProvider>
-          <WorkspaceProvider>
+          <WorkspaceProvider decks={DEMO_DECKS}>
             <WorkspaceLayout />
           </WorkspaceProvider>
         </ThemeProvider>
@@ -155,7 +156,7 @@ describe("workspace shell tab reorder (AC-004)", () => {
       <AppProviders>
         <SettingsProvider store={createInMemorySettingsStore()}>
           <ThemeProvider>
-            <WorkspaceProvider>
+            <WorkspaceProvider decks={DEMO_DECKS}>
               <WorkspaceLayout />
               <ReorderProbe />
             </WorkspaceProvider>
@@ -191,6 +192,7 @@ describe("workspace shell stale active tab (E-8)", () => {
       openTabIds: ["spanish", "capitals"],
       activeTabId: "gone",
       theme: { mode: "system" },
+      shortcuts: {},
     });
     renderShell(store);
 

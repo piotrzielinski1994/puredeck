@@ -33,6 +33,7 @@ describe("DEFAULT_SETTINGS (AC-009)", () => {
       openTabIds: [],
       activeTabId: null,
       theme: { mode: "system" },
+      shortcuts: {},
     });
   });
 });

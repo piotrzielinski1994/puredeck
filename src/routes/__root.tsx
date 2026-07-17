@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { useHotkey } from "@tanstack/react-hotkeys";
+import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 import { CommandPalette } from "@/components/command-palette";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
@@ -14,9 +14,8 @@ function ShellPalette() {
   const { decks, openDeck, openStudy, openSettings } = useWorkspace();
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
-  useHotkey("Mod+K", (event) => {
-    event.preventDefault();
-    setIsPaletteOpen((open) => !open);
+  useActionHotkeys({
+    "open-command-palette": () => setIsPaletteOpen((open) => !open),
   });
 
   const deckCommands = decks.map((deck) => ({

@@ -84,11 +84,12 @@ describe("ThemeProvider dark-class side effect (AC-008 / TC-008)", () => {
 
     renderTheme("light");
 
+    const darkButton = await screen.findByRole("button", { name: "dark" });
     await waitFor(() => {
       expect(document.documentElement.classList.contains("dark")).toBe(false);
     });
 
-    await user.click(screen.getByRole("button", { name: "dark" }));
+    await user.click(darkButton);
 
     await waitFor(() => {
       expect(document.documentElement.classList.contains("dark")).toBe(true);
@@ -102,11 +103,12 @@ describe("ThemeProvider dark-class side effect (AC-008 / TC-008)", () => {
 
     renderTheme("dark");
 
+    const lightButton = await screen.findByRole("button", { name: "light" });
     await waitFor(() => {
       expect(document.documentElement.classList.contains("dark")).toBe(true);
     });
 
-    await user.click(screen.getByRole("button", { name: "light" }));
+    await user.click(lightButton);
 
     await waitFor(() => {
       expect(document.documentElement.classList.contains("dark")).toBe(false);

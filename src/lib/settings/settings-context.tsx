@@ -24,7 +24,7 @@ type SettingsContextValue = {
   saveThemeMode: (mode: ThemeMode) => void;
 };
 
-const SettingsContext = createContext<SettingsContextValue | null>(null);
+export const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 type SettingsProviderProps = {
   store: SettingsStore;
