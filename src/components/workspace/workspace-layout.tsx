@@ -5,10 +5,17 @@ import {
 } from "@/components/ui/resizable";
 import { Sidebar } from "@/components/workspace/sidebar";
 import { Main } from "@/components/workspace/main";
+import { MobileShell } from "@/components/workspace/mobile-shell";
+import { useIsMobile } from "@/lib/responsive/use-is-mobile";
 import { useSettings } from "@/lib/settings/settings-context";
 
 export function WorkspaceLayout() {
   const { settings, saveLayout } = useSettings();
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <MobileShell />;
+  }
 
   if (settings.sidebarCollapsed) {
     return (

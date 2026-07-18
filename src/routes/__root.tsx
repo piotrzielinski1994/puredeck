@@ -4,6 +4,7 @@ import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 import { CommandPalette } from "@/components/command-palette";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
+import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
 import {
   WorkspaceProvider,
   useWorkspace,
@@ -12,10 +13,10 @@ import { createSettingsStore } from "@/lib/settings/store-factory";
 
 function ShellPalette() {
   const { decks, openDeck, openStudy, openSettings } = useWorkspace();
-  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const { isOpen: isPaletteOpen, setOpen: setIsPaletteOpen } = usePalette();
 
   useActionHotkeys({
-    "open-command-palette": () => setIsPaletteOpen((open) => !open),
+    "open-command-palette": () => setIsPaletteOpen(!isPaletteOpen),
   });
 
   const deckCommands = decks.map((deck) => ({
@@ -47,12 +48,14 @@ function RootLayout() {
   return (
     <SettingsProvider store={store}>
       <ThemeProvider>
-        <WorkspaceProvider>
-          <div className="h-screen">
-            <Outlet />
-          </div>
-          <ShellPalette />
-        </WorkspaceProvider>
+        <PaletteProvider>
+          <WorkspaceProvider>
+            <div className="h-screen">
+              <Outlet />
+            </div>
+            <ShellPalette />
+          </WorkspaceProvider>
+        </PaletteProvider>
       </ThemeProvider>
     </SettingsProvider>
   );

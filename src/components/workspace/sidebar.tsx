@@ -1,8 +1,13 @@
 import { cn } from "@/lib/utils";
 import { useWorkspace } from "@/components/workspace/workspace-context";
 
-export function Sidebar() {
+export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { decks, selectedDeckId, openDeck } = useWorkspace();
+
+  const handleOpen = (deckId: string) => {
+    openDeck(deckId);
+    onNavigate?.();
+  };
 
   return (
     <div className="flex h-full flex-col bg-muted/30">
@@ -18,9 +23,9 @@ export function Sidebar() {
               key={deck.id}
               type="button"
               aria-current={deck.id === selectedDeckId}
-              onClick={() => openDeck(deck.id)}
+              onClick={() => handleOpen(deck.id)}
               className={cn(
-                "flex items-center px-3 py-1 text-left text-[13px] whitespace-nowrap hover:bg-accent",
+                "flex min-h-11 items-center px-3 py-1 text-left text-[13px] whitespace-nowrap hover:bg-accent md:min-h-0",
                 deck.id === selectedDeckId && "bg-accent",
               )}
             >
