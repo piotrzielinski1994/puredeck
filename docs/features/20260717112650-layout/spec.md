@@ -21,7 +21,7 @@ bar actions).
 
 ### User Story
 
-As a PureDeck user, I want a persistent app shell with a deck sidebar and tabbed content, so I can keep
+As a puredeck user, I want a persistent app shell with a deck sidebar and tabbed content, so I can keep
 several decks (and Study/Settings) open at once, resize and collapse the sidebar, and switch the app
 theme - with all of that surviving a restart.
 
@@ -31,7 +31,7 @@ theme - with all of that surviving a restart.
 |----|-----------|----------|
 | AC-001 | App renders a horizontal resizable split: **Sidebar** (left, default 20%, min 12% / max 40%) `│` drag handle `│` **Main**. Dragging the handle resizes; sizes use `react-resizable-panels` via a `ui/resizable` wrapper mirrored from requi. | Must |
 | AC-002 | Sidebar is **collapsible**: a toggle (and `Mod+B`) hides the sidebar panel so Main fills the width; toggling again restores it. Collapsed state is persisted. | Must |
-| AC-003 | Sidebar shows the **"PureDeck" brand header** (`h-9`, `border-b`, `bg-muted/30`, brand text only - no action icons) over a **deck list** (static scaffold decks, name only, `bg-accent` on hover/selected - no counts/dots/icons). Clicking a deck opens it as a Main tab and selects it. | Must |
+| AC-003 | Sidebar shows the **"puredeck" brand header** (`h-9`, `border-b`, `bg-muted/30`, brand text only - no action icons) over a **deck list** (static scaffold decks, name only, `bg-accent` on hover/selected - no counts/dots/icons). Clicking a deck opens it as a Main tab and selects it. | Must |
 | AC-004 | Main has a **tab strip** (`h-9`, `border-b`, `bg-muted/30`): open-deck tabs + a Study tab + a Settings tab. Tabs **switch** (click), **close** (× per tab), **reorder** (drag, dnd-kit), and a **new-tab** (`+`) affordance exists. Active tab = `bg-accent` + `shadow-[inset_0_-2px_0_0_var(--primary)]`; inactive = `text-muted-foreground`. | Must |
 | AC-005 | **Deck view** surface = a pane-toolbar (`items-stretch`, no padding: deck title + card count in a padded cell, an icon-only **Study** action filled `bg-primary`, `h-full`, `border-l`, flush to the right edge) over a **full-bleed editable key/value grid** glued to the pane edges (columns `front │ back │ delete`, `border-t border-l`, cells `border-r border-b`, `h-9` mono inputs, trailing blank row to add). Scaffold: rows are static demo cards. | Must |
 | AC-006 | **Study** surface = centered flashcard showing the **front**; clicking it or pressing **Space** flips to reveal the **back**; grade buttons **Again / Hard / Good** appear only after flip and advance to the next card. A `Card N / M` progress label shows. Scaffold: static card sequence, no scheduling. | Must |
@@ -130,7 +130,7 @@ ASCII wireframes below capture each surface; the interactive source of truth is 
 ### Shell + Deck view (active tab)
 ```
 +----------------------+---+----------------------------------------+
-| PureDeck             | H | [Spanish][Study: Spanish][Settings][+]  |
+| puredeck             | H | [Spanish][Study: Spanish][Settings][+]  |
 +----------------------+ A +----------------------------------------+
 | Spanish              | N | Spanish   42 cards              [Study] |  <- pane toolbar (flush action)
 | Capitals             | D +----------------------------------------+
@@ -144,7 +144,7 @@ ASCII wireframes below capture each surface; the interactive source of truth is 
 ### Study (flipped)
 ```
 +----------------------+---+----------------------------------------+
-| PureDeck             | H | [Spanish][Study: Spanish][Settings][+]  |
+| puredeck             | H | [Spanish][Study: Spanish][Settings][+]  |
 +----------------------+ A +----------------------------------------+
 | Spanish              | N |               Card 3 / 42               |
 | Capitals             | D |        +-----------------------+        |
@@ -159,7 +159,7 @@ ASCII wireframes below capture each surface; the interactive source of truth is 
 ### Settings (Theme pane) - Shortcuts is a separate sub-tab
 ```
 +----------------------+---+----------------------------------------+
-| PureDeck             | H | [Spanish][Settings][+]                  |
+| puredeck             | H | [Spanish][Settings][+]                  |
 +----------------------+ A +----------------------------------------+
 | Spanish              | N | Theme | Shortcuts                       |  <- sub-tab bar
 | Capitals             | D +----------------------------------------+

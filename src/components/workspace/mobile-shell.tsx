@@ -21,7 +21,7 @@ export function MobileShell() {
           <Menu className="size-4" />
         </button>
         <div className="flex flex-1 items-center pl-3 text-sm font-semibold">
-          PureDeck
+          puredeck
         </div>
         <button
           type="button"

@@ -12,7 +12,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col bg-muted/30">
       <div className="flex h-9 shrink-0 items-center border-b pl-3 text-sm font-semibold">
-        PureDeck
+        puredeck
       </div>
       <nav aria-label="Decks" className="flex flex-col overflow-y-auto py-1">
         {decks.length === 0 ? (

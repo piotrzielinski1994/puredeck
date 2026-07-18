@@ -1,10 +1,10 @@
-# PureDeck
+# puredeck
 
 Briefing for Claude Code. Read [README.md](README.md) first - setup, commands, repo layout. This file lists conventions and the non-obvious bits not visible from reading individual files.
 
 ## Platform targets (mobile is a first-class target)
 
-PureDeck must be usable on mobile - **especially Android** - not just desktop. Tauri 2 supports mobile targets, so treat phone/tablet as a shipping platform, not an afterthought:
+puredeck must be usable on mobile - **especially Android** - not just desktop. Tauri 2 supports mobile targets, so treat phone/tablet as a shipping platform, not an afterthought:
 
 - **Responsive by default.** Every layout must degrade gracefully to a narrow, touch-first viewport. The requi-style resizable sidebar-beside-content shell assumes a wide screen and a pointer; on a phone it must collapse to a single-column, stack/drawer, or tab-switched layout. Never ship a screen that only works at desktop widths.
 - **Touch-first interaction.** Hit targets must be finger-sized; do not rely on hover, right-click, or a physical keyboard for any core action. Every keyboard shortcut needs an on-screen affordance (button/menu) that reaches the same action, since a phone has no `Mod+K`.
@@ -19,7 +19,7 @@ PureDeck must be usable on mobile - **especially Android** - not just desktop. T
 ## Running the app
 
 - Always shut the app down when finished - never leave it running in the background.
-- `TaskStop` (or killing `npm start`) only stops the `npm`/`tauri dev`/`vite` node procs; the spawned native `target/debug/pure-deck` window keeps running detached. Kill all: `pkill -f "target/debug/pure-deck"` AND `pkill -f "node_modules/.bin/tauri"` AND `pkill -f "pure-deck/node_modules/.bin/vite"`, then confirm with `pgrep -fl "tauri dev|target/debug/pure-deck"`.
+- `TaskStop` (or killing `npm start`) only stops the `npm`/`tauri dev`/`vite` node procs; the spawned native `target/debug/puredeck` window keeps running detached. Kill all: `pkill -f "target/debug/puredeck"` AND `pkill -f "node_modules/.bin/tauri"` AND `pkill -f "puredeck/node_modules/.bin/vite"`, then confirm with `pgrep -fl "tauri dev|target/debug/puredeck"`.
 
 ## Learning from conversation
 

@@ -1,4 +1,4 @@
-# Architectural Decisions - PureDeck
+# Architectural Decisions - puredeck
 
 Append-only log of architectural and design decisions made during development.
 

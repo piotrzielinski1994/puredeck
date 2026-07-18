@@ -39,10 +39,10 @@ afterEach(() => {
 });
 
 describe("workspace shell sidebar (TC-001 / AC-001 / AC-003)", () => {
-  it("should render the PureDeck brand and a row per demo deck", async () => {
+  it("should render the puredeck brand and a row per demo deck", async () => {
     renderShell();
 
-    expect(await screen.findByText("PureDeck")).toBeInTheDocument();
+    expect(await screen.findByText("puredeck")).toBeInTheDocument();
     expect(screen.getByText("Spanish")).toBeInTheDocument();
     expect(screen.getByText("Capitals")).toBeInTheDocument();
     expect(screen.getByText("Verbs")).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe("workspace shell sidebar (TC-001 / AC-001 / AC-003)", () => {
   it("should render a resize handle between the sidebar and main", async () => {
     renderShell();
 
-    await screen.findByText("PureDeck");
+    await screen.findByText("puredeck");
 
     expect(screen.getByRole("separator")).toBeInTheDocument();
   });
@@ -62,7 +62,7 @@ describe("workspace shell tabs (TC-004 / AC-004)", () => {
     const user = userEvent.setup();
     renderShell();
 
-    await screen.findByText("PureDeck");
+    await screen.findByText("puredeck");
     expect(
       screen.queryByRole("tab", { name: /Spanish/ }),
     ).not.toBeInTheDocument();
@@ -78,7 +78,7 @@ describe("workspace shell tabs (TC-004 / AC-004)", () => {
     const user = userEvent.setup();
     renderShell();
 
-    await screen.findByText("PureDeck");
+    await screen.findByText("puredeck");
     await user.click(screen.getByText("Spanish"));
     await user.click(screen.getByText("Capitals"));
 
@@ -98,7 +98,7 @@ describe("workspace shell tabs (TC-004 / AC-004)", () => {
     const user = userEvent.setup();
     renderShell();
 
-    await screen.findByText("PureDeck");
+    await screen.findByText("puredeck");
     await user.click(screen.getByText("Spanish"));
     await user.click(screen.getByText("Capitals"));
 
@@ -117,7 +117,7 @@ describe("workspace shell tabs (TC-004 / AC-004)", () => {
     const user = userEvent.setup();
     renderShell();
 
-    await screen.findByText("PureDeck");
+    await screen.findByText("puredeck");
     await user.click(screen.getByText("Spanish"));
     await user.click(screen.getByText("Capitals"));
 
@@ -165,7 +165,7 @@ describe("workspace shell tab reorder (AC-004)", () => {
       </AppProviders>,
     );
 
-    await screen.findByText("PureDeck");
+    await screen.findByText("puredeck");
     await user.click(screen.getByText("Spanish"));
     await user.click(screen.getByText("Capitals"));
 
@@ -226,16 +226,16 @@ describe("workspace shell collapse (TC-003 / AC-002)", () => {
   it("should hide the sidebar if collapse is toggled and restore it if toggled again", async () => {
     renderShell();
 
-    expect(await screen.findByText("PureDeck")).toBeInTheDocument();
+    expect(await screen.findByText("puredeck")).toBeInTheDocument();
 
     fireEvent.keyDown(document, { key: "b", code: "KeyB", ctrlKey: true });
 
     await waitFor(() => {
-      expect(screen.queryByText("PureDeck")).not.toBeInTheDocument();
+      expect(screen.queryByText("puredeck")).not.toBeInTheDocument();
     });
 
     fireEvent.keyDown(document, { key: "b", code: "KeyB", ctrlKey: true });
 
-    expect(await screen.findByText("PureDeck")).toBeInTheDocument();
+    expect(await screen.findByText("puredeck")).toBeInTheDocument();
   });
 });

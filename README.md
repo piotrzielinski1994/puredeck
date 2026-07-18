@@ -1,4 +1,4 @@
-# PureDeck
+# puredeck
 
 A keyboard-driven, file-based desktop flashcards app - an open alternative to Anki.
 

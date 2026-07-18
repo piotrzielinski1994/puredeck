@@ -1,6 +1,6 @@
 # Glossary
 
-Ubiquitous-language terms for PureDeck. One entry per domain concept: what it IS (not what it does), plus an `_Avoid_:` line listing aliases not to use. Domain terms only - not general programming concepts. `pz-implement` appends here as terms get sharpened.
+Ubiquitous-language terms for puredeck. One entry per domain concept: what it IS (not what it does), plus an `_Avoid_:` line listing aliases not to use. Domain terms only - not general programming concepts. `pz-implement` appends here as terms get sharpened.
 
 ## Terms
 

@@ -6,7 +6,7 @@
 
 ## 1. Overview
 
-Give PureDeck real on-disk persistence for two config surfaces, mirroring how `requi` split its
+Give puredeck real on-disk persistence for two config surfaces, mirroring how `requi` split its
 config across separate feature-slices, adapted to the flashcards domain:
 
 1. **Collections on disk** (`collections/<deck-slug>.json`) - each deck is one JSON file in a
@@ -39,7 +39,7 @@ map and a `collectionPath` pointer, and **splits** the keymap into its own `keym
 
 ### User Story
 
-As a PureDeck user, I want my decks stored as plain JSON files I can hand-edit and back up, and my
+As a puredeck user, I want my decks stored as plain JSON files I can hand-edit and back up, and my
 keyboard bindings remembered across launches, so the app reopens with the decks I have on disk and
 the shortcuts I configured, without hidden state.
 
@@ -225,7 +225,7 @@ Reused (already present): `@tauri-apps/plugin-store` (settings/keymap files), `@
   read-only + hand-edited this feature (`CollectionStore` has no `save`). A later feature adds CRUD.
 - **In-app key recorder UI** (record/rebind/reset/conflict in Settings). Rebinding is by hand-editing
   `keymap.json`; the pane is read-only. Later feature.
-- **Folder/nested collections, inheritance, config resolution** (requi's per-folder config). PureDeck
+- **Folder/nested collections, inheritance, config resolution** (requi's per-folder config). puredeck
   decks are flat - a collection is a single directory of deck files.
 - **Folder picker / changing `collectionPath` from the UI.** Hand-edit `settings.json`.
 - **Spaced-repetition scheduling / study state persistence** - decks carry only cards, no review data.

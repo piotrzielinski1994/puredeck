@@ -18,7 +18,7 @@ rejected: file-based router (extra build plugin, unneeded for a 3-route scaffold
 
 | # | Task | Spec Ref | Files | Type | Est |
 |---|------|----------|-------|------|-----|
-| 1 | Scaffold Vite + React + TS + Tauri 2 (`npm create tauri-app` in temp, copy in, rewrite identity to `pure-deck`) | AC-001, AC-002 | `package.json`, `vite.config.ts`, `src-tauri/**`, `index.html`, `.nvmrc`, `tsconfig*.json` | impl | 1h |
+| 1 | Scaffold Vite + React + TS + Tauri 2 (`npm create tauri-app` in temp, copy in, rewrite identity to `puredeck`) | AC-001, AC-002 | `package.json`, `vite.config.ts`, `src-tauri/**`, `index.html`, `.nvmrc`, `tsconfig*.json` | impl | 1h |
 | 2 | Add Tailwind v4 + init shadcn/ui, add Button | AC-008 | `src/index.css`, `components.json`, `src/components/ui/button.tsx`, `src/lib/utils.ts` | impl | 1h |
 | 3 | Wire TanStack Router: root layout + `/` + `/settings` + 404 | AC-003 | `src/router.tsx`, `src/routes/**`, `src/main.tsx` | impl | 1h |
 | 4 | Wire TanStack Query: `QueryClientProvider` + `greet` Tauri command + demo query | AC-004, AC-011 | `src-tauri/src/lib.rs`, `src/lib/tauri.ts`, `src/routes/index.tsx` | impl | 1h |
@@ -121,7 +121,7 @@ Verdict: none invoked - a bootstrap/plumbing ticket with no domain model to shap
 | AC-008 | shadcn Button styled | `should render the welcome heading and the Get started button` (Button renders) | Pass |
 | AC-009 | Build succeeds | `npm run build` -> exit 0 (tsc + vite, 2065 modules); `cargo build` src-tauri -> exit 0 | Pass |
 | AC-010 | Lint + typecheck pass | `npm run lint` exit 0 (1 accepted shadcn Button warning); `npm run typecheck` exit 0 | Pass |
-| AC-011 | `greet` IPC callable | `should render the greeting text...` asserts `invoke("greet",{name:"PureDeck"})` called | Pass |
+| AC-011 | `greet` IPC callable | `should render the greeting text...` asserts `invoke("greet",{name:"puredeck"})` called | Pass |
 
 Test file: `tests/bootstrap.test.tsx` (12 tests) + `tests/setup.ts`. Full suite: 12 passed. `npm run tauri build` (full distributable bundle, AC-009 "Should") not run this session - the two build halves (`npm run build` + `cargo build`) both pass, which covers compile; full bundle packaging deferred.
 

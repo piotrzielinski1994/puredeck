@@ -2566,7 +2566,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pure-deck"
+name = "puredeck"
 version = "0.1.0"
 dependencies = [
  "serde",

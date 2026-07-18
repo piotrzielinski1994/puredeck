@@ -116,7 +116,7 @@ Interfaces are named up front so neighbouring tasks agree (step-12 self-review c
 **Files:** Create `src/components/workspace/sidebar.tsx`. Test `tests/layout-shell.test.tsx` (sidebar portion, TC-001).
 **Interfaces:**
 - Consumes: `useWorkspace` (decks, selectedDeckId, openDeck).
-- Produces: `Sidebar` - `h-9` brand header (`bg-muted/30 border-b`, text "PureDeck"), deck list rows (`text-[13px] py-1`, hover/selected `bg-accent`, name only), click -> `openDeck(id)`. `role`/`aria-label` for the tree region.
+- Produces: `Sidebar` - `h-9` brand header (`bg-muted/30 border-b`, text "puredeck"), deck list rows (`text-[13px] py-1`, hover/selected `bg-accent`, name only), click -> `openDeck(id)`. `role`/`aria-label` for the tree region.
 - [ ] Write failing test: brand + a row per demo deck; click opens/selects.
 - [ ] Confirm FAIL. Implement. Confirm PASS.
 - [ ] Commit (`feat(layout): AC-003 sidebar deck list`).
@@ -231,7 +231,7 @@ Verdict: pz-codebase-design applies (interface/seam design); pz-ddd + pz-archety
 |----|--------------------|--------|
 | AC-001 | layout-shell `should render a resize handle between the sidebar and main` (+ brand/deck render) | Pass |
 | AC-002 | layout-shell `should hide the sidebar if collapse is toggled and restore it if toggled again` | Pass |
-| AC-003 | layout-shell `should render the PureDeck brand and a row per demo deck`; `should open a deck as a tab if its sidebar row is clicked` | Pass |
+| AC-003 | layout-shell `should render the puredeck brand and a row per demo deck`; `should open a deck as a tab if its sidebar row is clicked` | Pass |
 | AC-004 | layout-shell `should open a deck as a tab...`, `should switch the active tab...`, `should close a tab...`, `should reflect a new tab order if the open tabs are reordered` | Pass |
 | AC-005 | deck-view `should render the deck title and card count...`, `...editable grid with a row per card...`, `...a Study action...`, `...a trailing blank input row...` | Pass |
 | AC-006 | study-view `should show the front...and hide the grade buttons`, `...reveal the back...when clicked`, `...when Space is pressed`, `...advance to the next card...`, `...progress label` | Pass |
