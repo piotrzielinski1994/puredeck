@@ -16,7 +16,7 @@ function EmptyState() {
 }
 
 function ActiveSurface() {
-  const { tabs, activeTabId, deckById, openStudy } = useWorkspace();
+  const { tabs, activeTabId, deckById, openStudy, saveDeck } = useWorkspace();
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? null;
 
   if (!activeTab) {
@@ -32,14 +32,39 @@ function ActiveSurface() {
   if (activeTab.kind === "study") {
     return <StudyView deck={deck} />;
   }
-  return <DeckView deck={deck} onStudy={() => openStudy(deck.id)} />;
+  return (
+    <DeckView
+      deck={deck}
+      onStudy={() => openStudy(deck.id)}
+      onSaveDeck={saveDeck}
+    />
+  );
 }
 
 export function Main() {
   const { settings, saveSidebarCollapsed } = useSettings();
+  const { tabs, activeTabId, deckById, saveDeck } = useWorkspace();
+
+  const saveActiveDeck = (): void => {
+    const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? null;
+    if (activeTab?.kind !== "deck" || !activeTab.deckId) {
+      return;
+    }
+    const deck = deckById(activeTab.deckId);
+    if (!deck) {
+      return;
+    }
+    const focused = document.activeElement;
+    if (focused instanceof HTMLInputElement) {
+      focused.blur();
+      return;
+    }
+    saveDeck(deck);
+  };
 
   useActionHotkeys({
     "toggle-sidebar": () => saveSidebarCollapsed(!settings.sidebarCollapsed),
+    "save-active-deck": saveActiveDeck,
   });
 
   return (

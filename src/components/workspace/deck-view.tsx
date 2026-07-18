@@ -1,14 +1,30 @@
 import { GraduationCap } from "lucide-react";
 import { CardGrid } from "@/components/workspace/card-grid";
-import type { Deck } from "@/lib/workspace/model";
+import {
+  withCardAdded,
+  withCardEdited,
+  withCardRemoved,
+} from "@/lib/workspace/deck-ops";
+import type { Card, Deck } from "@/lib/workspace/model";
 
 export function DeckView({
   deck,
   onStudy,
+  onSaveDeck,
 }: {
   deck: Deck;
   onStudy?: () => void;
+  onSaveDeck?: (deck: Deck) => void;
 }) {
+  const onEditCard = (
+    id: string,
+    patch: Partial<Pick<Card, "front" | "back">>,
+  ): void => onSaveDeck?.(withCardEdited(deck, id, patch));
+  const onRemoveCard = (id: string): void =>
+    onSaveDeck?.(withCardRemoved(deck, id));
+  const onAddCard = (front: string, back: string): void =>
+    onSaveDeck?.(withCardAdded(deck, front, back));
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-10 shrink-0 items-stretch border-b bg-muted/30">
@@ -29,7 +45,12 @@ export function DeckView({
         </button>
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
-        <CardGrid cards={deck.cards} />
+        <CardGrid
+          cards={deck.cards}
+          onEditCard={onEditCard}
+          onRemoveCard={onRemoveCard}
+          onAddCard={onAddCard}
+        />
       </div>
     </div>
   );

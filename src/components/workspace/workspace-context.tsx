@@ -17,6 +17,7 @@ import {
 } from "@/lib/workspace/model";
 import type { CollectionStore } from "@/lib/workspace/collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
+import { useToast } from "@/components/ui/toast";
 
 export type TabKind = "deck" | "study" | "settings";
 
@@ -34,6 +35,7 @@ type WorkspaceContextValue = {
   activeTabId: string | null;
   tabs: Tab[];
   deckById: (id: string) => Deck | undefined;
+  saveDeck: (deck: Deck) => void;
   openDeck: (id: string) => void;
   openStudy: (deckId: string) => void;
   openSettings: () => void;
@@ -66,6 +68,7 @@ export function WorkspaceProvider({
   store?: CollectionStore;
 }) {
   const { settings, saveOpenTabs } = useSettings();
+  const { show } = useToast();
   const [collectionStore] = useState(
     () => store ?? createCollectionStore(settings.collectionPath),
   );
@@ -86,7 +89,19 @@ export function WorkspaceProvider({
     };
   }, [collectionStore, decksProp]);
 
-  const decks = decksProp ?? loadedDecks;
+  const decks = loadedDecks;
+
+  const saveDeck = useCallback(
+    (deck: Deck) => {
+      setLoadedDecks((current) =>
+        current.map((existing) => (existing.id === deck.id ? deck : existing)),
+      );
+      collectionStore.save(deck);
+      show("Saved");
+    },
+    [collectionStore, show],
+  );
+
   const { openTabIds } = settings;
   const activeTabId =
     settings.activeTabId !== null && openTabIds.includes(settings.activeTabId)
@@ -174,6 +189,7 @@ export function WorkspaceProvider({
       activeTabId,
       tabs,
       deckById,
+      saveDeck,
       openDeck,
       openStudy,
       openSettings,
@@ -188,6 +204,7 @@ export function WorkspaceProvider({
       activeTabId,
       tabs,
       deckById,
+      saveDeck,
       openDeck,
       openStudy,
       openSettings,

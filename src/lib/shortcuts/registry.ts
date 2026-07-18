@@ -1,7 +1,8 @@
 export type ShortcutActionId =
   | "open-command-palette"
   | "flip-card"
-  | "toggle-sidebar";
+  | "toggle-sidebar"
+  | "save-active-deck";
 
 export type ShortcutAction = {
   id: ShortcutActionId;
@@ -30,5 +31,11 @@ export const SHORTCUT_ACTIONS: readonly ShortcutAction[] = [
     name: "Toggle sidebar",
     description: "Show or hide the deck sidebar.",
     defaultHotkey: "Mod+B",
+  },
+  {
+    id: "save-active-deck",
+    name: "Save",
+    description: "Save the active deck.",
+    defaultHotkey: "Mod+S",
   },
 ];
