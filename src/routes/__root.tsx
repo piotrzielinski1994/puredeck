@@ -10,6 +10,7 @@ import {
   useWorkspace,
 } from "@/components/workspace/workspace-context";
 import { createSettingsStore } from "@/lib/settings/store-factory";
+import { ToastProvider } from "@/components/ui/toast";
 
 function ShellPalette() {
   const { decks, openDeck, openStudy, openSettings } = useWorkspace();
@@ -49,12 +50,14 @@ function RootLayout() {
     <SettingsProvider store={store}>
       <ThemeProvider>
         <PaletteProvider>
-          <WorkspaceProvider>
-            <div className="h-screen">
-              <Outlet />
-            </div>
-            <ShellPalette />
-          </WorkspaceProvider>
+          <ToastProvider>
+            <WorkspaceProvider>
+              <div className="h-screen">
+                <Outlet />
+              </div>
+              <ShellPalette />
+            </WorkspaceProvider>
+          </ToastProvider>
         </PaletteProvider>
       </ThemeProvider>
     </SettingsProvider>
