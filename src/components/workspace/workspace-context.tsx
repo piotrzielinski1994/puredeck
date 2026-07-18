@@ -18,6 +18,15 @@ import {
 import type { CollectionStore } from "@/lib/workspace/collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
 import { useToast } from "@/components/ui/toast";
+import type { ReviewStore } from "@/lib/study/review-store";
+import { createReviewStore } from "@/lib/study/review-store-factory";
+import {
+  defaultReview,
+  schedule,
+  type Grade,
+  type ReviewMap,
+} from "@/lib/study/scheduler";
+import { todayIso } from "@/lib/study/queue";
 
 export type TabKind = "deck" | "study" | "settings";
 
@@ -36,6 +45,8 @@ type WorkspaceContextValue = {
   tabs: Tab[];
   deckById: (id: string) => Deck | undefined;
   saveDeck: (deck: Deck) => void;
+  reviews: ReviewMap;
+  gradeCard: (cardId: string, grade: Grade) => void;
   openDeck: (id: string) => void;
   openStudy: (deckId: string) => void;
   openSettings: () => void;
@@ -62,17 +73,23 @@ export function WorkspaceProvider({
   children,
   decks: decksProp,
   store,
+  reviewStore,
 }: {
   children: ReactNode;
   decks?: Deck[];
   store?: CollectionStore;
+  reviewStore?: ReviewStore;
 }) {
   const { settings, saveOpenTabs } = useSettings();
   const { show } = useToast();
   const [collectionStore] = useState(
     () => store ?? createCollectionStore(settings.collectionPath),
   );
+  const [reviewStoreInstance] = useState(
+    () => reviewStore ?? createReviewStore(),
+  );
   const [loadedDecks, setLoadedDecks] = useState<Deck[]>(decksProp ?? []);
+  const [reviews, setReviews] = useState<ReviewMap>({});
 
   useEffect(() => {
     if (decksProp) {
@@ -89,7 +106,38 @@ export function WorkspaceProvider({
     };
   }, [collectionStore, decksProp]);
 
+  useEffect(() => {
+    let isMounted = true;
+    reviewStoreInstance.load().then((loaded) => {
+      if (isMounted) {
+        setReviews(loaded);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [reviewStoreInstance]);
+
   const decks = loadedDecks;
+
+  const gradeCard = useCallback(
+    (cardId: string, grade: Grade) => {
+      const today = todayIso();
+      setReviews((current) => {
+        const next = {
+          ...current,
+          [cardId]: schedule(
+            current[cardId] ?? defaultReview(today),
+            grade,
+            today,
+          ),
+        };
+        reviewStoreInstance.save(next);
+        return next;
+      });
+    },
+    [reviewStoreInstance],
+  );
 
   const saveDeck = useCallback(
     (deck: Deck) => {
@@ -190,6 +238,8 @@ export function WorkspaceProvider({
       tabs,
       deckById,
       saveDeck,
+      reviews,
+      gradeCard,
       openDeck,
       openStudy,
       openSettings,
@@ -205,6 +255,8 @@ export function WorkspaceProvider({
       tabs,
       deckById,
       saveDeck,
+      reviews,
+      gradeCard,
       openDeck,
       openStudy,
       openSettings,
