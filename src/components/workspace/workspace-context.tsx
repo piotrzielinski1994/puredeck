@@ -123,20 +123,14 @@ export function WorkspaceProvider({
   const gradeCard = useCallback(
     (cardId: string, grade: Grade) => {
       const today = todayIso();
-      setReviews((current) => {
-        const next = {
-          ...current,
-          [cardId]: schedule(
-            current[cardId] ?? defaultReview(today),
-            grade,
-            today,
-          ),
-        };
-        reviewStoreInstance.save(next);
-        return next;
-      });
+      const next = {
+        ...reviews,
+        [cardId]: schedule(reviews[cardId] ?? defaultReview(today), grade, today),
+      };
+      setReviews(next);
+      reviewStoreInstance.save(next);
     },
-    [reviewStoreInstance],
+    [reviews, reviewStoreInstance],
   );
 
   const saveDeck = useCallback(

@@ -135,6 +135,27 @@ describe("StudyView Again requeue (AC-006 / TC-010)", () => {
   });
 });
 
+describe("StudyView Hard drops the card (AC-006)", () => {
+  it("should drop the current card from the session when Hard is graded, not requeue it", () => {
+    const onGrade = vi.fn();
+    render(
+      <StudyView deck={deck} reviews={{}} onGrade={onGrade} today={TODAY} />,
+    );
+
+    fireEvent.click(screen.getByText("gato"));
+    fireEvent.click(screen.getByRole("button", { name: /hard/i }));
+
+    expect(onGrade).toHaveBeenCalledWith("c1", "Hard");
+    expect(screen.getByText("hola")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("hola"));
+    fireEvent.click(screen.getByRole("button", { name: /good/i }));
+
+    expect(screen.getByText(/all caught up/i)).toBeInTheDocument();
+    expect(screen.queryByText("gato")).not.toBeInTheDocument();
+  });
+});
+
 describe("StudyView empty deck (unchanged message)", () => {
   it("should show the No cards to study message when the deck has no cards", () => {
     const empty: Deck = { id: "es", name: "Spanish", cards: [] };
