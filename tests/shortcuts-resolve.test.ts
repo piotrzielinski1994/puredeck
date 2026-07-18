@@ -10,12 +10,13 @@ const EXPECTED: Record<ShortcutActionId, string> = {
   "open-command-palette": "Mod+K",
   "flip-card": "Space",
   "toggle-sidebar": "Mod+B",
+  "save-active-deck": "Mod+S",
 };
 
 const EXPECTED_IDS = Object.keys(EXPECTED).sort();
 
 describe("SHORTCUT_ACTIONS registry (AC-007 / TC-006)", () => {
-  it("should define exactly the three in-scope actions, each id unique", () => {
+  it("should define exactly the in-scope actions, each id unique", () => {
     const ids = SHORTCUT_ACTIONS.map((action) => action.id);
 
     expect([...ids].sort()).toEqual(EXPECTED_IDS);
