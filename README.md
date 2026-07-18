@@ -48,3 +48,4 @@ Under the OS app-data dir:
 - `settings.json` - panel layout, sidebar-collapsed, open tabs, theme mode.
 - `keymap.json` - keyboard shortcut overrides (`actionId -> hotkey`); missing entries fall back to registry defaults.
 - `collections/<deck-slug>.json` - one JSON file per deck (id, name, cards). Read on launch; hand-editable. First run seeds the demo decks here once. Cards are editable in-app (add / edit / delete); each change rewrites the deck's file. Creating, renaming, or deleting whole decks is still file-only.
+- `review-state.json` - per-card SRS scheduling state (SM-2: ease, interval, reps, due), keyed by card id, kept separate from deck content. Study grades (Again/Hard/Good) reschedule the card; the study session shows only due cards.

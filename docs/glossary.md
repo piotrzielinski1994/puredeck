@@ -25,3 +25,19 @@ _Avoid_: workspace, library, vault, folder (use "collection" for the decks direc
 ### Slug
 The filesystem-safe identifier derived from a deck name (lowercase, non-alphanumerics to `-`), used as the deck's on-disk file stem (`<slug>.json`) and de-duplicated within a collection.
 _Avoid_: filename, key, path.
+
+### Review state
+The per-[[Card]] scheduling record the SRS keeps: ease, interval (days), consecutive-correct reps, and the due date. Persisted separately from card content, keyed by card id.
+_Avoid_: progress, history, stats, srs data.
+
+### Grade
+The learner's self-rated recall on a reviewed [[Card]] - one of `Again`, `Hard`, `Good` - fed to the scheduler to compute the next [[Review state]]. Maps to SM-2 quality Again=2 / Hard=3 / Good=4.
+_Avoid_: rating, score, answer, difficulty.
+
+### Due
+A [[Card]] is *due* when it has no [[Review state]] (new) or its stored due date is on/before today. The study session studies only due cards.
+_Avoid_: pending, ready, scheduled.
+
+### Scheduler
+The pure SM-2 function that maps a [[Review state]] + a [[Grade]] + today to the next review state. Owns all interval/ease math; holds no IO or time of its own.
+_Avoid_: algorithm, planner, srs engine.
