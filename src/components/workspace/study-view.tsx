@@ -53,7 +53,7 @@ export function StudyView({ deck }: { deck: Deck }) {
               key={label}
               type="button"
               onClick={grade}
-              className="min-w-20 border px-3 py-1.5 text-center text-sm font-medium hover:bg-accent"
+              className="min-h-11 min-w-20 border px-3 py-1.5 text-center text-sm font-medium hover:bg-accent md:min-h-0"
             >
               {label}
             </button>

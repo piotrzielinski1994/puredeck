@@ -2,7 +2,7 @@
 
 A keyboard-driven, file-based desktop flashcards app - an open alternative to Anki.
 
-Built as a Tauri 2 desktop shell (Rust backend, native webview) with a React 19 + TypeScript frontend, the TanStack stack (Router/Query/Hotkeys), and shadcn/ui on Tailwind CSS v4. The UI is a requi-style workspace shell: a resizable, collapsible deck sidebar beside a tabbed content area (deck / study / settings), with a persisted theme (light/dark/system).
+Built as a Tauri 2 desktop shell (Rust backend, native webview) with a React 19 + TypeScript frontend, the TanStack stack (Router/Query/Hotkeys), and shadcn/ui on Tailwind CSS v4. The UI is a requi-style workspace shell: a resizable, collapsible deck sidebar beside a tabbed content area (deck / study / settings), with a persisted theme (light/dark/system). Below a 768px viewport it switches to a touch-first mobile layout - a top bar with a hamburger-opened deck drawer and a command-palette button - so it works on phones (Android/iOS), not just desktop.
 
 ## Prerequisites
 
