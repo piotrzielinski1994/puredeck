@@ -26,6 +26,7 @@ import {
   createScheduler,
   gradeReview,
   newCard,
+  type Card as FsrsCard,
   type Grade,
   type ReviewMap,
 } from "@/lib/study/fsrs";
@@ -49,7 +50,7 @@ type WorkspaceContextValue = {
   deckById: (id: string) => Deck | undefined;
   saveDeck: (deck: Deck) => void;
   reviews: ReviewMap;
-  gradeCard: (cardId: string, grade: Grade) => void;
+  gradeCard: (cardId: string, grade: Grade) => FsrsCard;
   openDeck: (id: string) => void;
   openStudy: (deckId: string) => void;
   openSettings: () => void;
@@ -144,6 +145,7 @@ export function WorkspaceProvider({
       setRevlog(nextRevlog);
       reviewStoreInstance.save(nextReviews);
       revlogStoreInstance.save(nextRevlog);
+      return card;
     },
     [reviews, revlog, scheduler, reviewStoreInstance, revlogStoreInstance],
   );

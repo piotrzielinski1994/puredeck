@@ -1,24 +1,38 @@
 import { useState } from "react";
 import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 import type { Card, Deck } from "@/lib/workspace/model";
-import type { Grade, ReviewMap } from "@/lib/study/scheduler";
-import { buildStudyQueue, todayIso } from "@/lib/study/queue";
+import {
+  Rating,
+  type Card as FsrsCard,
+  type Grade,
+  type ReviewMap,
+} from "@/lib/study/fsrs";
+import { buildStudyQueue, nowDate } from "@/lib/study/queue";
 
-const GRADES = ["Again", "Hard", "Good"] as const satisfies readonly Grade[];
+const GRADES = [
+  ["Again", Rating.Again],
+  ["Hard", Rating.Hard],
+  ["Good", Rating.Good],
+  ["Easy", Rating.Easy],
+] as const satisfies readonly (readonly [string, Grade])[];
+
+function isSameDay(a: Date, b: Date): boolean {
+  return a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10);
+}
 
 export function StudyView({
   deck,
   reviews,
   onGrade,
-  today = todayIso(),
+  now = nowDate(),
 }: {
   deck: Deck;
   reviews: ReviewMap;
-  onGrade: (cardId: string, grade: Grade) => void;
-  today?: string;
+  onGrade: (cardId: string, grade: Grade) => FsrsCard;
+  now?: Date;
 }) {
   const [queue, setQueue] = useState<Card[]>(() =>
-    buildStudyQueue(deck, reviews, today),
+    buildStudyQueue(deck, reviews, now),
   );
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -28,9 +42,9 @@ export function StudyView({
 
   const grade = (value: Grade) => {
     setIsFlipped(false);
-    onGrade(card.id, value);
+    const scheduled = onGrade(card.id, value);
     setQueue((current) =>
-      value === "Again"
+      isSameDay(scheduled.due, now)
         ? [...current.slice(1), current[0]]
         : current.slice(1),
     );
@@ -75,12 +89,12 @@ export function StudyView({
         )}
       </button>
       {isFlipped && (
-        <div className="flex gap-2">
-          {GRADES.map((label) => (
+        <div className="flex flex-wrap justify-center gap-2">
+          {GRADES.map(([label, value]) => (
             <button
               key={label}
               type="button"
-              onClick={() => grade(label)}
+              onClick={() => grade(value)}
               className="min-h-11 min-w-20 border px-3 py-1.5 text-center text-sm font-medium hover:bg-accent md:min-h-0"
             >
               {label}
