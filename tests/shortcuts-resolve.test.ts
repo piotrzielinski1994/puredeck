@@ -14,6 +14,8 @@ const EXPECTED: Record<ShortcutActionId, string> = {
   "open-command-palette": "Mod+K",
   "flip-card": "Space",
   "toggle-sidebar": "Mod+B",
+  "panel-expand": "Mod+Alt+=",
+  "panel-shrink": "Mod+Alt+-",
   "save-active-deck": "Mod+S",
 };
 
