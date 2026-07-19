@@ -20,13 +20,16 @@ import { createCollectionStore } from "@/lib/workspace/collection-store-factory"
 import { useToast } from "@/components/ui/toast";
 import type { ReviewStore } from "@/lib/study/review-store";
 import { createReviewStore } from "@/lib/study/review-store-factory";
+import type { Revlog, RevlogStore } from "@/lib/study/revlog-store";
+import { createRevlogStore } from "@/lib/study/revlog-store-factory";
 import {
-  defaultReview,
-  schedule,
+  createScheduler,
+  gradeReview,
+  newCard,
   type Grade,
   type ReviewMap,
-} from "@/lib/study/scheduler";
-import { todayIso } from "@/lib/study/queue";
+} from "@/lib/study/fsrs";
+import { nowDate } from "@/lib/study/queue";
 
 export type TabKind = "deck" | "study" | "settings";
 
@@ -74,11 +77,13 @@ export function WorkspaceProvider({
   decks: decksProp,
   store,
   reviewStore,
+  revlogStore,
 }: {
   children: ReactNode;
   decks?: Deck[];
   store?: CollectionStore;
   reviewStore?: ReviewStore;
+  revlogStore?: RevlogStore;
 }) {
   const { settings, saveOpenTabs } = useSettings();
   const { show } = useToast();
@@ -88,8 +93,13 @@ export function WorkspaceProvider({
   const [reviewStoreInstance] = useState(
     () => reviewStore ?? createReviewStore(),
   );
+  const [revlogStoreInstance] = useState(
+    () => revlogStore ?? createRevlogStore(),
+  );
+  const [scheduler] = useState(createScheduler);
   const [loadedDecks, setLoadedDecks] = useState<Deck[]>(decksProp ?? []);
   const [reviews, setReviews] = useState<ReviewMap>({});
+  const [revlog, setRevlog] = useState<Revlog>([]);
 
   useEffect(() => {
     if (decksProp) {
@@ -108,29 +118,34 @@ export function WorkspaceProvider({
 
   useEffect(() => {
     let isMounted = true;
-    reviewStoreInstance.load().then((loaded) => {
-      if (isMounted) {
-        setReviews(loaded);
-      }
-    });
+    Promise.all([reviewStoreInstance.load(), revlogStoreInstance.load()]).then(
+      ([loadedReviews, loadedRevlog]) => {
+        if (isMounted) {
+          setReviews(loadedReviews);
+          setRevlog(loadedRevlog);
+        }
+      },
+    );
     return () => {
       isMounted = false;
     };
-  }, [reviewStoreInstance]);
+  }, [reviewStoreInstance, revlogStoreInstance]);
 
   const decks = loadedDecks;
 
   const gradeCard = useCallback(
     (cardId: string, grade: Grade) => {
-      const today = todayIso();
-      const next = {
-        ...reviews,
-        [cardId]: schedule(reviews[cardId] ?? defaultReview(today), grade, today),
-      };
-      setReviews(next);
-      reviewStoreInstance.save(next);
+      const now = nowDate();
+      const current = reviews[cardId] ?? newCard(now);
+      const { card, log } = gradeReview(scheduler, current, grade, cardId, now);
+      const nextReviews = { ...reviews, [cardId]: card };
+      const nextRevlog = [...revlog, { cid: cardId, ...log }];
+      setReviews(nextReviews);
+      setRevlog(nextRevlog);
+      reviewStoreInstance.save(nextReviews);
+      revlogStoreInstance.save(nextRevlog);
     },
-    [reviews, reviewStoreInstance],
+    [reviews, revlog, scheduler, reviewStoreInstance, revlogStoreInstance],
   );
 
   const saveDeck = useCallback(
