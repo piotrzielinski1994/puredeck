@@ -1,12 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { buildStudyQueue, isDue } from "@/lib/study/queue";
-import type { CardReview, ReviewMap } from "@/lib/study/scheduler";
+import { buildStudyQueue, isDue, nowDate } from "@/lib/study/queue";
+import {
+  createScheduler,
+  gradeReview,
+  newCard,
+  Rating,
+  type Card as FsrsCard,
+  type ReviewMap,
+} from "@/lib/study/fsrs";
 import type { Deck } from "@/lib/workspace/model";
 
-const TODAY = "2026-07-19";
+const NOW = new Date("2026-07-19T12:00:00Z");
+const PAST_SAME_DAY = new Date("2026-07-19T06:00:00Z");
+const FUTURE_SAME_DAY = new Date("2026-07-19T18:00:00Z");
+const CARD_ANCHOR = new Date("2020-01-01T00:00:00Z");
 
-function review(due: string): CardReview {
-  return { ease: 2.5, intervalDays: 1, reps: 1, due };
+function fsrsCardDueAt(due: Date): FsrsCard {
+  return { ...newCard(CARD_ANCHOR), due };
+}
+
+function futureReviewCard(cid: string): FsrsCard {
+  const scheduler = createScheduler();
+  const learnAt = new Date("2026-07-19T12:00:00Z");
+  const graduateAt = new Date("2026-07-19T12:10:00Z");
+  const learning = gradeReview(scheduler, newCard(learnAt), Rating.Good, cid, learnAt);
+  return gradeReview(scheduler, learning.card, Rating.Good, cid, graduateAt).card;
 }
 
 function makeDeck(): Deck {
@@ -22,51 +40,61 @@ function makeDeck(): Deck {
   };
 }
 
-describe("isDue (AC-005)", () => {
-  it("should treat a new card with no review as due", () => {
-    expect(isDue(undefined, TODAY)).toBe(true);
+describe("isDue (AC-006)", () => {
+  it("should treat a new card with no review entry as due", () => {
+    expect(isDue(undefined, NOW)).toBe(true);
   });
 
-  it("should treat a card due today as due", () => {
-    expect(isDue(review(TODAY), TODAY)).toBe(true);
+  it("should treat a card whose due datetime is in the past as due", () => {
+    expect(isDue(fsrsCardDueAt(PAST_SAME_DAY), NOW)).toBe(true);
   });
 
-  it("should treat a card due in the past as due", () => {
-    expect(isDue(review("2026-07-01"), TODAY)).toBe(true);
+  it("should treat a card whose due datetime exactly equals now as due", () => {
+    expect(isDue(fsrsCardDueAt(new Date(NOW.getTime())), NOW)).toBe(true);
   });
 
-  it("should treat a card due in the future as not due", () => {
-    expect(isDue(review("2026-07-20"), TODAY)).toBe(false);
-  });
-});
-
-describe("buildStudyQueue due filter (TC-007 / AC-005)", () => {
-  it("should return only new and due cards, preserving deck order", () => {
-    const deck = makeDeck();
-    const reviews: ReviewMap = {
-      c2: review(TODAY),
-      c3: review("2026-08-01"),
-      c4: review("2026-07-10"),
-    };
-
-    const queue = buildStudyQueue(deck, reviews, TODAY);
-
-    expect(queue.map((card) => card.id)).toEqual(["c1", "c2", "c4"]);
+  it("should treat a card due later the same day as not due", () => {
+    expect(isDue(fsrsCardDueAt(FUTURE_SAME_DAY), NOW)).toBe(false);
   });
 });
 
-describe("buildStudyQueue none due (TC-008 / AC-005 / AC-007)", () => {
-  it("should return an empty queue when every card is future-due", () => {
+describe("buildStudyQueue due filter (TC-008 / AC-006)", () => {
+  it("should return the new, past, and due-now cards in deck order and exclude the future card", () => {
     const deck = makeDeck();
+    const future = futureReviewCard("c4");
+
+    expect(future.due.getTime()).toBeGreaterThan(NOW.getTime());
+
     const reviews: ReviewMap = {
-      c1: review("2026-07-20"),
-      c2: review("2026-08-01"),
-      c3: review("2026-12-31"),
-      c4: review("2027-01-01"),
+      c2: fsrsCardDueAt(PAST_SAME_DAY),
+      c3: fsrsCardDueAt(new Date(NOW.getTime())),
+      c4: future,
     };
 
-    const queue = buildStudyQueue(deck, reviews, TODAY);
+    const queue = buildStudyQueue(deck, reviews, NOW);
+
+    expect(queue.map((card) => card.id)).toEqual(["c1", "c2", "c3"]);
+  });
+});
+
+describe("buildStudyQueue none due (TC-009 / AC-006)", () => {
+  it("should return an empty queue when every card is due in the future", () => {
+    const deck = makeDeck();
+    const reviews: ReviewMap = {
+      c1: fsrsCardDueAt(FUTURE_SAME_DAY),
+      c2: fsrsCardDueAt(new Date("2026-07-20T00:00:00Z")),
+      c3: fsrsCardDueAt(new Date("2026-12-31T00:00:00Z")),
+      c4: futureReviewCard("c4"),
+    };
+
+    const queue = buildStudyQueue(deck, reviews, NOW);
 
     expect(queue).toEqual([]);
+  });
+});
+
+describe("nowDate", () => {
+  it("should return the current instant as a Date", () => {
+    expect(nowDate()).toBeInstanceOf(Date);
   });
 });

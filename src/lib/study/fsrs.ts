@@ -16,6 +16,7 @@ import {
 
 export { Rating, State };
 export type { Card, Grade, ReviewLog };
+export type ReviewMap = Record<string, Card>;
 
 const REQUEST_RETENTION = 0.9;
 const MAXIMUM_INTERVAL = 36500;

@@ -1,26 +1,21 @@
 import type { Card, Deck } from "@/lib/workspace/model";
-import type { CardReview, ReviewMap } from "@/lib/study/scheduler";
+import type { Card as FsrsCard, ReviewMap } from "@/lib/study/fsrs";
 
-function pad(value: number): string {
-  return String(value).padStart(2, "0");
+export function nowDate(): Date {
+  return new Date();
 }
 
-export function todayIso(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-}
-
-export function isDue(review: CardReview | undefined, today: string): boolean {
+export function isDue(review: FsrsCard | undefined, now: Date): boolean {
   if (!review) {
     return true;
   }
-  return review.due <= today;
+  return review.due.getTime() <= now.getTime();
 }
 
 export function buildStudyQueue(
   deck: Deck,
   reviews: ReviewMap,
-  today: string,
+  now: Date,
 ): Card[] {
-  return deck.cards.filter((card) => isDue(reviews[card.id], today));
+  return deck.cards.filter((card) => isDue(reviews[card.id], now));
 }
