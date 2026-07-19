@@ -6,6 +6,12 @@ import type { Card } from "@/lib/workspace/model";
 const CELL = "border-r border-b border-border bg-background";
 const INPUT =
   "h-9 w-full bg-background px-2.5 font-mono text-xs text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-inset";
+const NO_AUTOFILL = {
+  autoComplete: "off",
+  autoCorrect: "off",
+  autoCapitalize: "off",
+  spellCheck: false,
+} as const;
 
 type CardGridProps = {
   cards: Card[];
@@ -60,6 +66,7 @@ export function CardGrid({
               defaultValue={card.front}
               onBlur={(event) => commitEdit(card, "front", event.target.value)}
               className={INPUT}
+              {...NO_AUTOFILL}
             />
           </div>
           <div className={CELL}>
@@ -68,6 +75,7 @@ export function CardGrid({
               defaultValue={card.back}
               onBlur={(event) => commitEdit(card, "back", event.target.value)}
               className={INPUT}
+              {...NO_AUTOFILL}
             />
           </div>
           <div className={cn(CELL, "flex items-center justify-center")}>
@@ -90,6 +98,7 @@ export function CardGrid({
           onChange={(event) => setFront(event.target.value)}
           onBlur={commitAdd}
           className={INPUT}
+          {...NO_AUTOFILL}
         />
       </div>
       <div className={CELL}>
@@ -100,6 +109,7 @@ export function CardGrid({
           onChange={(event) => setBack(event.target.value)}
           onBlur={commitAdd}
           className={INPUT}
+          {...NO_AUTOFILL}
         />
       </div>
       <div className={CELL} />

@@ -16,7 +16,8 @@ function EmptyState() {
 }
 
 function ActiveSurface() {
-  const { tabs, activeTabId, deckById, openStudy, saveDeck } = useWorkspace();
+  const { tabs, activeTabId, deckById, openStudy, saveDeck, reviews, gradeCard } =
+    useWorkspace();
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? null;
 
   if (!activeTab) {
@@ -30,7 +31,14 @@ function ActiveSurface() {
     return <EmptyState />;
   }
   if (activeTab.kind === "study") {
-    return <StudyView deck={deck} />;
+    return (
+      <StudyView
+        key={deck.id}
+        deck={deck}
+        reviews={reviews}
+        onGrade={gradeCard}
+      />
+    );
   }
   return (
     <DeckView

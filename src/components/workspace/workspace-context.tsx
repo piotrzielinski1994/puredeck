@@ -18,6 +18,19 @@ import {
 import type { CollectionStore } from "@/lib/workspace/collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
 import { useToast } from "@/components/ui/toast";
+import type { ReviewStore } from "@/lib/study/review-store";
+import { createReviewStore } from "@/lib/study/review-store-factory";
+import type { Revlog, RevlogStore } from "@/lib/study/revlog-store";
+import { createRevlogStore } from "@/lib/study/revlog-store-factory";
+import {
+  createScheduler,
+  gradeReview,
+  newCard,
+  type Card as FsrsCard,
+  type Grade,
+  type ReviewMap,
+} from "@/lib/study/fsrs";
+import { nowDate } from "@/lib/study/queue";
 
 export type TabKind = "deck" | "study" | "settings";
 
@@ -36,6 +49,8 @@ type WorkspaceContextValue = {
   tabs: Tab[];
   deckById: (id: string) => Deck | undefined;
   saveDeck: (deck: Deck) => void;
+  reviews: ReviewMap;
+  gradeCard: (cardId: string, grade: Grade) => FsrsCard;
   openDeck: (id: string) => void;
   openStudy: (deckId: string) => void;
   openSettings: () => void;
@@ -62,17 +77,30 @@ export function WorkspaceProvider({
   children,
   decks: decksProp,
   store,
+  reviewStore,
+  revlogStore,
 }: {
   children: ReactNode;
   decks?: Deck[];
   store?: CollectionStore;
+  reviewStore?: ReviewStore;
+  revlogStore?: RevlogStore;
 }) {
   const { settings, saveOpenTabs } = useSettings();
   const { show } = useToast();
   const [collectionStore] = useState(
     () => store ?? createCollectionStore(settings.collectionPath),
   );
+  const [reviewStoreInstance] = useState(
+    () => reviewStore ?? createReviewStore(),
+  );
+  const [revlogStoreInstance] = useState(
+    () => revlogStore ?? createRevlogStore(),
+  );
+  const [scheduler] = useState(createScheduler);
   const [loadedDecks, setLoadedDecks] = useState<Deck[]>(decksProp ?? []);
+  const [reviews, setReviews] = useState<ReviewMap>({});
+  const [revlog, setRevlog] = useState<Revlog>([]);
 
   useEffect(() => {
     if (decksProp) {
@@ -89,7 +117,38 @@ export function WorkspaceProvider({
     };
   }, [collectionStore, decksProp]);
 
+  useEffect(() => {
+    let isMounted = true;
+    Promise.all([reviewStoreInstance.load(), revlogStoreInstance.load()]).then(
+      ([loadedReviews, loadedRevlog]) => {
+        if (isMounted) {
+          setReviews(loadedReviews);
+          setRevlog(loadedRevlog);
+        }
+      },
+    );
+    return () => {
+      isMounted = false;
+    };
+  }, [reviewStoreInstance, revlogStoreInstance]);
+
   const decks = loadedDecks;
+
+  const gradeCard = useCallback(
+    (cardId: string, grade: Grade) => {
+      const now = nowDate();
+      const current = reviews[cardId] ?? newCard(now);
+      const { card, log } = gradeReview(scheduler, current, grade, cardId, now);
+      const nextReviews = { ...reviews, [cardId]: card };
+      const nextRevlog = [...revlog, { cid: cardId, ...log }];
+      setReviews(nextReviews);
+      setRevlog(nextRevlog);
+      reviewStoreInstance.save(nextReviews);
+      revlogStoreInstance.save(nextRevlog);
+      return card;
+    },
+    [reviews, revlog, scheduler, reviewStoreInstance, revlogStoreInstance],
+  );
 
   const saveDeck = useCallback(
     (deck: Deck) => {
@@ -190,6 +249,8 @@ export function WorkspaceProvider({
       tabs,
       deckById,
       saveDeck,
+      reviews,
+      gradeCard,
       openDeck,
       openStudy,
       openSettings,
@@ -205,6 +266,8 @@ export function WorkspaceProvider({
       tabs,
       deckById,
       saveDeck,
+      reviews,
+      gradeCard,
       openDeck,
       openStudy,
       openSettings,
