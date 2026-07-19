@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
@@ -79,8 +85,6 @@ describe("useActionHotkeys (AC-007 / TC-017)", () => {
     expect(flip).not.toHaveBeenCalled();
   });
 
-  // AC-007, TC-017 — behavior: an action bound to two hotkeys fires its handler
-  // on either binding (one definition registered per binding).
   it("should run the handler on each bound hotkey if the action has several", async () => {
     const flip = vi.fn();
     await renderHarness(
@@ -94,7 +98,6 @@ describe("useActionHotkeys (AC-007 / TC-017)", () => {
     expect(flip).toHaveBeenCalledTimes(2);
   });
 
-  // AC-007 — behavior: an empty (disabled) list registers no hotkey definition.
   it("should not run the handler if the action is disabled with an empty list", async () => {
     const flip = vi.fn();
     await renderHarness({ "flip-card": flip }, { "flip-card": [] });

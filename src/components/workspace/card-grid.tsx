@@ -15,7 +15,10 @@ const NO_AUTOFILL = {
 
 type CardGridProps = {
   cards: Card[];
-  onEditCard: (id: string, patch: Partial<Pick<Card, "front" | "back">>) => void;
+  onEditCard: (
+    id: string,
+    patch: Partial<Pick<Card, "front" | "back">>,
+  ) => void;
   onRemoveCard: (id: string) => void;
   onAddCard: (front: string, back: string) => void;
 };

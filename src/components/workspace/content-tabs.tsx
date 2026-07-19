@@ -17,7 +17,10 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
-import { useWorkspace, type Tab } from "@/components/workspace/workspace-context";
+import {
+  useWorkspace,
+  type Tab,
+} from "@/components/workspace/workspace-context";
 
 function SortableTab({
   tab,
@@ -30,8 +33,14 @@ function SortableTab({
   onActivate: () => void;
   onClose: () => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: tab.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: tab.id });
 
   return (
     <div

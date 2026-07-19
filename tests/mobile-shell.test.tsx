@@ -46,9 +46,7 @@ function stubMobileMatchMedia() {
 
 function PaletteStateProbe() {
   const { isOpen } = usePalette();
-  return (
-    <span data-testid="palette-state">{isOpen ? "open" : "closed"}</span>
-  );
+  return <span data-testid="palette-state">{isOpen ? "open" : "closed"}</span>;
 }
 
 function renderMobile(

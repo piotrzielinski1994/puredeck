@@ -173,7 +173,9 @@ export function WorkspaceProvider({
   );
 
   const tabLabel = useCallback(
-    (tabId: string): { kind: TabKind; label: string; deckId: string | null } => {
+    (
+      tabId: string,
+    ): { kind: TabKind; label: string; deckId: string | null } => {
       if (tabId === SETTINGS_TAB_ID) {
         return { kind: "settings", label: "Settings", deckId: null };
       }
@@ -185,7 +187,11 @@ export function WorkspaceProvider({
           deckId,
         };
       }
-      return { kind: "deck", label: deckById(tabId)?.name ?? tabId, deckId: tabId };
+      return {
+        kind: "deck",
+        label: deckById(tabId)?.name ?? tabId,
+        deckId: tabId,
+      };
     },
     [deckById],
   );
@@ -213,10 +219,7 @@ export function WorkspaceProvider({
     (deckId: string) => openTab(studyTabId(deckId)),
     [openTab],
   );
-  const openSettings = useCallback(
-    () => openTab(SETTINGS_TAB_ID),
-    [openTab],
-  );
+  const openSettings = useCallback(() => openTab(SETTINGS_TAB_ID), [openTab]);
 
   const setActiveTab = useCallback(
     (id: string) => saveOpenTabs(openTabIds, id),
@@ -227,9 +230,7 @@ export function WorkspaceProvider({
     (id: string) => {
       const nextOpen = openTabIds.filter((tabId) => tabId !== id);
       const nextActive =
-        activeTabId === id
-          ? neighbourAfterClose(openTabIds, id)
-          : activeTabId;
+        activeTabId === id ? neighbourAfterClose(openTabIds, id) : activeTabId;
       saveOpenTabs(nextOpen, nextActive);
     },
     [openTabIds, activeTabId, saveOpenTabs],

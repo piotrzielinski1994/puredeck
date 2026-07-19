@@ -5,7 +5,12 @@ import {
   type RevlogStore,
 } from "@/lib/study/revlog-store";
 import { createInMemoryRevlogStore } from "@/lib/study/in-memory-revlog-store";
-import { createScheduler, gradeReview, newCard, Rating } from "@/lib/study/fsrs";
+import {
+  createScheduler,
+  gradeReview,
+  newCard,
+  Rating,
+} from "@/lib/study/fsrs";
 
 function gradedRevlog(): Revlog {
   const scheduler = createScheduler();

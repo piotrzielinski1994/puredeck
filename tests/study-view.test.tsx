@@ -90,9 +90,8 @@ describe("StudyView flip behavior (AC-008)", () => {
 
 describe("StudyView grade dispatch (TC-012 / AC-008)", () => {
   it("should call onGrade with the current card id and Rating.Easy when Easy is clicked", () => {
-    const onGrade = vi.fn<(cardId: string, grade: Grade) => FsrsCard>(
-      dropOnGrade,
-    );
+    const onGrade =
+      vi.fn<(cardId: string, grade: Grade) => FsrsCard>(dropOnGrade);
     render(<StudyView deck={deck} reviews={{}} onGrade={onGrade} now={NOW} />);
 
     fireEvent.click(screen.getByText("gato"));
@@ -129,9 +128,8 @@ describe("StudyView requeue on same-day due (TC-011 / AC-007)", () => {
 
 describe("StudyView completion after grading away every due card (TC-010 / AC-007)", () => {
   it("should show the All caught up state with no card and no grade buttons when every returned due is a later day", () => {
-    const onGrade = vi.fn<(cardId: string, grade: Grade) => FsrsCard>(
-      dropOnGrade,
-    );
+    const onGrade =
+      vi.fn<(cardId: string, grade: Grade) => FsrsCard>(dropOnGrade);
     render(<StudyView deck={deck} reviews={{}} onGrade={onGrade} now={NOW} />);
 
     fireEvent.click(screen.getByText("gato"));
@@ -157,7 +155,12 @@ describe("StudyView completion at mount (TC-010 / AC-007)", () => {
     const single: Deck = { id: "es", name: "Spanish", cards: [deck.cards[0]] };
 
     render(
-      <StudyView deck={single} reviews={reviews} onGrade={dropOnGrade} now={NOW} />,
+      <StudyView
+        deck={single}
+        reviews={reviews}
+        onGrade={dropOnGrade}
+        now={NOW}
+      />,
     );
 
     expect(screen.getByText(/all caught up/i)).toBeInTheDocument();

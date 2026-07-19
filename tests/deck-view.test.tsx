@@ -40,9 +40,7 @@ describe("DeckView (AC-005 / TC-005)", () => {
   it("should render an icon-only Study action in the toolbar", () => {
     render(<DeckView deck={deck} />);
 
-    expect(
-      screen.getByRole("button", { name: /study/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /study/i })).toBeInTheDocument();
   });
 
   it("should render a trailing blank input row for adding a card", () => {

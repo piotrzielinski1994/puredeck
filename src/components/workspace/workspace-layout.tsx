@@ -32,7 +32,12 @@ export function WorkspaceLayout() {
       defaultLayout={settings.layouts.workspace}
       onLayoutChanged={(layout) => saveLayout("workspace", layout)}
     >
-      <ResizablePanel id="sidebar" defaultSize="20%" minSize="12%" maxSize="40%">
+      <ResizablePanel
+        id="sidebar"
+        defaultSize="20%"
+        minSize="12%"
+        maxSize="40%"
+      >
         <Sidebar />
       </ResizablePanel>
       <ResizableHandle />

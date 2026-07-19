@@ -1,8 +1,5 @@
 export type ShortcutActionId =
-  | "open-command-palette"
-  | "flip-card"
-  | "toggle-sidebar"
-  | "save-active-deck";
+  "open-command-palette" | "flip-card" | "toggle-sidebar" | "save-active-deck";
 
 export type ShortcutAction = {
   id: ShortcutActionId;

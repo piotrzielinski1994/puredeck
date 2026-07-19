@@ -24,7 +24,9 @@ function renderGrid() {
       <button type="button">outside</button>
     </>,
   );
-  const blur = async (user: ReturnType<typeof userEvent.setup>): Promise<void> => {
+  const blur = async (
+    user: ReturnType<typeof userEvent.setup>,
+  ): Promise<void> => {
     await user.click(screen.getByText("outside"));
   };
   return { onEditCard, onRemoveCard, onAddCard, blur };
@@ -101,9 +103,9 @@ describe("CardGrid controlled (TC-001..TC-005)", () => {
     await blur(user);
 
     expect(onAddCard).not.toHaveBeenCalled();
-    expect((screen.getByLabelText("New card front") as HTMLInputElement).value).toBe(
-      "solo",
-    );
+    expect(
+      (screen.getByLabelText("New card front") as HTMLInputElement).value,
+    ).toBe("solo");
 
     await user.type(screen.getByLabelText("New card back"), "alone");
     await blur(user);

@@ -16,8 +16,15 @@ function EmptyState() {
 }
 
 function ActiveSurface() {
-  const { tabs, activeTabId, deckById, openStudy, saveDeck, reviews, gradeCard } =
-    useWorkspace();
+  const {
+    tabs,
+    activeTabId,
+    deckById,
+    openStudy,
+    saveDeck,
+    reviews,
+    gradeCard,
+  } = useWorkspace();
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? null;
 
   if (!activeTab) {

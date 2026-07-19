@@ -1,5 +1,9 @@
 import { LazyStore } from "@tauri-apps/plugin-store";
-import { mergeRevlog, type Revlog, type RevlogStore } from "@/lib/study/revlog-store";
+import {
+  mergeRevlog,
+  type Revlog,
+  type RevlogStore,
+} from "@/lib/study/revlog-store";
 
 const REVLOG_FILE = "review-log.json";
 const REVLOG_KEY = "revlog";

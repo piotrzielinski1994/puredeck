@@ -131,9 +131,10 @@ describe("workspace shell tabs (TC-004 / AC-004)", () => {
         screen.queryByRole("tab", { name: /Capitals/ }),
       ).not.toBeInTheDocument();
     });
-    expect(
-      await screen.findByRole("tab", { name: /Spanish/ }),
-    ).toHaveAttribute("aria-selected", "true");
+    expect(await screen.findByRole("tab", { name: /Spanish/ })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
   });
 });
 

@@ -45,9 +45,7 @@ const THEME_MODES: readonly ThemeMode[] = ["light", "dark", "system"];
 
 const GROUP_KEYS: readonly PanelGroupKey[] = ["workspace"];
 
-const ACTION_IDS = new Set<string>(
-  SHORTCUT_ACTIONS.map((action) => action.id),
-);
+const ACTION_IDS = new Set<string>(SHORTCUT_ACTIONS.map((action) => action.id));
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -72,7 +70,9 @@ function mergeLayouts(
     const sizes = Object.entries(group).filter(
       (entry): entry is [string, number] => typeof entry[1] === "number",
     );
-    return sizes.length > 0 ? { ...acc, [key]: Object.fromEntries(sizes) } : acc;
+    return sizes.length > 0
+      ? { ...acc, [key]: Object.fromEntries(sizes) }
+      : acc;
   }, base);
 }
 

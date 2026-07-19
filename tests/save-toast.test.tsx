@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { ToastProvider } from "@/components/ui/toast";
@@ -10,7 +16,10 @@ import { ThemeProvider } from "@/lib/theme/theme-context";
 import { WorkspaceProvider } from "@/components/workspace/workspace-context";
 import { Main } from "@/components/workspace/main";
 import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
-import { serializeDeck, type CollectionStore } from "@/lib/workspace/collection";
+import {
+  serializeDeck,
+  type CollectionStore,
+} from "@/lib/workspace/collection";
 import { SETTINGS_TAB_ID, type Deck } from "@/lib/workspace/model";
 
 const deck: Deck = {
@@ -53,7 +62,9 @@ describe("save toast + Cmd+S (AC-002 / AC-004 / AC-005)", () => {
     const store = createInMemoryCollectionStore({ alpha: serializeDeck(deck) });
     renderApp(store, seedTabs([deck.id], deck.id));
 
-    const front = await screen.findByLabelText(`Front of ${deck.cards[0].front}`);
+    const front = await screen.findByLabelText(
+      `Front of ${deck.cards[0].front}`,
+    );
     await user.clear(front);
     await user.type(front, "changed");
     await user.click(screen.getByLabelText("New card front"));
@@ -83,7 +94,9 @@ describe("save toast + Cmd+S (AC-002 / AC-004 / AC-005)", () => {
     const store: CollectionStore = { ...base, save };
     renderApp(store, seedTabs([deck.id], deck.id));
 
-    const front = await screen.findByLabelText(`Front of ${deck.cards[0].front}`);
+    const front = await screen.findByLabelText(
+      `Front of ${deck.cards[0].front}`,
+    );
     await user.clear(front);
     await user.type(front, "changed");
 

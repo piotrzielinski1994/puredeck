@@ -61,10 +61,10 @@ describe("shell routing (AC-011 / TC-011)", () => {
     await user.click(await screen.findByText("Open Settings"));
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("tab", { name: /Settings/ }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("tab", { name: /Settings/ })).toBeInTheDocument();
     });
-    expect(router.routesByPath["/settings" as keyof typeof router.routesByPath]).toBeUndefined();
+    expect(
+      router.routesByPath["/settings" as keyof typeof router.routesByPath],
+    ).toBeUndefined();
   });
 });

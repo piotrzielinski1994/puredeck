@@ -24,7 +24,8 @@ export function createInMemoryCollectionStore(
       (slug) => parseDeck(files[slug])?.id === deck.id,
     );
     const slug =
-      existingSlug ?? uniqueSlug(slugify(deck.name), new Set(Object.keys(files)));
+      existingSlug ??
+      uniqueSlug(slugify(deck.name), new Set(Object.keys(files)));
     files[slug] = serializeDeck(deck);
     return Promise.resolve();
   };

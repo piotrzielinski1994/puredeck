@@ -16,7 +16,9 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       </div>
       <nav aria-label="Decks" className="flex flex-col overflow-y-auto py-1">
         {decks.length === 0 ? (
-          <p className="px-3 py-1 text-sm text-muted-foreground">No decks yet</p>
+          <p className="px-3 py-1 text-sm text-muted-foreground">
+            No decks yet
+          </p>
         ) : (
           decks.map((deck) => (
             <button
