@@ -31,7 +31,14 @@ function ActiveSurface() {
     return <EmptyState />;
   }
   if (activeTab.kind === "study") {
-    return <StudyView deck={deck} reviews={reviews} onGrade={gradeCard} />;
+    return (
+      <StudyView
+        key={deck.id}
+        deck={deck}
+        reviews={reviews}
+        onGrade={gradeCard}
+      />
+    );
   }
   return (
     <DeckView
