@@ -1,5 +1,5 @@
 import { LazyStore } from "@tauri-apps/plugin-store";
-import type { ReviewMap } from "@/lib/study/scheduler";
+import type { ReviewMap } from "@/lib/study/fsrs";
 import { mergeReviews, type ReviewStore } from "@/lib/study/review-store";
 
 const REVIEW_FILE = "review-state.json";

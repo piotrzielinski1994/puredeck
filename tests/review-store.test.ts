@@ -1,42 +1,67 @@
 import { describe, expect, it } from "vitest";
 import { mergeReviews, type ReviewStore } from "@/lib/study/review-store";
 import { createInMemoryReviewStore } from "@/lib/study/in-memory-review-store";
-import type { ReviewMap } from "@/lib/study/scheduler";
+import {
+  createScheduler,
+  gradeReview,
+  newCard,
+  Rating,
+  type ReviewMap,
+} from "@/lib/study/fsrs";
 
-describe("in-memory review store round-trip (TC-011 / AC-004 / AC-008)", () => {
+function gradedMap(): ReviewMap {
+  const scheduler = createScheduler();
+  const now = new Date("2026-07-19T12:00:00Z");
+  const c1 = gradeReview(scheduler, newCard(now), Rating.Good, "c1", now).card;
+  const c2 = gradeReview(scheduler, newCard(now), Rating.Easy, "c2", now).card;
+  return { c1, c2 };
+}
+
+describe("in-memory review store round-trip (TC-004 / AC-004)", () => {
   it("should return an equal map when load is called after save", async () => {
-    const map: ReviewMap = {
-      c1: { ease: 2.5, intervalDays: 1, reps: 1, due: "2026-07-20" },
-      c2: { ease: 1.9, intervalDays: 15, reps: 3, due: "2026-08-03" },
-    };
+    const map = gradedMap();
     const store: ReviewStore = createInMemoryReviewStore();
 
     await store.save(map);
     const loaded = await store.load();
 
     expect(loaded).toEqual(map);
+    expect(loaded.c1.due.getTime()).toBe(map.c1.due.getTime());
+    expect(loaded.c1.state).toBe(map.c1.state);
+    expect(loaded.c2.due.getTime()).toBe(map.c2.due.getTime());
   });
 
   it("should load the seeded initial map when constructed with one", async () => {
-    const initial: ReviewMap = {
-      c1: { ease: 2.5, intervalDays: 6, reps: 2, due: "2026-07-25" },
-    };
+    const initial = gradedMap();
     const store = createInMemoryReviewStore(initial);
 
-    expect(await store.load()).toEqual(initial);
+    const loaded = await store.load();
+
+    expect(loaded).toEqual(initial);
+    expect(loaded.c1.due.getTime()).toBe(initial.c1.due.getTime());
   });
 });
 
-describe("mergeReviews validation (TC-012 / AC-008)", () => {
+describe("mergeReviews revival + validation (TC-005 / AC-004)", () => {
+  it("should revive due and last_review to Date instances after a JSON round-trip", () => {
+    const map = gradedMap();
+    const persisted = JSON.parse(JSON.stringify(map));
+
+    const merged = mergeReviews(persisted);
+
+    expect(merged.c1.due).toBeInstanceOf(Date);
+    expect(merged.c1.due.getTime()).toBe(map.c1.due.getTime());
+    expect(merged.c1.last_review).toBeInstanceOf(Date);
+    expect(merged.c1.last_review?.getTime()).toBe(map.c1.last_review?.getTime());
+    expect(merged.c1.stability).toBe(map.c1.stability);
+    expect(merged.c1.difficulty).toBe(map.c1.difficulty);
+    expect(merged.c1.reps).toBe(map.c1.reps);
+    expect(merged.c1.state).toBe(map.c1.state);
+    expect(merged.c2.due.getTime()).toBe(map.c2.due.getTime());
+  });
+
   it("should coerce garbage top-level blobs to an empty map without throwing", () => {
-    const garbageBlobs: unknown[] = [
-      null,
-      undefined,
-      "not-an-object",
-      42,
-      [],
-      true,
-    ];
+    const garbageBlobs: unknown[] = [null, undefined, "x", 42, [], true];
 
     garbageBlobs.forEach((blob) => {
       expect(() => mergeReviews(blob)).not.toThrow();
@@ -44,80 +69,63 @@ describe("mergeReviews validation (TC-012 / AC-008)", () => {
     });
   });
 
-  it("should preserve a well-formed review entry unchanged", () => {
-    const persisted = {
-      c1: { ease: 2.5, intervalDays: 1, reps: 1, due: "2026-07-20" },
-    };
+  it("should drop an entry that is missing a due field", () => {
+    const merged = mergeReviews({ c1: { stability: 1 } });
 
-    const merged = mergeReviews(persisted);
-
-    expect(merged.c1).toEqual({
-      ease: 2.5,
-      intervalDays: 1,
-      reps: 1,
-      due: "2026-07-20",
-    });
+    expect(merged).toEqual({});
   });
 
-  it("should drop entries whose value is not a record", () => {
-    const persisted = {
-      good: { ease: 2.5, intervalDays: 1, reps: 1, due: "2026-07-20" },
-      num: 42,
-      str: "nope",
-      nul: null,
-      arr: [1, 2, 3],
-    };
+  it("should drop an entry whose due does not parse to a valid Date", () => {
+    const merged = mergeReviews({ c1: { due: "not-a-date" } });
 
-    const merged = mergeReviews(persisted);
-
-    expect(Object.keys(merged)).toEqual(["good"]);
+    expect(merged).toEqual({});
   });
 
-  it("should default missing or non-numeric fields while keeping a valid due", () => {
-    const persisted = {
-      c1: { ease: "x", reps: null, due: "2026-07-20" },
-    };
+  it("should default missing numeric fields to 0 while keeping a valid revived due", () => {
+    const merged = mergeReviews({ c1: { due: "2026-07-20T00:00:00.000Z" } });
 
-    const merged = mergeReviews(persisted);
-
-    expect(merged.c1.ease).toBe(2.5);
+    expect(merged.c1.due).toBeInstanceOf(Date);
+    expect(merged.c1.due.getTime()).toBe(
+      new Date("2026-07-20T00:00:00.000Z").getTime(),
+    );
+    expect(merged.c1.stability).toBe(0);
+    expect(merged.c1.difficulty).toBe(0);
+    expect(merged.c1.elapsed_days).toBe(0);
+    expect(merged.c1.scheduled_days).toBe(0);
     expect(merged.c1.reps).toBe(0);
-    expect(merged.c1.intervalDays).toBe(0);
-    expect(merged.c1.due).toBe("2026-07-20");
+    expect(merged.c1.lapses).toBe(0);
+    expect(merged.c1.learning_steps).toBe(0);
+    expect(merged.c1.state).toBe(0);
+    expect(merged.c1.last_review).toBeUndefined();
   });
 
-  it("should tolerate an orphan card id with a valid review entry", () => {
-    const persisted = {
-      "deleted-card": {
-        ease: 1.9,
-        intervalDays: 15,
-        reps: 3,
-        due: "2026-08-03",
-      },
-    };
-
-    const merged = mergeReviews(persisted);
-
-    expect(merged["deleted-card"]).toEqual({
-      ease: 1.9,
-      intervalDays: 15,
-      reps: 3,
-      due: "2026-08-03",
+  it("should default non-numeric numeric fields to 0", () => {
+    const merged = mergeReviews({
+      c1: { due: "2026-07-20T00:00:00.000Z", stability: "x", reps: null },
     });
+
+    expect(merged.c1.stability).toBe(0);
+    expect(merged.c1.reps).toBe(0);
   });
 
-  it("should not throw on a deeply malformed mixture and return only the salvageable entries", () => {
-    const persisted = {
-      valid: { ease: 2.5, intervalDays: 1, reps: 1, due: "2026-07-20" },
-      partial: { due: "2026-07-21" },
-      broken: "garbage",
-    };
+  it("should keep an orphan card id whose entry is well-formed", () => {
+    const scheduler = createScheduler();
+    const now = new Date("2026-07-19T12:00:00Z");
+    const orphan = gradeReview(
+      scheduler,
+      newCard(now),
+      Rating.Good,
+      "deleted-card",
+      now,
+    ).card;
+    const persisted = JSON.parse(
+      JSON.stringify({ "deleted-card": orphan }),
+    );
 
-    expect(() => mergeReviews(persisted)).not.toThrow();
     const merged = mergeReviews(persisted);
-    expect(Object.keys(merged).sort()).toEqual(["partial", "valid"]);
-    expect(merged.partial.ease).toBe(2.5);
-    expect(merged.partial.intervalDays).toBe(0);
-    expect(merged.partial.reps).toBe(0);
+
+    expect(Object.keys(merged)).toEqual(["deleted-card"]);
+    expect(merged["deleted-card"].due).toBeInstanceOf(Date);
+    expect(merged["deleted-card"].due.getTime()).toBe(orphan.due.getTime());
   });
 });

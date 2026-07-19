@@ -1,9 +1,4 @@
-import {
-  MIN_EASE,
-  STARTING_EASE,
-  type CardReview,
-  type ReviewMap,
-} from "@/lib/study/scheduler";
+import type { Card, ReviewMap } from "@/lib/study/fsrs";
 
 export type ReviewStore = {
   load: () => Promise<ReviewMap>;
@@ -18,13 +13,31 @@ function numberOr(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
-function parseReview(value: unknown): CardReview {
-  const record = isRecord(value) ? value : {};
+function toDate(value: unknown): Date | null {
+  if (typeof value !== "string" && typeof value !== "number") {
+    return null;
+  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function parseCard(value: Record<string, unknown>): Card | null {
+  const due = toDate(value.due);
+  if (!due) {
+    return null;
+  }
+  const lastReview = toDate(value.last_review);
   return {
-    ease: Math.max(MIN_EASE, numberOr(record.ease, STARTING_EASE)),
-    intervalDays: numberOr(record.intervalDays, 0),
-    reps: numberOr(record.reps, 0),
-    due: typeof record.due === "string" ? record.due : "",
+    due,
+    stability: numberOr(value.stability, 0),
+    difficulty: numberOr(value.difficulty, 0),
+    elapsed_days: numberOr(value.elapsed_days, 0),
+    scheduled_days: numberOr(value.scheduled_days, 0),
+    reps: numberOr(value.reps, 0),
+    lapses: numberOr(value.lapses, 0),
+    learning_steps: numberOr(value.learning_steps, 0),
+    state: numberOr(value.state, 0),
+    ...(lastReview ? { last_review: lastReview } : {}),
   };
 }
 
@@ -36,6 +49,7 @@ export function mergeReviews(persisted: unknown): ReviewMap {
     if (!isRecord(value)) {
       return acc;
     }
-    return { ...acc, [id]: parseReview(value) };
+    const card = parseCard(value);
+    return card ? { ...acc, [id]: card } : acc;
   }, {});
 }

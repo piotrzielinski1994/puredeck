@@ -1,4 +1,4 @@
-import type { ReviewMap } from "@/lib/study/scheduler";
+import type { ReviewMap } from "@/lib/study/fsrs";
 import type { ReviewStore } from "@/lib/study/review-store";
 
 export function createInMemoryReviewStore(
