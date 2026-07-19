@@ -47,7 +47,13 @@ describe("gradeReview on a fresh card (TC-001 / AC-001)", () => {
     const scheduler = createScheduler();
     const card = newCard(now);
 
-    const { card: graded, log } = gradeReview(scheduler, card, Rating.Good, "cid-1", now);
+    const { card: graded, log } = gradeReview(
+      scheduler,
+      card,
+      Rating.Good,
+      "cid-1",
+      now,
+    );
 
     expect(graded.reps).toBe(1);
     expect(graded.stability).toBeGreaterThan(0);
@@ -67,8 +73,20 @@ describe("gradeReview on a graduated Review-state card (TC-002 / AC-002)", () =>
     const learnAt = new Date("2026-07-19T12:00:00Z");
     const graduateAt = new Date("2026-07-19T12:10:00Z");
 
-    const learning = gradeReview(scheduler, newCard(learnAt), Rating.Good, cid, learnAt);
-    const review = gradeReview(scheduler, learning.card, Rating.Good, cid, graduateAt);
+    const learning = gradeReview(
+      scheduler,
+      newCard(learnAt),
+      Rating.Good,
+      cid,
+      learnAt,
+    );
+    const review = gradeReview(
+      scheduler,
+      learning.card,
+      Rating.Good,
+      cid,
+      graduateAt,
+    );
 
     return { scheduler, card: review.card };
   }
@@ -84,10 +102,34 @@ describe("gradeReview on a graduated Review-state card (TC-002 / AC-002)", () =>
     const { scheduler, card } = reviewStateCard();
     const now = new Date("2026-07-25T12:00:00Z");
 
-    const dueAgain = gradeReview(scheduler, card, Rating.Again, cid, now).card.due.getTime();
-    const dueHard = gradeReview(scheduler, card, Rating.Hard, cid, now).card.due.getTime();
-    const dueGood = gradeReview(scheduler, card, Rating.Good, cid, now).card.due.getTime();
-    const dueEasy = gradeReview(scheduler, card, Rating.Easy, cid, now).card.due.getTime();
+    const dueAgain = gradeReview(
+      scheduler,
+      card,
+      Rating.Again,
+      cid,
+      now,
+    ).card.due.getTime();
+    const dueHard = gradeReview(
+      scheduler,
+      card,
+      Rating.Hard,
+      cid,
+      now,
+    ).card.due.getTime();
+    const dueGood = gradeReview(
+      scheduler,
+      card,
+      Rating.Good,
+      cid,
+      now,
+    ).card.due.getTime();
+    const dueEasy = gradeReview(
+      scheduler,
+      card,
+      Rating.Easy,
+      cid,
+      now,
+    ).card.due.getTime();
 
     expect(dueEasy).toBeGreaterThan(dueGood);
     expect(dueGood).toBeGreaterThan(dueHard);
@@ -109,7 +151,10 @@ describe("gradeReview on a graduated Review-state card (TC-002 / AC-002)", () =>
 describe("seeded fuzz determinism (TC-003 / AC-003)", () => {
   const start = new Date("2026-07-19T12:00:00Z");
 
-  function longIntervalCard(scheduler: ReturnType<typeof createScheduler>, cid: string) {
+  function longIntervalCard(
+    scheduler: ReturnType<typeof createScheduler>,
+    cid: string,
+  ) {
     const offsetsMinutes = [0, 10, 3 * 24 * 60, 20 * 24 * 60];
     return offsetsMinutes.reduce(
       (card, offset) =>
@@ -141,8 +186,20 @@ describe("seeded fuzz determinism (TC-003 / AC-003)", () => {
     const base = longIntervalCard(scheduler, "cid-seed");
     const at = new Date(base.due.getTime());
 
-    const dueX = gradeReview(scheduler, base, Rating.Good, "seed-x", at).card.due.getTime();
-    const dueY = gradeReview(scheduler, base, Rating.Good, "seed-y", at).card.due.getTime();
+    const dueX = gradeReview(
+      scheduler,
+      base,
+      Rating.Good,
+      "seed-x",
+      at,
+    ).card.due.getTime();
+    const dueY = gradeReview(
+      scheduler,
+      base,
+      Rating.Good,
+      "seed-y",
+      at,
+    ).card.due.getTime();
 
     expect(dueX).not.toBe(dueY);
   });

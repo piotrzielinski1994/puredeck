@@ -4,12 +4,18 @@ import {
   type ShortcutActionId,
   type ShortcutOverrides,
 } from "@/lib/shortcuts/registry";
-import { safeNormalize, resolveShortcuts } from "@/lib/shortcuts/resolve";
+import {
+  safeNormalize,
+  resolveShortcuts,
+  findConflict,
+} from "@/lib/shortcuts/resolve";
 
 const EXPECTED: Record<ShortcutActionId, string> = {
   "open-command-palette": "Mod+K",
   "flip-card": "Space",
   "toggle-sidebar": "Mod+B",
+  "panel-expand": "Mod+Alt+=",
+  "panel-shrink": "Mod+Alt+-",
   "save-active-deck": "Mod+S",
 };
 
@@ -55,65 +61,142 @@ describe("safeNormalize (AC-008 / E-7)", () => {
   });
 });
 
-describe("resolveShortcuts (AC-008 / AC-011 / TC-007 / E-7 / E-8 / E-9)", () => {
-  it("should map every action to its registry default if no overrides are given", () => {
+describe("resolveShortcuts array model (AC-001 / TC-001 / TC-002 / TC-003)", () => {
+  it("should map every action to a single-element list of its default if no overrides are given", () => {
     const effective = resolveShortcuts({});
 
-    expect(effective).toEqual(EXPECTED);
+    SHORTCUT_ACTIONS.forEach((action) => {
+      expect(effective[action.id]).toEqual([EXPECTED[action.id]]);
+    });
   });
 
-  it("should let a valid override win over the registry default", () => {
-    const effective = resolveShortcuts({ "flip-card": "Enter" });
+  it("should let a valid override list win over the registry default", () => {
+    const effective = resolveShortcuts({ "flip-card": ["Enter"] });
 
-    expect(effective["flip-card"]).toBe("Enter");
-    expect(effective["open-command-palette"]).toBe("Mod+K");
-    expect(effective["toggle-sidebar"]).toBe("Mod+B");
+    expect(effective["flip-card"]).toEqual(["Enter"]);
+    expect(effective["open-command-palette"]).toEqual(["Mod+K"]);
+    expect(effective["toggle-sidebar"]).toEqual(["Mod+B"]);
   });
 
-  it("should fall back to the default if an override is an empty string", () => {
-    const effective = resolveShortcuts({ "toggle-sidebar": "" });
+  it("should resolve a multi-binding override to every normalized hotkey", () => {
+    const effective = resolveShortcuts({ "flip-card": ["Enter", "Mod+J"] });
 
-    expect(effective["toggle-sidebar"]).toBe("Mod+B");
+    expect(effective["flip-card"]).toEqual(["Enter", "Mod+J"]);
   });
 
-  it("should fall back to the default if an override is an invalid hotkey", () => {
-    const effective = resolveShortcuts({ "flip-card": "not a hotkey!!" });
+  it("should normalize each entry in a multi-binding override", () => {
+    const effective = resolveShortcuts({ "flip-card": ["mod+j", "MOD+K"] });
 
-    expect(effective["flip-card"]).toBe("Space");
+    expect(effective["flip-card"]).toEqual(["Mod+J", "Mod+K"]);
+  });
+
+  it("should drop only the invalid entry from a mixed override list", () => {
+    const effective = resolveShortcuts({
+      "flip-card": ["not a hotkey!!", "Enter"],
+    });
+
+    expect(effective["flip-card"]).toEqual(["Enter"]);
+  });
+
+  it("should preserve an empty-array override as an empty list", () => {
+    const effective = resolveShortcuts({ "toggle-sidebar": [] });
+
+    expect(effective["toggle-sidebar"]).toEqual([]);
+  });
+
+  it("should resolve to an empty list if every entry in the override is invalid", () => {
+    const effective = resolveShortcuts({
+      "flip-card": ["not a hotkey!!", "also bad!!"],
+    });
+
+    expect(effective["flip-card"]).toEqual([]);
+  });
+
+  it("should fall back to the default list if an override value is not an array", () => {
+    const overrides = {
+      "flip-card": "Enter",
+    } as unknown as ShortcutOverrides;
+
+    const effective = resolveShortcuts(overrides);
+
+    expect(effective["flip-card"]).toEqual(["Space"]);
   });
 
   it("should ignore an override for an unknown action id and keep every default", () => {
     const overrides = {
-      "flip-card": "Enter",
-      "bogus-id": "X",
+      "flip-card": ["Enter"],
+      "bogus-id": ["X"],
     } as unknown as ShortcutOverrides;
 
     const effective = resolveShortcuts(overrides);
 
     expect(effective).not.toHaveProperty("bogus-id");
     expect(Object.keys(effective).sort()).toEqual(EXPECTED_IDS);
-    expect(effective["flip-card"]).toBe("Enter");
-  });
-
-  it("should resolve the mixed spec override set (Enter + bogus + empty) correctly", () => {
-    const overrides = {
-      "flip-card": "Enter",
-      "bogus-id": "X",
-      "toggle-sidebar": "",
-    } as unknown as ShortcutOverrides;
-
-    const effective = resolveShortcuts(overrides);
-
-    expect(effective["flip-card"]).toBe("Enter");
-    expect(effective["toggle-sidebar"]).toBe("Mod+B");
-    expect(effective["open-command-palette"]).toBe("Mod+K");
-    expect(effective).not.toHaveProperty("bogus-id");
+    expect(effective["flip-card"]).toEqual(["Enter"]);
   });
 
   it("should not throw on a corrupt overrides value", () => {
     const overrides = null as unknown as ShortcutOverrides;
 
     expect(() => resolveShortcuts(overrides)).not.toThrow();
-    expect(resolveShortcuts(overrides)).toEqual(EXPECTED);
+    const effective = resolveShortcuts(overrides);
+    SHORTCUT_ACTIONS.forEach((action) => {
+      expect(effective[action.id]).toEqual([EXPECTED[action.id]]);
+    });
+  });
+});
+
+describe("findConflict (AC-005 / TC-014)", () => {
+  it("should return the owning action id if another action's default holds the hotkey", () => {
+    const effective = resolveShortcuts({});
+
+    const owner = findConflict("Mod+K", "flip-card", effective);
+
+    expect(owner).toBe("open-command-palette");
+  });
+
+  it("should detect a conflict from a differently-cased hotkey", () => {
+    const effective = resolveShortcuts({});
+
+    const owner = findConflict("mod+k", "flip-card", effective);
+
+    expect(owner).toBe("open-command-palette");
+  });
+
+  it("should detect a conflict from any binding in another action's multi-binding list", () => {
+    const effective = resolveShortcuts({
+      "open-command-palette": ["Mod+K", "Mod+Shift+P"],
+    });
+
+    const owner = findConflict("Mod+Shift+P", "flip-card", effective);
+
+    expect(owner).toBe("open-command-palette");
+  });
+
+  it("should return null if the hotkey is only in the edited action's own list", () => {
+    const effective = resolveShortcuts({
+      "flip-card": ["Enter", "Mod+Shift+P"],
+    });
+
+    expect(effective["flip-card"]).toContain("Mod+Shift+P");
+    expect(findConflict("Mod+Shift+P", "flip-card", effective)).toBeNull();
+  });
+
+  it("should return null if no action owns the hotkey", () => {
+    const effective = resolveShortcuts({});
+
+    expect(findConflict("Mod+Y", "flip-card", effective)).toBeNull();
+  });
+
+  it("should return null if the hotkey is invalid", () => {
+    const effective = resolveShortcuts({});
+
+    expect(findConflict("not a hotkey!!", "flip-card", effective)).toBeNull();
+  });
+
+  it("should not report a disabled action as a conflict owner", () => {
+    const effective = resolveShortcuts({ "open-command-palette": [] });
+
+    expect(findConflict("Mod+K", "flip-card", effective)).toBeNull();
   });
 });

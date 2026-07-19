@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { formatForDisplay } from "@tanstack/hotkeys";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme/theme-context";
-import { useSettings } from "@/lib/settings/settings-context";
 import type { ThemeMode } from "@/lib/settings/settings";
-import { SHORTCUT_ACTIONS } from "@/lib/shortcuts/registry";
-import { resolveShortcuts } from "@/lib/shortcuts/resolve";
+import { ShortcutsSection } from "@/components/settings/shortcuts-section";
 
 type Section = "theme" | "shortcuts";
 
@@ -67,31 +64,6 @@ function ThemeSection() {
           </button>
         ))}
       </div>
-    </section>
-  );
-}
-
-function ShortcutsSection() {
-  const { settings } = useSettings();
-  const effective = resolveShortcuts(settings.shortcuts);
-
-  return (
-    <section className="flex flex-col gap-1 p-6">
-      <h2 className="text-lg font-medium">Keyboard Shortcuts</h2>
-      <p className="text-sm text-muted-foreground">Bindings for common actions.</p>
-      <dl className="mt-3">
-        {SHORTCUT_ACTIONS.map((action) => (
-          <div
-            key={action.id}
-            className="flex items-center justify-between border-b py-2.5 text-sm last:border-b-0"
-          >
-            <dt>{action.name}</dt>
-            <dd className="border bg-secondary px-1.5 py-0.5 font-mono text-xs">
-              {formatForDisplay(effective[action.id])}
-            </dd>
-          </div>
-        ))}
-      </dl>
     </section>
   );
 }

@@ -15,13 +15,15 @@ export function useActionHotkeys(
 
   const definitions: UseHotkeyDefinition[] = (
     Object.keys(handlers) as ShortcutActionId[]
-  ).map((id) => ({
-    hotkey: effective[id] as Hotkey,
-    callback: (event) => {
-      event.preventDefault();
-      handlers[id]?.();
-    },
-  }));
+  ).flatMap((id) =>
+    effective[id].map((hotkey) => ({
+      hotkey: hotkey as Hotkey,
+      callback: (event) => {
+        event.preventDefault();
+        handlers[id]?.();
+      },
+    })),
+  );
 
   useHotkeys(definitions);
 }

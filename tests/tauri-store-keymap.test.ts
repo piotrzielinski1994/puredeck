@@ -35,19 +35,18 @@ afterEach(() => {
 
 describe("createTauriSettingsStore keymap split (AC-009)", () => {
   it("should write shortcuts to keymap.json and the rest to settings.json", async () => {
-    const { createTauriSettingsStore } = await import(
-      "@/lib/settings/tauri-store"
-    );
+    const { createTauriSettingsStore } =
+      await import("@/lib/settings/tauri-store");
     const { DEFAULT_SETTINGS } = await import("@/lib/settings/settings");
     const store = createTauriSettingsStore();
 
     await store.save({
       ...DEFAULT_SETTINGS,
       sidebarCollapsed: true,
-      shortcuts: { "flip-card": "Enter" },
+      shortcuts: { "flip-card": ["Enter"] },
     });
 
-    expect(files["keymap.json"].shortcuts).toEqual({ "flip-card": "Enter" });
+    expect(files["keymap.json"].shortcuts).toEqual({ "flip-card": ["Enter"] });
     expect(files["settings.json"].settings).not.toHaveProperty("shortcuts");
     expect(
       (files["settings.json"].settings as { sidebarCollapsed: boolean })
@@ -56,18 +55,17 @@ describe("createTauriSettingsStore keymap split (AC-009)", () => {
   });
 
   it("should re-merge shortcuts from keymap.json back into the loaded Settings", async () => {
-    const { createTauriSettingsStore } = await import(
-      "@/lib/settings/tauri-store"
-    );
+    const { createTauriSettingsStore } =
+      await import("@/lib/settings/tauri-store");
     const { DEFAULT_SETTINGS } = await import("@/lib/settings/settings");
     const store = createTauriSettingsStore();
 
     await store.save({
       ...DEFAULT_SETTINGS,
-      shortcuts: { "flip-card": "Enter" },
+      shortcuts: { "flip-card": ["Enter"] },
     });
     const loaded = await store.load();
 
-    expect(loaded.shortcuts).toEqual({ "flip-card": "Enter" });
+    expect(loaded.shortcuts).toEqual({ "flip-card": ["Enter"] });
   });
 });

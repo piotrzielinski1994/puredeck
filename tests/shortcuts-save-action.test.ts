@@ -14,6 +14,6 @@ describe("save-active-deck shortcut action (AC-003 / TC-003)", () => {
   it("should resolve save-active-deck to Mod+S when no override is given", () => {
     const effective = resolveShortcuts({});
 
-    expect(effective["save-active-deck"]).toBe("Mod+S");
+    expect(effective["save-active-deck"]).toEqual(["Mod+S"]);
   });
 });

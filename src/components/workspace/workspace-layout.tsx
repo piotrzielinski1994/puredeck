@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import type { GroupImperativeHandle } from "react-resizable-panels";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -8,10 +10,29 @@ import { Main } from "@/components/workspace/main";
 import { MobileShell } from "@/components/workspace/mobile-shell";
 import { useIsMobile } from "@/lib/responsive/use-is-mobile";
 import { useSettings } from "@/lib/settings/settings-context";
+import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
+import {
+  PANEL_RESIZE_STEP,
+  stepSidebarLayout,
+} from "@/lib/workspace/panel-resize";
 
 export function WorkspaceLayout() {
   const { settings, saveLayout } = useSettings();
   const isMobile = useIsMobile();
+  const groupRef = useRef<GroupImperativeHandle | null>(null);
+
+  const resizeSidebar = (deltaPct: number): void => {
+    const handle = groupRef.current;
+    if (handle === null) {
+      return;
+    }
+    handle.setLayout(stepSidebarLayout(handle.getLayout(), deltaPct));
+  };
+
+  useActionHotkeys({
+    "panel-expand": () => resizeSidebar(PANEL_RESIZE_STEP),
+    "panel-shrink": () => resizeSidebar(-PANEL_RESIZE_STEP),
+  });
 
   if (isMobile) {
     return <MobileShell />;
@@ -27,15 +48,21 @@ export function WorkspaceLayout() {
 
   return (
     <ResizablePanelGroup
+      groupRef={groupRef}
       orientation="horizontal"
       className="h-full w-full"
       defaultLayout={settings.layouts.workspace}
       onLayoutChanged={(layout) => saveLayout("workspace", layout)}
     >
-      <ResizablePanel id="sidebar" defaultSize="20%" minSize="12%" maxSize="40%">
+      <ResizablePanel
+        id="sidebar"
+        defaultSize="20%"
+        minSize="12%"
+        maxSize="40%"
+      >
         <Sidebar />
       </ResizablePanel>
-      <ResizableHandle />
+      <ResizableHandle withHandle />
       <ResizablePanel id="main" defaultSize="80%">
         <Main />
       </ResizablePanel>

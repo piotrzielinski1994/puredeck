@@ -52,7 +52,9 @@ describe("mergeReviews revival + validation (TC-005 / AC-004)", () => {
     expect(merged.c1.due).toBeInstanceOf(Date);
     expect(merged.c1.due.getTime()).toBe(map.c1.due.getTime());
     expect(merged.c1.last_review).toBeInstanceOf(Date);
-    expect(merged.c1.last_review?.getTime()).toBe(map.c1.last_review?.getTime());
+    expect(merged.c1.last_review?.getTime()).toBe(
+      map.c1.last_review?.getTime(),
+    );
     expect(merged.c1.stability).toBe(map.c1.stability);
     expect(merged.c1.difficulty).toBe(map.c1.difficulty);
     expect(merged.c1.reps).toBe(map.c1.reps);
@@ -118,9 +120,7 @@ describe("mergeReviews revival + validation (TC-005 / AC-004)", () => {
       "deleted-card",
       now,
     ).card;
-    const persisted = JSON.parse(
-      JSON.stringify({ "deleted-card": orphan }),
-    );
+    const persisted = JSON.parse(JSON.stringify({ "deleted-card": orphan }));
 
     const merged = mergeReviews(persisted);
 

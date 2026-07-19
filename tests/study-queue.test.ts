@@ -23,8 +23,15 @@ function futureReviewCard(cid: string): FsrsCard {
   const scheduler = createScheduler();
   const learnAt = new Date("2026-07-19T12:00:00Z");
   const graduateAt = new Date("2026-07-19T12:10:00Z");
-  const learning = gradeReview(scheduler, newCard(learnAt), Rating.Good, cid, learnAt);
-  return gradeReview(scheduler, learning.card, Rating.Good, cid, graduateAt).card;
+  const learning = gradeReview(
+    scheduler,
+    newCard(learnAt),
+    Rating.Good,
+    cid,
+    learnAt,
+  );
+  return gradeReview(scheduler, learning.card, Rating.Good, cid, graduateAt)
+    .card;
 }
 
 function makeDeck(): Deck {

@@ -32,7 +32,10 @@ export function createScheduler(): FSRS {
       enable_short_term: true,
     }),
   );
-  scheduler.useStrategy(StrategyMode.SEED, GenSeedStrategyWithCardId(SEED_FIELD));
+  scheduler.useStrategy(
+    StrategyMode.SEED,
+    GenSeedStrategyWithCardId(SEED_FIELD),
+  );
   return scheduler;
 }
 

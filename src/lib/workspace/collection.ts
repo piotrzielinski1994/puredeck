@@ -37,15 +37,17 @@ export function parseDeck(raw: string): Deck | null {
     return null;
   }
   const { id, name, cards } = parsed;
-  if (typeof id !== "string" || typeof name !== "string" || !Array.isArray(cards)) {
+  if (
+    typeof id !== "string" ||
+    typeof name !== "string" ||
+    !Array.isArray(cards)
+  ) {
     return null;
   }
   return {
     id,
     name,
-    cards: cards
-      .map(parseCard)
-      .filter((card): card is Card => card !== null),
+    cards: cards.map(parseCard).filter((card): card is Card => card !== null),
   };
 }
 

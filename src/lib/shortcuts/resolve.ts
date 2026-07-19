@@ -5,6 +5,12 @@ import {
   type ShortcutOverrides,
 } from "@/lib/shortcuts/registry";
 
+const ACTION_IDS = new Set<string>(SHORTCUT_ACTIONS.map((action) => action.id));
+
+function isShortcutActionId(value: string): value is ShortcutActionId {
+  return ACTION_IDS.has(value);
+}
+
 export function safeNormalize(hotkey: string): string | null {
   if (typeof hotkey !== "string" || hotkey.length === 0) {
     return null;
@@ -21,17 +27,39 @@ export function safeNormalize(hotkey: string): string | null {
 
 export function resolveShortcuts(
   overrides: ShortcutOverrides,
-): Record<ShortcutActionId, string> {
+): Record<ShortcutActionId, string[]> {
   const overlay =
     typeof overrides === "object" && overrides !== null ? overrides : {};
   return SHORTCUT_ACTIONS.reduce(
     (acc, action) => {
       const candidate = overlay[action.id];
-      const normalized =
-        typeof candidate === "string" ? safeNormalize(candidate) : null;
-      acc[action.id] = normalized ?? action.defaultHotkey;
+      if (!Array.isArray(candidate)) {
+        acc[action.id] = [action.defaultHotkey];
+        return acc;
+      }
+      acc[action.id] = candidate
+        .map((entry) => safeNormalize(entry))
+        .filter((entry): entry is string => entry !== null);
       return acc;
     },
-    {} as Record<ShortcutActionId, string>,
+    {} as Record<ShortcutActionId, string[]>,
   );
+}
+
+export function findConflict(
+  hotkey: string,
+  forAction: ShortcutActionId,
+  effective: Record<ShortcutActionId, string[]>,
+): ShortcutActionId | null {
+  const target = safeNormalize(hotkey);
+  if (target === null) {
+    return null;
+  }
+  const owner = (Object.keys(effective) as ShortcutActionId[]).find((id) => {
+    if (id === forAction || !isShortcutActionId(id)) {
+      return false;
+    }
+    return effective[id].some((binding) => safeNormalize(binding) === target);
+  });
+  return owner ?? null;
 }
