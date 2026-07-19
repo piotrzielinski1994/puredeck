@@ -96,13 +96,13 @@ describe("SettingsView Shortcuts pane is registry-driven (AC-012 / TC-010)", () 
     const effective = resolveShortcuts({});
     SHORTCUT_ACTIONS.forEach((action) => {
       expect(
-        screen.getByText(formatForDisplay(effective[action.id])),
+        screen.getByText(formatForDisplay(effective[action.id][0])),
       ).toBeInTheDocument();
     });
   });
 
   it("should show the override's display label if an action is rebound", async () => {
-    renderSettings({ "flip-card": "Enter" });
+    renderSettings({ "flip-card": ["Enter"] });
 
     await openShortcuts();
 

@@ -21,17 +21,21 @@ export function safeNormalize(hotkey: string): string | null {
 
 export function resolveShortcuts(
   overrides: ShortcutOverrides,
-): Record<ShortcutActionId, string> {
+): Record<ShortcutActionId, string[]> {
   const overlay =
     typeof overrides === "object" && overrides !== null ? overrides : {};
   return SHORTCUT_ACTIONS.reduce(
     (acc, action) => {
       const candidate = overlay[action.id];
-      const normalized =
-        typeof candidate === "string" ? safeNormalize(candidate) : null;
-      acc[action.id] = normalized ?? action.defaultHotkey;
+      if (!Array.isArray(candidate)) {
+        acc[action.id] = [action.defaultHotkey];
+        return acc;
+      }
+      acc[action.id] = candidate
+        .map((entry) => safeNormalize(entry))
+        .filter((entry): entry is string => entry !== null);
       return acc;
     },
-    {} as Record<ShortcutActionId, string>,
+    {} as Record<ShortcutActionId, string[]>,
   );
 }

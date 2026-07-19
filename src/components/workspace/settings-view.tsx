@@ -87,7 +87,9 @@ function ShortcutsSection() {
           >
             <dt>{action.name}</dt>
             <dd className="border bg-secondary px-1.5 py-0.5 font-mono text-xs">
-              {formatForDisplay(effective[action.id])}
+              {effective[action.id]
+                .map((hotkey) => formatForDisplay(hotkey))
+                .join(", ")}
             </dd>
           </div>
         ))}

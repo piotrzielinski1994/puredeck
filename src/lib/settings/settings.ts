@@ -90,19 +90,32 @@ function mergeStringArray(base: string[], persisted: unknown): string[] {
   return persisted.filter((item): item is string => typeof item === "string");
 }
 
+function mergeShortcutValue(value: unknown): string[] | null {
+  if (typeof value === "string") {
+    const normalized = safeNormalize(value);
+    return normalized === null ? null : [normalized];
+  }
+  if (!Array.isArray(value)) {
+    return null;
+  }
+  return value
+    .map((entry) => (typeof entry === "string" ? safeNormalize(entry) : null))
+    .filter((entry): entry is string => entry !== null);
+}
+
 function mergeShortcuts(persisted: unknown): ShortcutOverrides {
   if (!isRecord(persisted)) {
     return {};
   }
   return Object.entries(persisted).reduce<ShortcutOverrides>(
     (acc, [id, value]) => {
-      if (!ACTION_IDS.has(id) || typeof value !== "string") {
+      if (!ACTION_IDS.has(id)) {
         return acc;
       }
-      const normalized = safeNormalize(value);
-      return normalized === null
+      const merged = mergeShortcutValue(value);
+      return merged === null
         ? acc
-        : { ...acc, [id as ShortcutActionId]: normalized };
+        : { ...acc, [id as ShortcutActionId]: merged };
     },
     {},
   );

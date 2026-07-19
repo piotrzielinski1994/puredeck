@@ -44,10 +44,10 @@ describe("createTauriSettingsStore keymap split (AC-009)", () => {
     await store.save({
       ...DEFAULT_SETTINGS,
       sidebarCollapsed: true,
-      shortcuts: { "flip-card": "Enter" },
+      shortcuts: { "flip-card": ["Enter"] },
     });
 
-    expect(files["keymap.json"].shortcuts).toEqual({ "flip-card": "Enter" });
+    expect(files["keymap.json"].shortcuts).toEqual({ "flip-card": ["Enter"] });
     expect(files["settings.json"].settings).not.toHaveProperty("shortcuts");
     expect(
       (files["settings.json"].settings as { sidebarCollapsed: boolean })
@@ -64,10 +64,10 @@ describe("createTauriSettingsStore keymap split (AC-009)", () => {
 
     await store.save({
       ...DEFAULT_SETTINGS,
-      shortcuts: { "flip-card": "Enter" },
+      shortcuts: { "flip-card": ["Enter"] },
     });
     const loaded = await store.load();
 
-    expect(loaded.shortcuts).toEqual({ "flip-card": "Enter" });
+    expect(loaded.shortcuts).toEqual({ "flip-card": ["Enter"] });
   });
 });

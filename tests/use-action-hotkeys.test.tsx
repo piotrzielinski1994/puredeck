@@ -42,10 +42,10 @@ afterEach(() => {
   cleanup();
 });
 
-describe("useActionHotkeys (AC-010 / TC-009 / E-9)", () => {
+describe("useActionHotkeys (AC-007 / TC-017)", () => {
   it("should run the handler if the overridden effective binding is pressed", async () => {
     const flip = vi.fn();
-    await renderHarness({ "flip-card": flip }, { "flip-card": "Enter" });
+    await renderHarness({ "flip-card": flip }, { "flip-card": ["Enter"] });
 
     fireEvent.keyDown(document, { key: "Enter", code: "Enter" });
 
@@ -54,7 +54,7 @@ describe("useActionHotkeys (AC-010 / TC-009 / E-9)", () => {
 
   it("should not run the handler on the registry default if it has been overridden", async () => {
     const flip = vi.fn();
-    await renderHarness({ "flip-card": flip }, { "flip-card": "Enter" });
+    await renderHarness({ "flip-card": flip }, { "flip-card": ["Enter"] });
 
     fireEvent.keyDown(document, { key: " ", code: "Space" });
 
@@ -75,6 +75,31 @@ describe("useActionHotkeys (AC-010 / TC-009 / E-9)", () => {
     await renderHarness({ "flip-card": flip });
 
     fireEvent.keyDown(document, { key: "b", code: "KeyB", ctrlKey: true });
+
+    expect(flip).not.toHaveBeenCalled();
+  });
+
+  // AC-007, TC-017 — behavior: an action bound to two hotkeys fires its handler
+  // on either binding (one definition registered per binding).
+  it("should run the handler on each bound hotkey if the action has several", async () => {
+    const flip = vi.fn();
+    await renderHarness(
+      { "flip-card": flip },
+      { "flip-card": ["Enter", "Mod+J"] },
+    );
+
+    fireEvent.keyDown(document, { key: "Enter", code: "Enter" });
+    fireEvent.keyDown(document, { key: "j", code: "KeyJ", ctrlKey: true });
+
+    expect(flip).toHaveBeenCalledTimes(2);
+  });
+
+  // AC-007 — behavior: an empty (disabled) list registers no hotkey definition.
+  it("should not run the handler if the action is disabled with an empty list", async () => {
+    const flip = vi.fn();
+    await renderHarness({ "flip-card": flip }, { "flip-card": [] });
+
+    fireEvent.keyDown(document, { key: " ", code: "Space" });
 
     expect(flip).not.toHaveBeenCalled();
   });
