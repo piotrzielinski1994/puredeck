@@ -62,7 +62,7 @@ export function WorkspaceLayout() {
       >
         <Sidebar />
       </ResizablePanel>
-      <ResizableHandle withHandle />
+      <ResizableHandle />
       <ResizablePanel id="main" defaultSize="80%">
         <Main />
       </ResizablePanel>
