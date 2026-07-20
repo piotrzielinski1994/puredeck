@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 import { CommandPalette } from "@/components/command-palette";
+import { DeleteDeckDialog } from "@/components/workspace/delete-deck-dialog";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
@@ -13,7 +14,14 @@ import { createSettingsStore } from "@/lib/settings/store-factory";
 import { ToastProvider } from "@/components/ui/toast";
 
 function ShellPalette() {
-  const { decks, openDeck, openStudy, openSettings } = useWorkspace();
+  const {
+    decks,
+    openDeck,
+    openStudy,
+    openSettings,
+    createDeck,
+    requestDeleteDeck,
+  } = useWorkspace();
   const { isOpen: isPaletteOpen, setOpen: setIsPaletteOpen } = usePalette();
 
   useActionHotkeys({
@@ -31,6 +39,7 @@ function ShellPalette() {
       open={isPaletteOpen}
       onOpenChange={setIsPaletteOpen}
       commands={[
+        { id: "new-deck", name: "New deck", run: () => createDeck() },
         { id: "open-settings", name: "Open Settings", run: openSettings },
         ...decks.map((deck) => ({
           id: `study-${deck.id}`,
@@ -38,6 +47,11 @@ function ShellPalette() {
           run: () => openStudy(deck.id),
         })),
         ...deckCommands,
+        ...decks.map((deck) => ({
+          id: `delete-deck-${deck.id}`,
+          name: `Delete deck: ${deck.name}`,
+          run: () => requestDeleteDeck(deck.id),
+        })),
       ]}
     />
   );
@@ -56,6 +70,7 @@ function RootLayout() {
                 <Outlet />
               </div>
               <ShellPalette />
+              <DeleteDeckDialog />
             </WorkspaceProvider>
           </ToastProvider>
         </PaletteProvider>

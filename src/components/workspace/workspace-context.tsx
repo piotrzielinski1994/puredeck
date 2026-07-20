@@ -19,6 +19,12 @@ import {
 } from "@/lib/workspace/model";
 import type { CollectionStore } from "@/lib/workspace/collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
+import {
+  newDeck,
+  uniqueDeckName,
+  withDeckRemoved,
+  withDeckUpserted,
+} from "@/lib/workspace/deck-ops";
 import { useToast } from "@/components/ui/toast";
 import type { ReviewStore } from "@/lib/study/review-store";
 import { createReviewStore } from "@/lib/study/review-store-factory";
@@ -51,6 +57,16 @@ type WorkspaceContextValue = {
   tabs: Tab[];
   deckById: (id: string) => Deck | undefined;
   saveDeck: (deck: Deck) => void;
+  createDeck: () => string;
+  renameDeck: (id: string, name: string) => void;
+  deleteDeck: (id: string) => void;
+  renamingDeckId: string | null;
+  beginRename: (id: string) => void;
+  cancelRename: () => void;
+  pendingDeleteDeckId: string | null;
+  requestDeleteDeck: (id: string) => void;
+  confirmDeleteDeck: () => void;
+  cancelDeleteDeck: () => void;
   reviews: ReviewMap;
   gradeCard: (cardId: string, grade: Grade) => FsrsCard;
   openDeck: (id: string) => void;
@@ -109,6 +125,10 @@ export function WorkspaceProvider({
   const [loadedDecks, setLoadedDecks] = useState<Deck[]>(decksProp ?? []);
   const [reviews, setReviews] = useState<ReviewMap>({});
   const [revlog, setRevlog] = useState<Revlog>([]);
+  const [renamingDeckId, setRenamingDeckId] = useState<string | null>(null);
+  const [pendingDeleteDeckId, setPendingDeleteDeckId] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     if (decksProp) {
@@ -265,6 +285,66 @@ export function WorkspaceProvider({
     [activeTabId, saveOpenTabs],
   );
 
+  const createDeck = useCallback((): string => {
+    const takenNames = new Set(decks.map((deck) => deck.name));
+    const created = newDeck(uniqueDeckName("New Deck", takenNames));
+    setLoadedDecks((current) => withDeckUpserted(current, created));
+    collectionStore.save(created);
+    openTab(created.id);
+    setRenamingDeckId(created.id);
+    return created.id;
+  }, [decks, collectionStore, openTab]);
+
+  const beginRename = useCallback((id: string) => setRenamingDeckId(id), []);
+  const cancelRename = useCallback(() => setRenamingDeckId(null), []);
+
+  const renameDeck = useCallback(
+    (id: string, name: string) => {
+      setRenamingDeckId(null);
+      const trimmed = name.trim();
+      const target = decks.find((deck) => deck.id === id);
+      if (trimmed === "" || !target || trimmed === target.name) {
+        return;
+      }
+      const renamed = { ...target, name: trimmed };
+      setLoadedDecks((current) => withDeckUpserted(current, renamed));
+      collectionStore.save(renamed);
+    },
+    [decks, collectionStore],
+  );
+
+  const deleteDeck = useCallback(
+    (id: string) => {
+      setLoadedDecks((current) => withDeckRemoved(current, id));
+      collectionStore.remove(id);
+      const survivingIds = new Set(
+        decks.filter((deck) => deck.id !== id).map((deck) => deck.id),
+      );
+      const pruned = pruneTabsToDecks(openTabIds, survivingIds);
+      const nextActive =
+        activeTabId !== null && pruned.includes(activeTabId)
+          ? activeTabId
+          : (pruned[0] ?? null);
+      saveOpenTabs(pruned, nextActive);
+    },
+    [decks, collectionStore, openTabIds, activeTabId, saveOpenTabs],
+  );
+
+  const requestDeleteDeck = useCallback(
+    (id: string) => setPendingDeleteDeckId(id),
+    [],
+  );
+  const cancelDeleteDeck = useCallback(
+    () => setPendingDeleteDeckId(null),
+    [],
+  );
+  const confirmDeleteDeck = useCallback(() => {
+    if (pendingDeleteDeckId !== null) {
+      deleteDeck(pendingDeleteDeckId);
+    }
+    setPendingDeleteDeckId(null);
+  }, [pendingDeleteDeckId, deleteDeck]);
+
   const value = useMemo<WorkspaceContextValue>(
     () => ({
       decks,
@@ -274,6 +354,16 @@ export function WorkspaceProvider({
       tabs,
       deckById,
       saveDeck,
+      createDeck,
+      renameDeck,
+      deleteDeck,
+      renamingDeckId,
+      beginRename,
+      cancelRename,
+      pendingDeleteDeckId,
+      requestDeleteDeck,
+      confirmDeleteDeck,
+      cancelDeleteDeck,
       reviews,
       gradeCard,
       openDeck,
@@ -291,6 +381,16 @@ export function WorkspaceProvider({
       tabs,
       deckById,
       saveDeck,
+      createDeck,
+      renameDeck,
+      deleteDeck,
+      renamingDeckId,
+      beginRename,
+      cancelRename,
+      pendingDeleteDeckId,
+      requestDeleteDeck,
+      confirmDeleteDeck,
+      cancelDeleteDeck,
       reviews,
       gradeCard,
       openDeck,
