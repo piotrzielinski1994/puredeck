@@ -16,6 +16,13 @@ const GRADES = [
   ["Easy", Rating.Easy],
 ] as const satisfies readonly (readonly [string, Grade])[];
 
+const ZERO_TALLY: Record<Grade, number> = {
+  [Rating.Again]: 0,
+  [Rating.Hard]: 0,
+  [Rating.Good]: 0,
+  [Rating.Easy]: 0,
+};
+
 function isSameDay(a: Date, b: Date): boolean {
   return (
     a.getFullYear() === b.getFullYear() &&
@@ -40,6 +47,7 @@ export function StudyView({
     buildStudyQueue(deck, reviews, now),
   );
   const [isFlipped, setIsFlipped] = useState(false);
+  const [tally, setTally] = useState<Record<Grade, number>>(ZERO_TALLY);
   const hasGraded = useRef(false);
 
   useEffect(() => {
@@ -56,6 +64,7 @@ export function StudyView({
   const grade = (value: Grade) => {
     hasGraded.current = true;
     setIsFlipped(false);
+    setTally((current) => ({ ...current, [value]: current[value] + 1 }));
     const scheduled = onGrade(card.id, value);
     setQueue((current) =>
       isSameDay(scheduled.due, now)
@@ -63,6 +72,16 @@ export function StudyView({
         : current.slice(1),
     );
   };
+
+  const reviewed =
+    tally[Rating.Again] +
+    tally[Rating.Hard] +
+    tally[Rating.Good] +
+    tally[Rating.Easy];
+  const accuracy =
+    reviewed === 0
+      ? 0
+      : Math.round(((reviewed - tally[Rating.Again]) / reviewed) * 100);
 
   useActionHotkeys({ "flip-card": flip });
 
@@ -75,10 +94,32 @@ export function StudyView({
   }
 
   if (!card) {
+    if (reviewed === 0) {
+      return (
+        <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+          <p className="text-base font-medium text-foreground">All caught up</p>
+          <p>No cards due for review.</p>
+        </div>
+      );
+    }
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-        <p className="text-base font-medium text-foreground">All caught up</p>
-        <p>No cards due for review.</p>
+      <div className="flex h-full flex-col items-center justify-center gap-5 p-6 text-center text-muted-foreground">
+        <div className="flex flex-col gap-1">
+          <p className="text-base font-medium text-foreground">All caught up</p>
+          <p>{`You reviewed ${reviewed} ${reviewed === 1 ? "card" : "cards"} today.`}</p>
+        </div>
+        <dl className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
+          {GRADES.map(([label, value]) => (
+            <div
+              key={label}
+              className="flex items-center justify-between gap-4"
+            >
+              <dt>{label}</dt>
+              <dd className="font-medium text-foreground">{tally[value]}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="text-sm">{`Accuracy ${accuracy}%`}</p>
       </div>
     );
   }
@@ -86,7 +127,7 @@ export function StudyView({
   return (
     <div className="flex h-full flex-col items-center justify-center gap-5 p-6">
       <p className="text-xs tracking-wide text-muted-foreground">
-        {queue.length} due
+        {`reviewed ${reviewed}`} &middot; {`${queue.length} left`}
       </p>
       <button
         type="button"
