@@ -13,7 +13,7 @@ import {
   serializeDeck,
   type CollectionStore,
 } from "@/lib/workspace/collection";
-import { DEMO_DECKS } from "@/lib/workspace/demo-data";
+import { SEED_DECKS } from "@/lib/workspace/demo-data";
 import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 const COLLECTION_DIR = "collections";
@@ -35,7 +35,7 @@ async function jsonFileNames(root: string): Promise<string[]> {
 
 async function seedDemoDecks(root: string): Promise<void> {
   await mkdir(root, { recursive: true });
-  const files = seedFileMap(DEMO_DECKS);
+  const files = seedFileMap(SEED_DECKS);
   await Promise.all(
     Object.entries(files).map(([slug, content]) =>
       writeTextFile(`${root}/${slug}.json`, content),
@@ -78,7 +78,7 @@ export function createTauriCollectionStore(
       return await readDecks(root, slugById);
     } catch (error) {
       console.error("Failed to load collections:", error);
-      return DEMO_DECKS;
+      return SEED_DECKS;
     }
   };
 

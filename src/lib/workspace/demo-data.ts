@@ -30,3 +30,5 @@ export const DEMO_DECKS: Deck[] = [
     ],
   },
 ];
+
+export const SEED_DECKS: Deck[] = [DEMO_DECKS[0]];

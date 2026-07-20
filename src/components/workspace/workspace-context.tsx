@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -11,6 +12,7 @@ import { useSettings } from "@/lib/settings/settings-context";
 import {
   SETTINGS_TAB_ID,
   isStudyTabId,
+  pruneTabsToDecks,
   studyDeckId,
   studyTabId,
   type Deck,
@@ -88,9 +90,15 @@ export function WorkspaceProvider({
 }) {
   const { settings, saveOpenTabs } = useSettings();
   const { show } = useToast();
-  const [collectionStore] = useState(
+  const collectionStore = useMemo(
     () => store ?? createCollectionStore(settings.collectionPath),
+    [store, settings.collectionPath],
   );
+  const tabStateRef = useRef<{
+    openTabIds: string[];
+    activeTabId: string | null;
+    saveOpenTabs: (openTabIds: string[], activeTabId: string | null) => void;
+  }>({ openTabIds: [], activeTabId: null, saveOpenTabs });
   const [reviewStoreInstance] = useState(
     () => reviewStore ?? createReviewStore(),
   );
@@ -108,9 +116,21 @@ export function WorkspaceProvider({
     }
     let isMounted = true;
     collectionStore.load().then((loaded) => {
-      if (isMounted) {
-        setLoadedDecks(loaded);
+      if (!isMounted) {
+        return;
       }
+      setLoadedDecks(loaded);
+      const deckIds = new Set(loaded.map((deck) => deck.id));
+      const current = tabStateRef.current;
+      const pruned = pruneTabsToDecks(current.openTabIds, deckIds);
+      if (pruned.length === current.openTabIds.length) {
+        return;
+      }
+      const nextActive =
+        current.activeTabId !== null && pruned.includes(current.activeTabId)
+          ? current.activeTabId
+          : (pruned[0] ?? null);
+      current.saveOpenTabs(pruned, nextActive);
     });
     return () => {
       isMounted = false;
@@ -166,6 +186,10 @@ export function WorkspaceProvider({
     settings.activeTabId !== null && openTabIds.includes(settings.activeTabId)
       ? settings.activeTabId
       : (openTabIds[0] ?? null);
+
+  useEffect(() => {
+    tabStateRef.current = { openTabIds, activeTabId, saveOpenTabs };
+  }, [openTabIds, activeTabId, saveOpenTabs]);
 
   const deckById = useCallback(
     (id: string) => decks.find((deck) => deck.id === id),

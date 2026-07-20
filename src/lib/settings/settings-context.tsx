@@ -24,6 +24,7 @@ type SettingsContextValue = {
   saveSidebarCollapsed: (collapsed: boolean) => void;
   saveOpenTabs: (openTabIds: string[], activeTabId: string | null) => void;
   saveThemeMode: (mode: ThemeMode) => void;
+  saveCollectionPath: (path: string | undefined) => void;
   addShortcut: (id: ShortcutActionId, hotkey: string) => void;
   removeShortcut: (id: ShortcutActionId, hotkey: string) => void;
   replaceShortcut: (
@@ -91,6 +92,20 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
   const saveThemeMode = useCallback(
     (mode: ThemeMode) =>
       update((base) => ({ ...base, theme: { ...base.theme, mode } })),
+    [update],
+  );
+
+  const saveCollectionPath = useCallback(
+    (path: string | undefined) =>
+      update((base) => {
+        const next = { ...base };
+        if (path === undefined) {
+          delete next.collectionPath;
+          return next;
+        }
+        next.collectionPath = path;
+        return next;
+      }),
     [update],
   );
 
@@ -178,6 +193,7 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
       saveSidebarCollapsed,
       saveOpenTabs,
       saveThemeMode,
+      saveCollectionPath,
       addShortcut,
       removeShortcut,
       replaceShortcut,
@@ -189,6 +205,7 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
     saveSidebarCollapsed,
     saveOpenTabs,
     saveThemeMode,
+    saveCollectionPath,
     addShortcut,
     removeShortcut,
     replaceShortcut,

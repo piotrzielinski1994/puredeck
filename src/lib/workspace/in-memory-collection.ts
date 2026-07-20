@@ -6,7 +6,7 @@ import {
   seedFileMap,
   type CollectionStore,
 } from "@/lib/workspace/collection";
-import { DEMO_DECKS } from "@/lib/workspace/demo-data";
+import { SEED_DECKS } from "@/lib/workspace/demo-data";
 import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 export function createInMemoryCollectionStore(
@@ -14,7 +14,7 @@ export function createInMemoryCollectionStore(
 ): CollectionStore {
   const load = (): Promise<Deck[]> => {
     if (Object.keys(files).length === 0) {
-      Object.assign(files, seedFileMap(DEMO_DECKS));
+      Object.assign(files, seedFileMap(SEED_DECKS));
     }
     return Promise.resolve(decksFromFileMap(files));
   };
