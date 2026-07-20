@@ -20,7 +20,10 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@tauri-apps/plugin-dialog", () => ({ open: mocks.open }));
-vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true }));
+vi.mock("@tauri-apps/api/core", () => ({
+  isTauri: () => true,
+  invoke: () => Promise.resolve(null),
+}));
 vi.mock("@/lib/responsive/use-is-mobile", () => ({
   useIsMobile: () => mocks.isMobile,
 }));
