@@ -6,14 +6,14 @@ Built as a Tauri 2 desktop shell (Rust backend, native webview) with a React 19 
 
 ## Prerequisites
 
-- **Node.js** - version pinned in [.nvmrc](.nvmrc) (24). This machine manages node via `mise`; run `mise use` or `eval "$(mise activate bash)"` before npm.
+- **Node.js** - version pinned in [mise.toml](mise.toml) (24). This machine manages node via `mise`; run `mise use` or `eval "$(mise activate bash)"` before npm.
 - **Rust** - stable toolchain (`rustc`/`cargo`), required by Tauri.
 - **Tauri OS prerequisites** - platform build tools per the [Tauri 2 prerequisites guide](https://v2.tauri.app/start/prerequisites/) (on macOS: Xcode Command Line Tools).
 
 ## Setup
 
 ```bash
-nvm use          # or: mise use
+mise install     # installs the pinned Node toolchain
 npm install
 ```
 
