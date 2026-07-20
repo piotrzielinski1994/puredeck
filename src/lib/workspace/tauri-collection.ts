@@ -3,6 +3,7 @@ import {
   mkdir,
   readDir,
   readTextFile,
+  remove as removeFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
 import { appDataDir, join } from "@tauri-apps/api/path";
@@ -96,5 +97,19 @@ export function createTauriCollectionStore(
     }
   };
 
-  return { load, save };
+  const remove = async (deckId: string): Promise<void> => {
+    const slug = slugById.get(deckId);
+    if (slug === undefined) {
+      return;
+    }
+    try {
+      const root = await collectionRoot(collectionPath);
+      await removeFile(`${root}/${slug}.json`);
+      slugById.delete(deckId);
+    } catch (error) {
+      console.error("Failed to remove deck:", error);
+    }
+  };
+
+  return { load, save, remove };
 }

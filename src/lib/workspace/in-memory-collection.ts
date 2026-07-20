@@ -30,5 +30,15 @@ export function createInMemoryCollectionStore(
     return Promise.resolve();
   };
 
-  return { load, save };
+  const remove = (deckId: string): Promise<void> => {
+    const slug = Object.keys(files).find(
+      (key) => parseDeck(files[key])?.id === deckId,
+    );
+    if (slug !== undefined) {
+      delete files[slug];
+    }
+    return Promise.resolve();
+  };
+
+  return { load, save, remove };
 }
