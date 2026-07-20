@@ -23,3 +23,16 @@ export function isStudyTabId(tabId: string): boolean {
 export function studyDeckId(tabId: string): string {
   return tabId.slice("__study__:".length);
 }
+
+export function pruneTabsToDecks(
+  openTabIds: string[],
+  deckIds: Set<string>,
+): string[] {
+  return openTabIds.filter((tabId) => {
+    if (tabId === SETTINGS_TAB_ID) {
+      return true;
+    }
+    const deckId = isStudyTabId(tabId) ? studyDeckId(tabId) : tabId;
+    return deckIds.has(deckId);
+  });
+}

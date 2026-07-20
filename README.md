@@ -45,8 +45,8 @@ docs/                   spec/plan per feature, ADR, learnings, glossary
 
 Under the OS app-data dir:
 
-- `settings.json` - panel layout, sidebar-collapsed, open tabs, theme mode.
+- `settings.json` - panel layout, sidebar-collapsed, open tabs, theme mode, and the optional `collectionPath` (custom deck folder; unset = default app-data `collections/`).
 - `keymap.json` - keyboard shortcut overrides (`actionId -> hotkey[]`); an action can hold several bindings, an empty list disables it, and a missing entry falls back to the registry default. Rebind, add, remove, and reset bindings in Settings > Shortcuts.
-- `collections/<deck-slug>.json` - one JSON file per deck (id, name, cards). Read on launch; hand-editable. First run seeds the demo decks here once. Cards are editable in-app (add / edit / delete); each change rewrites the deck's file. Creating, renaming, or deleting whole decks is still file-only.
+- `collections/<deck-slug>.json` - one JSON file per deck (id, name, cards). Read on launch; hand-editable. Any empty deck folder is seeded with one demo deck on first load. On desktop the deck folder is configurable in Settings > Storage (any path); picking a folder reloads decks in place and the choice survives restarts. Cards are editable in-app (add / edit / delete); each change rewrites the deck's file. Creating, renaming, or deleting whole decks is still file-only.
 - `review-state.json` - per-card SRS scheduling state (FSRS-6: stability, difficulty, due, state, reps, lapses), keyed by card id, kept separate from deck content. Study grades (Again/Hard/Good/Easy) reschedule the card via the `ts-fsrs` library; the study session shows only due cards.
 - `review-log.json` - append-only review history (one entry per grade), the training input for a future FSRS optimizer / stats.

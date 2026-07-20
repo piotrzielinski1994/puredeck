@@ -8,7 +8,7 @@ import {
 import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
 import { slugify, uniqueSlug } from "@/lib/workspace/slug";
-import { DEMO_DECKS } from "@/lib/workspace/demo-data";
+import { SEED_DECKS } from "@/lib/workspace/demo-data";
 import type { Deck } from "@/lib/workspace/model";
 
 const deckA: Deck = {
@@ -145,17 +145,17 @@ describe("createInMemoryCollectionStore (AC-001 / AC-005 / TC-001)", () => {
 });
 
 describe("createInMemoryCollectionStore seed-once (AC-002 / TC-002 / E-1 / E-2)", () => {
-  it("should seed and return the demo decks if the map is absent", async () => {
+  it("should seed and return the single starter deck if the map is absent", async () => {
     const store = createInMemoryCollectionStore();
 
     const first = await store.load();
     const second = await store.load();
 
-    expect(sortedNames(first)).toEqual(sortedNames(DEMO_DECKS));
-    expect(sortedNames(second)).toEqual(sortedNames(DEMO_DECKS));
+    expect(sortedNames(first)).toEqual(sortedNames(SEED_DECKS));
+    expect(sortedNames(second)).toEqual(sortedNames(SEED_DECKS));
   });
 
-  it("should write one file per demo deck into an empty map on first load and not re-seed on the second", async () => {
+  it("should write one file per seed deck into an empty map on first load and not re-seed on the second", async () => {
     const files: Record<string, string> = {};
     const store = createInMemoryCollectionStore(files);
 
@@ -164,7 +164,7 @@ describe("createInMemoryCollectionStore seed-once (AC-002 / TC-002 / E-1 / E-2)"
     await store.load();
     const keysAfterSecond = Object.keys(files).length;
 
-    expect(keysAfterFirst).toBe(DEMO_DECKS.length);
+    expect(keysAfterFirst).toBe(SEED_DECKS.length);
     expect(keysAfterSecond).toBe(keysAfterFirst);
   });
 });
@@ -209,10 +209,10 @@ describe("createInMemoryCollectionStore tolerance (AC-003 / TC-003 / E-3 / E-4 /
 });
 
 describe("createCollectionStore factory (AC-006 / TC-005 / E-6)", () => {
-  it("should return the demo decks if fs is unavailable in a non-Tauri env", async () => {
+  it("should return the single seed deck if fs is unavailable in a non-Tauri env", async () => {
     const decks = await createCollectionStore().load();
 
-    expect(sortedNames(decks)).toEqual(sortedNames(DEMO_DECKS));
+    expect(sortedNames(decks)).toEqual(sortedNames(SEED_DECKS));
   });
 });
 

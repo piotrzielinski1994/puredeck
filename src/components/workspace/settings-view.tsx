@@ -3,8 +3,9 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "@/lib/theme/theme-context";
 import type { ThemeMode } from "@/lib/settings/settings";
 import { ShortcutsSection } from "@/components/settings/shortcuts-section";
+import { StorageSection } from "@/components/settings/storage-section";
 
-type Section = "theme" | "shortcuts";
+type Section = "theme" | "shortcuts" | "storage";
 
 const MODES: { id: ThemeMode; label: string }[] = [
   { id: "light", label: "Light" },
@@ -90,9 +91,17 @@ export function SettingsView() {
         >
           Shortcuts
         </SubTab>
+        <SubTab
+          isActive={section === "storage"}
+          onClick={() => setSection("storage")}
+        >
+          Storage
+        </SubTab>
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
-        {section === "theme" ? <ThemeSection /> : <ShortcutsSection />}
+        {section === "theme" && <ThemeSection />}
+        {section === "shortcuts" && <ShortcutsSection />}
+        {section === "storage" && <StorageSection />}
       </div>
     </div>
   );
