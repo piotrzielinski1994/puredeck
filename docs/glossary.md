@@ -45,3 +45,11 @@ _Avoid_: algorithm, planner, srs engine, SM-2.
 ### Revlog
 The append-only review history: one entry per [[Grade]] (rating, prior state, stability/difficulty, elapsed/scheduled days, review instant), tagged with the [[Card]] id. Persisted separately (`review-log.json`); feeds future stats and FSRS parameter optimization, never the current scheduling decision.
 _Avoid_: log, audit, history table.
+
+### Data source
+The active backend the [[Collection]] loads and saves decks through: exactly one of *Local folder* (an on-disk directory, the F7 path) or *Google Drive* (the [[Drive connection]]'s hidden app folder). Mutually exclusive - selecting one deactivates the other. Realized as which `CollectionStore` adapter is constructed.
+_Avoid_: backend, provider, storage mode, sync target.
+
+### Drive connection
+The authenticated link between puredeck and one Google account, established by OAuth and represented by stored tokens. It is *connected* (valid tokens present) or *disconnected* (none); it is not a deck store itself - the Drive [[Data source]] uses it. Scoped to the hidden per-app Drive folder only (`drive.appdata`), never the user's visible files.
+_Avoid_: login, session, account, sync, integration.

@@ -22,6 +22,11 @@
       "csp": null
     }
   },
+  "plugins": {
+    "deep-link": {
+      "mobile": [{ "scheme": ["com.pzielinski.puredeck"], "appLink": false }]
+    }
+  },
   "bundle": {
     "active": true,
     "targets": "all",

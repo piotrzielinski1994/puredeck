@@ -25,6 +25,7 @@ type SettingsContextValue = {
   saveOpenTabs: (openTabIds: string[], activeTabId: string | null) => void;
   saveThemeMode: (mode: ThemeMode) => void;
   saveCollectionPath: (path: string | undefined) => void;
+  saveGoogleAccount: (account: { email: string } | undefined) => void;
   addShortcut: (id: ShortcutActionId, hotkey: string) => void;
   removeShortcut: (id: ShortcutActionId, hotkey: string) => void;
   replaceShortcut: (
@@ -104,6 +105,20 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
           return next;
         }
         next.collectionPath = path;
+        return next;
+      }),
+    [update],
+  );
+
+  const saveGoogleAccount = useCallback(
+    (account: { email: string } | undefined) =>
+      update((base) => {
+        const next = { ...base };
+        if (account === undefined) {
+          delete next.googleAccount;
+          return next;
+        }
+        next.googleAccount = account;
         return next;
       }),
     [update],
@@ -194,6 +209,7 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
       saveOpenTabs,
       saveThemeMode,
       saveCollectionPath,
+      saveGoogleAccount,
       addShortcut,
       removeShortcut,
       replaceShortcut,
@@ -206,6 +222,7 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
     saveOpenTabs,
     saveThemeMode,
     saveCollectionPath,
+    saveGoogleAccount,
     addShortcut,
     removeShortcut,
     replaceShortcut,

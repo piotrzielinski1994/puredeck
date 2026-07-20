@@ -24,6 +24,7 @@ export type Settings = {
   theme: ThemeSettings;
   shortcuts: ShortcutOverrides;
   collectionPath?: string;
+  googleAccount?: { email: string };
 };
 
 export type SettingsStore = {
@@ -53,6 +54,17 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isThemeMode(value: unknown): value is ThemeMode {
   return typeof value === "string" && THEME_MODES.includes(value as ThemeMode);
+}
+
+function parseGoogleAccount(value: unknown): Settings["googleAccount"] {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+  const { email } = value;
+  if (typeof email !== "string" || email.length === 0) {
+    return undefined;
+  }
+  return { email };
 }
 
 function mergeLayouts(
@@ -143,5 +155,7 @@ export function mergeSettings(base: Settings, persisted: unknown): Settings {
       typeof persisted.collectionPath === "string"
         ? persisted.collectionPath
         : base.collectionPath,
+    googleAccount:
+      parseGoogleAccount(persisted.googleAccount) ?? base.googleAccount,
   };
 }

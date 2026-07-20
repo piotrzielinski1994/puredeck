@@ -1,3 +1,5 @@
+mod google_auth;
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -12,7 +14,15 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_persisted_scope::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .plugin(tauri_plugin_oauth::init())
+        .plugin(tauri_plugin_deep_link::init())
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            google_auth::google_status,
+            google_auth::google_connect,
+            google_auth::google_disconnect,
+            google_auth::google_access_token
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
