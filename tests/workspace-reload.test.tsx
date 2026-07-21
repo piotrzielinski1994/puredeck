@@ -1,20 +1,23 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import {
-  SettingsProvider,
-  useSettings,
-} from "@/lib/settings/settings-context";
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  useWorkspace,
+  WorkspaceProvider,
+} from "@/components/workspace/workspace-context";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
-import {
-  WorkspaceProvider,
-  useWorkspace,
-} from "@/components/workspace/workspace-context";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
+import { SettingsProvider, useSettings } from "@/lib/settings/settings-context";
 import { serializeDeck } from "@/lib/workspace/collection";
-import { SETTINGS_TAB_ID } from "@/lib/workspace/model";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
+import { SETTINGS_TAB_ID } from "@/lib/workspace/model";
 
 const deckAlpha: Deck = {
   id: "a",
@@ -28,7 +31,9 @@ const deckSpanish: Deck = {
 };
 
 const PATH_B = "/folder-b";
-const storeA = createInMemoryCollectionStore({ alpha: serializeDeck(deckAlpha) });
+const storeA = createInMemoryCollectionStore({
+  alpha: serializeDeck(deckAlpha),
+});
 const storeB = createInMemoryCollectionStore({
   spanish: serializeDeck(deckSpanish),
 });

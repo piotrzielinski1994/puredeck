@@ -58,10 +58,12 @@ export function serializeDeck(deck: Deck): string {
 
 export function seedFileMap(decks: Deck[]): Record<string, string> {
   const used = new Set<string>();
-  return decks.reduce<Record<string, string>>((acc, deck) => {
-    const slug = uniqueSlug(slugify(deck.name), used);
-    return { ...acc, [slug]: serializeDeck(deck) };
-  }, {});
+  return Object.fromEntries(
+    decks.map((deck) => {
+      const slug = uniqueSlug(slugify(deck.name), used);
+      return [slug, serializeDeck(deck)] as const;
+    }),
+  );
 }
 
 export function decksFromFileMap(files: Record<string, string>): Deck[] {

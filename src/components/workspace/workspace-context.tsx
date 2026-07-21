@@ -1,22 +1,28 @@
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
+import { useToast } from "@/components/ui/toast";
 import { useSettings } from "@/lib/settings/settings-context";
 import {
-  SETTINGS_TAB_ID,
-  isStudyTabId,
-  pruneTabsToDecks,
-  studyDeckId,
-  studyTabId,
-  type Deck,
-} from "@/lib/workspace/model";
+  createScheduler,
+  type Card as FsrsCard,
+  type Grade,
+  gradeReview,
+  newCard,
+  type ReviewMap,
+} from "@/lib/study/fsrs";
+import { nowDate } from "@/lib/study/queue";
+import type { ReviewStore } from "@/lib/study/review-store";
+import { createReviewStore } from "@/lib/study/review-store-factory";
+import type { Revlog, RevlogStore } from "@/lib/study/revlog-store";
+import { createRevlogStore } from "@/lib/study/revlog-store-factory";
 import type { CollectionStore } from "@/lib/workspace/collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
 import {
@@ -25,20 +31,14 @@ import {
   withDeckRemoved,
   withDeckUpserted,
 } from "@/lib/workspace/deck-ops";
-import { useToast } from "@/components/ui/toast";
-import type { ReviewStore } from "@/lib/study/review-store";
-import { createReviewStore } from "@/lib/study/review-store-factory";
-import type { Revlog, RevlogStore } from "@/lib/study/revlog-store";
-import { createRevlogStore } from "@/lib/study/revlog-store-factory";
 import {
-  createScheduler,
-  gradeReview,
-  newCard,
-  type Card as FsrsCard,
-  type Grade,
-  type ReviewMap,
-} from "@/lib/study/fsrs";
-import { nowDate } from "@/lib/study/queue";
+  type Deck,
+  isStudyTabId,
+  pruneTabsToDecks,
+  SETTINGS_TAB_ID,
+  studyDeckId,
+  studyTabId,
+} from "@/lib/workspace/model";
 
 export type TabKind = "deck" | "study" | "settings";
 
@@ -334,10 +334,7 @@ export function WorkspaceProvider({
     (id: string) => setPendingDeleteDeckId(id),
     [],
   );
-  const cancelDeleteDeck = useCallback(
-    () => setPendingDeleteDeckId(null),
-    [],
-  );
+  const cancelDeleteDeck = useCallback(() => setPendingDeleteDeckId(null), []);
   const confirmDeleteDeck = useCallback(() => {
     if (pendingDeleteDeckId !== null) {
       deleteDeck(pendingDeleteDeckId);

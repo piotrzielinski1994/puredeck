@@ -1,12 +1,12 @@
-import type { Deck } from "@/lib/workspace/model";
 import {
+  type CollectionStore,
   decksFromFileMap,
   parseDeck,
-  serializeDeck,
   seedFileMap,
-  type CollectionStore,
+  serializeDeck,
 } from "@/lib/workspace/collection";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
+import type { Deck } from "@/lib/workspace/model";
 import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 export function createInMemoryCollectionStore(

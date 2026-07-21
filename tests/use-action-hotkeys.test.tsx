@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import {
   act,
   cleanup,
@@ -6,15 +6,15 @@ import {
   render,
   screen,
 } from "@testing-library/react";
-import { HotkeysProvider } from "@tanstack/react-hotkeys";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { DEFAULT_SETTINGS, type Settings } from "@/lib/settings/settings";
-import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import type {
   ShortcutActionId,
   ShortcutOverrides,
 } from "@/lib/shortcuts/registry";
+import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 
 function Harness({
   handlers,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { applyDefaults, diffOverrides } from "@/lib/theme/overrides";
 import type { ThemeColors } from "@/lib/settings/settings";
+import { applyDefaults, diffOverrides } from "@/lib/theme/overrides";
 
 const DEFAULTS: ThemeColors = {
   light: {
@@ -77,7 +77,10 @@ describe("applyDefaults mode independence (AC-005 / TC-006)", () => {
 
 describe("diffOverrides (AC-004 / TC-003 / TC-004)", () => {
   it("should return empty per-mode maps if the edited set equals the defaults", () => {
-    const diff = diffOverrides(applyDefaults(emptyColors(), DEFAULTS), DEFAULTS);
+    const diff = diffOverrides(
+      applyDefaults(emptyColors(), DEFAULTS),
+      DEFAULTS,
+    );
 
     expect(diff.light.tokens).toEqual({});
     expect(diff.dark.tokens).toEqual({});
@@ -85,7 +88,10 @@ describe("diffOverrides (AC-004 / TC-003 / TC-004)", () => {
 
   it("should keep only the one token that differs and leave the other mode empty", () => {
     const edited = applyDefaults(
-      { light: { tokens: { primary: "oklch(0.55 0.22 27)" }, editor: {} }, dark: { tokens: {}, editor: {} } },
+      {
+        light: { tokens: { primary: "oklch(0.55 0.22 27)" }, editor: {} },
+        dark: { tokens: {}, editor: {} },
+      },
       DEFAULTS,
     );
 

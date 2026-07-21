@@ -5,9 +5,9 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { Sidebar } from "@/components/workspace/sidebar";
 import { Main } from "@/components/workspace/main";
 import { MobileShell } from "@/components/workspace/mobile-shell";
+import { Sidebar } from "@/components/workspace/sidebar";
 import { useIsMobile } from "@/lib/responsive/use-is-mobile";
 import { useSettings } from "@/lib/settings/settings-context";
 import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";

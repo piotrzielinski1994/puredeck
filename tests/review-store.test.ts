@@ -1,6 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { mergeReviews, type ReviewStore } from "@/lib/study/review-store";
-import { createInMemoryReviewStore } from "@/lib/study/in-memory-review-store";
 import {
   createScheduler,
   gradeReview,
@@ -8,6 +6,8 @@ import {
   Rating,
   type ReviewMap,
 } from "@/lib/study/fsrs";
+import { createInMemoryReviewStore } from "@/lib/study/in-memory-review-store";
+import { mergeReviews, type ReviewStore } from "@/lib/study/review-store";
 
 function gradedMap(): ReviewMap {
   const scheduler = createScheduler();

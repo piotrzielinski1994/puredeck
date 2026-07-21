@@ -1,9 +1,9 @@
 import {
   createContext,
+  type ReactNode,
   useContext,
   useMemo,
   useState,
-  type ReactNode,
 } from "react";
 
 type PaletteContextValue = {

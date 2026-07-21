@@ -1,10 +1,10 @@
-import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
-import { useSettings } from "@/lib/settings/settings-context";
-import { useWorkspace } from "@/components/workspace/workspace-context";
 import { ContentTabs } from "@/components/workspace/content-tabs";
 import { DeckView } from "@/components/workspace/deck-view";
-import { StudyView } from "@/components/workspace/study-view";
 import { SettingsView } from "@/components/workspace/settings-view";
+import { StudyView } from "@/components/workspace/study-view";
+import { useWorkspace } from "@/components/workspace/workspace-context";
+import { useSettings } from "@/lib/settings/settings-context";
+import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 
 function EmptyState() {
   return (

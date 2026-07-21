@@ -1,20 +1,20 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { formatForDisplay } from "@tanstack/hotkeys";
 import {
   cleanup,
   fireEvent,
+  type RenderResult,
   render,
   screen,
-  type RenderResult,
 } from "@testing-library/react";
-import { formatForDisplay } from "@tanstack/hotkeys";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it } from "vitest";
+import { SettingsView } from "@/components/workspace/settings-view";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { DEFAULT_SETTINGS, type Settings } from "@/lib/settings/settings";
-import { ThemeProvider } from "@/lib/theme/theme-context";
-import { SettingsView } from "@/components/workspace/settings-view";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import type { ShortcutOverrides } from "@/lib/shortcuts/registry";
 import { SHORTCUT_ACTIONS } from "@/lib/shortcuts/registry";
 import { resolveShortcuts } from "@/lib/shortcuts/resolve";
-import type { ShortcutOverrides } from "@/lib/shortcuts/registry";
+import { ThemeProvider } from "@/lib/theme/theme-context";
 
 function renderSettings(overrides: ShortcutOverrides = {}): RenderResult {
   const seeded: Settings = { ...DEFAULT_SETTINGS, shortcuts: overrides };

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { createInMemoryGoogleAuth } from "@/lib/google/in-memory-google-auth";
 import { createGoogleAuth } from "@/lib/google/google-auth-factory";
+import { createInMemoryGoogleAuth } from "@/lib/google/in-memory-google-auth";
 
 vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => false }));
 
@@ -65,8 +65,6 @@ describe("createGoogleAuth factory (Task 2)", () => {
       expect(typeof result.account.email).toBe("string");
       expect(result.account.email.length).toBeGreaterThan(0);
     }
-    expect(await auth.status()).toEqual(
-      result.ok ? result.account : null,
-    );
+    expect(await auth.status()).toEqual(result.ok ? result.account : null);
   });
 });

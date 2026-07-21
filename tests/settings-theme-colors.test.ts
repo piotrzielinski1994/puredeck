@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
   mergeSettings,
   type Settings,
   type ThemeColors,
 } from "@/lib/settings/settings";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 
 describe("mergeSettings theme.colors validation (AC-008 / TC-011)", () => {
   it("should drop an unknown token and a numeric value but keep a valid oklch string", () => {
@@ -43,7 +43,9 @@ describe("mergeSettings theme.colors validation (AC-008 / TC-011)", () => {
   });
 
   it("should fall back to empty overrides if theme.colors is missing", () => {
-    const merged = mergeSettings(DEFAULT_SETTINGS, { theme: { mode: "light" } });
+    const merged = mergeSettings(DEFAULT_SETTINGS, {
+      theme: { mode: "light" },
+    });
 
     expect(merged.theme.colors).toEqual({
       light: { tokens: {}, editor: {} },

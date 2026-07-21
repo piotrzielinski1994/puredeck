@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
   mergeSettings,
   type Settings,
 } from "@/lib/settings/settings";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { resolveShortcuts } from "@/lib/shortcuts/resolve";
 
 function mergedShortcuts(shortcuts: unknown): Settings["shortcuts"] {

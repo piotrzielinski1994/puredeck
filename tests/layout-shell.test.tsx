@@ -1,4 +1,3 @@
-import { afterEach, describe, expect, it } from "vitest";
 import {
   cleanup,
   fireEvent,
@@ -8,16 +7,17 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it } from "vitest";
 import { AppProviders } from "@/app/providers";
-import { SettingsProvider } from "@/lib/settings/settings-context";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
-import { type SettingsStore } from "@/lib/settings/settings";
-import { ThemeProvider } from "@/lib/theme/theme-context";
 import {
-  WorkspaceProvider,
   useWorkspace,
+  WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
 import { WorkspaceLayout } from "@/components/workspace/workspace-layout";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import type { SettingsStore } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import { ThemeProvider } from "@/lib/theme/theme-context";
 import { DEMO_DECKS } from "@/lib/workspace/demo-data";
 
 function renderShell(store: SettingsStore = createInMemorySettingsStore()) {
@@ -192,7 +192,13 @@ describe("workspace shell stale active tab (E-8)", () => {
       sidebarCollapsed: false,
       openTabIds: ["spanish", "capitals"],
       activeTabId: "gone",
-      theme: { mode: "system", colors: { light: { tokens: {}, editor: {} }, dark: { tokens: {}, editor: {} } } },
+      theme: {
+        mode: "system",
+        colors: {
+          light: { tokens: {}, editor: {} },
+          dark: { tokens: {}, editor: {} },
+        },
+      },
       shortcuts: {},
     });
     renderShell(store);

@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { buildStudyQueue, isDue, nowDate } from "@/lib/study/queue";
 import {
   createScheduler,
+  type Card as FsrsCard,
   gradeReview,
   newCard,
   Rating,
-  type Card as FsrsCard,
   type ReviewMap,
 } from "@/lib/study/fsrs";
+import { buildStudyQueue, isDue, nowDate } from "@/lib/study/queue";
 import type { Deck } from "@/lib/workspace/model";
 
 const NOW = new Date("2026-07-19T12:00:00Z");

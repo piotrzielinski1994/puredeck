@@ -1,13 +1,10 @@
-import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {
-  SettingsProvider,
-  useSettings,
-} from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it } from "vitest";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
-import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
 import type { SettingsStore } from "@/lib/settings/settings";
+import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
+import { SettingsProvider, useSettings } from "@/lib/settings/settings-context";
 
 const CUSTOM_PATH = "/Users/me/Decks";
 const OTHER_PATH = "/Users/me/Other";

@@ -50,8 +50,7 @@ export function mergeRevlog(persisted: unknown): Revlog {
   if (!Array.isArray(persisted)) {
     return [];
   }
-  return persisted.reduce<Revlog>((acc, value) => {
-    const entry = parseEntry(value);
-    return entry ? [...acc, entry] : acc;
-  }, []);
+  return persisted
+    .map(parseEntry)
+    .filter((entry): entry is RevlogEntry => entry !== null);
 }

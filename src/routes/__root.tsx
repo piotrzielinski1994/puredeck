@@ -1,17 +1,17 @@
-import { useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
+import { useState } from "react";
 import { CommandPalette } from "@/components/command-palette";
-import { DeleteDeckDialog } from "@/components/workspace/delete-deck-dialog";
-import { SettingsProvider } from "@/lib/settings/settings-context";
-import { ThemeProvider } from "@/lib/theme/theme-context";
-import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
-import {
-  WorkspaceProvider,
-  useWorkspace,
-} from "@/components/workspace/workspace-context";
-import { createSettingsStore } from "@/lib/settings/store-factory";
 import { ToastProvider } from "@/components/ui/toast";
+import { DeleteDeckDialog } from "@/components/workspace/delete-deck-dialog";
+import {
+  useWorkspace,
+  WorkspaceProvider,
+} from "@/components/workspace/workspace-context";
+import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import { createSettingsStore } from "@/lib/settings/store-factory";
+import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
+import { ThemeProvider } from "@/lib/theme/theme-context";
 
 function ShellPalette() {
   const {

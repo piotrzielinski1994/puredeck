@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { ThemeSection } from "@/components/settings/theme-section";
 import { ShortcutsSection } from "@/components/settings/shortcuts-section";
 import { StorageSection } from "@/components/settings/storage-section";
+import { ThemeSection } from "@/components/settings/theme-section";
+import { cn } from "@/lib/utils";
 
 type Section = "theme" | "shortcuts" | "storage";
 

@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
 import {
-  mergeRevlog,
-  type Revlog,
-  type RevlogStore,
-} from "@/lib/study/revlog-store";
-import { createInMemoryRevlogStore } from "@/lib/study/in-memory-revlog-store";
-import {
   createScheduler,
   gradeReview,
   newCard,
   Rating,
 } from "@/lib/study/fsrs";
+import { createInMemoryRevlogStore } from "@/lib/study/in-memory-revlog-store";
+import {
+  mergeRevlog,
+  type Revlog,
+  type RevlogStore,
+} from "@/lib/study/revlog-store";
 
 function gradedRevlog(): Revlog {
   const scheduler = createScheduler();

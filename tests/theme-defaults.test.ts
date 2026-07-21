@@ -2,8 +2,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { APP_TOKENS, DEFAULT_THEME_COLORS } from "@/lib/theme/theme-defaults";
 import type { AppTokenName, FullThemeColors } from "@/lib/settings/settings";
+import { APP_TOKENS, DEFAULT_THEME_COLORS } from "@/lib/theme/theme-defaults";
 
 const REPO_ROOT = process.cwd();
 const indexCss = readFileSync(path.join(REPO_ROOT, "src/index.css"), "utf8");
@@ -35,7 +35,7 @@ function cssVar(block: ":root" | ".dark", token: string): string {
   const body = indexCss.slice(start).split("}")[0];
   const match = body.match(new RegExp(`--${token}:\\s*([^;]+);`));
   expect(match).not.toBeNull();
-  return (match![1] ?? "").trim();
+  return (match?.[1] ?? "").trim();
 }
 
 const norm = (value: string): string => value.replace(/\s+/g, " ").trim();

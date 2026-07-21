@@ -1,18 +1,18 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cleanup,
+  type RenderResult,
   render,
   screen,
   waitFor,
-  type RenderResult,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SettingsProvider } from "@/lib/settings/settings-context";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
-import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
-import { ThemeProvider } from "@/lib/theme/theme-context";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { StorageSection } from "@/components/settings/storage-section";
 import { SettingsView } from "@/components/workspace/settings-view";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import { ThemeProvider } from "@/lib/theme/theme-context";
 
 const mocks = vi.hoisted(() => ({
   open: vi.fn(),
@@ -45,7 +45,8 @@ function renderStorage(collectionPath?: string): RenderResult {
   );
 }
 
-const chooseButton = () => screen.queryByRole("button", { name: /choose folder/i });
+const chooseButton = () =>
+  screen.queryByRole("button", { name: /choose folder/i });
 const resetButton = () =>
   screen.queryByRole("button", { name: /reset to default/i });
 
@@ -88,7 +89,9 @@ describe("StorageSection path label (AC-002 / TC-001)", () => {
     renderStorage(CUSTOM_PATH);
 
     expect(await screen.findByText(CUSTOM_PATH)).toBeInTheDocument();
-    expect(screen.queryByText(/default app data folder/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/default app data folder/i),
+    ).not.toBeInTheDocument();
   });
 });
 
@@ -98,7 +101,9 @@ describe("StorageSection choose folder (AC-003 / TC-002)", () => {
     mocks.open.mockResolvedValue(PICKED_PATH);
     renderStorage();
 
-    await user.click(await screen.findByRole("button", { name: /choose folder/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /choose folder/i }),
+    );
 
     expect(mocks.open).toHaveBeenCalledWith({
       directory: true,
@@ -111,7 +116,9 @@ describe("StorageSection choose folder (AC-003 / TC-002)", () => {
     mocks.open.mockResolvedValue(PICKED_PATH);
     renderStorage();
 
-    await user.click(await screen.findByRole("button", { name: /choose folder/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /choose folder/i }),
+    );
 
     expect(await screen.findByText(PICKED_PATH)).toBeInTheDocument();
     expect(resetButton()).toBeInTheDocument();
@@ -124,7 +131,9 @@ describe("StorageSection cancel (AC-004 / TC-004)", () => {
     mocks.open.mockResolvedValue(null);
     renderStorage();
 
-    await user.click(await screen.findByRole("button", { name: /choose folder/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /choose folder/i }),
+    );
 
     await waitFor(() => expect(mocks.open).toHaveBeenCalled());
     expect(screen.getByText(/default app data folder/i)).toBeInTheDocument();
@@ -136,7 +145,9 @@ describe("StorageSection cancel (AC-004 / TC-004)", () => {
     mocks.open.mockResolvedValue([PICKED_PATH]);
     renderStorage();
 
-    await user.click(await screen.findByRole("button", { name: /choose folder/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /choose folder/i }),
+    );
 
     await waitFor(() => expect(mocks.open).toHaveBeenCalled());
     expect(screen.getByText(/default app data folder/i)).toBeInTheDocument();

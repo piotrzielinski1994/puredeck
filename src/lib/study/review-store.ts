@@ -45,11 +45,13 @@ export function mergeReviews(persisted: unknown): ReviewMap {
   if (!isRecord(persisted)) {
     return {};
   }
-  return Object.entries(persisted).reduce<ReviewMap>((acc, [id, value]) => {
-    if (!isRecord(value)) {
-      return acc;
-    }
-    const card = parseCard(value);
-    return card ? { ...acc, [id]: card } : acc;
-  }, {});
+  return Object.fromEntries(
+    Object.entries(persisted).flatMap(([id, value]) => {
+      if (!isRecord(value)) {
+        return [];
+      }
+      const card = parseCard(value);
+      return card ? [[id, card] as const] : [];
+    }),
+  );
 }

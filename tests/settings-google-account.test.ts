@@ -1,10 +1,6 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { cleanup, renderHook, act, waitFor } from "@testing-library/react";
-import {
-  SettingsProvider,
-  useSettings,
-} from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it } from "vitest";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
@@ -12,6 +8,7 @@ import {
   type Settings,
   type SettingsStore,
 } from "@/lib/settings/settings";
+import { SettingsProvider, useSettings } from "@/lib/settings/settings-context";
 
 const ACCOUNT = { email: "jane@example.com" };
 

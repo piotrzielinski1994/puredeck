@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useSettings } from "@/lib/settings/settings-context";
 import type { GoogleAccount, GoogleAuth } from "@/lib/google/google-auth";
 import { createGoogleAuth } from "@/lib/google/google-auth-factory";
+import { useSettings } from "@/lib/settings/settings-context";
 import { cn } from "@/lib/utils";
 
 type ConnectError = "failed" | "unconfigured";

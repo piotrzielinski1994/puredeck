@@ -1,6 +1,6 @@
-import { useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Menu, Search } from "lucide-react";
+import { useState } from "react";
 import { Main } from "@/components/workspace/main";
 import { Sidebar } from "@/components/workspace/sidebar";
 import { usePalette } from "@/lib/palette/palette-context";

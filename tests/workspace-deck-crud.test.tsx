@@ -1,4 +1,3 @@
-import { afterEach, describe, expect, it } from "vitest";
 import {
   cleanup,
   render,
@@ -7,23 +6,24 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SettingsProvider } from "@/lib/settings/settings-context";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
-import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
+import { afterEach, describe, expect, it } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
 import {
-  WorkspaceProvider,
   useWorkspace,
+  WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createInMemoryReviewStore } from "@/lib/study/in-memory-review-store";
 import { createInMemoryRevlogStore } from "@/lib/study/in-memory-revlog-store";
 import {
-  serializeDeck,
   type CollectionStore,
+  serializeDeck,
 } from "@/lib/workspace/collection";
-import { studyTabId } from "@/lib/workspace/model";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
+import { studyTabId } from "@/lib/workspace/model";
 
 type DeckCrudSurface = ReturnType<typeof useWorkspace> & {
   createDeck: () => string;
@@ -142,12 +142,9 @@ describe("WorkspaceProvider createDeck (AC-001 / TC-001)", () => {
     renderWorkspace(store);
 
     await waitFor(() =>
-      expect(
-        within(decksList()).getByText("Spanish"),
-      ).toBeInTheDocument(),
+      expect(within(decksList()).getByText("Spanish")).toBeInTheDocument(),
     );
-    const deckCountBefore =
-      within(decksList()).getAllByRole("listitem").length;
+    const deckCountBefore = within(decksList()).getAllByRole("listitem").length;
 
     await user.click(screen.getByRole("button", { name: /^create$/i }));
 
@@ -177,7 +174,9 @@ describe("WorkspaceProvider renameDeck (AC-005 / TC-002)", () => {
       expect(within(decksList()).getByText("Spanish")).toBeInTheDocument(),
     );
 
-    await user.click(screen.getByRole("button", { name: /rename to espanol/i }));
+    await user.click(
+      screen.getByRole("button", { name: /rename to espanol/i }),
+    );
 
     expect(within(decksList()).getByText("Espanol")).toBeInTheDocument();
     expect(within(decksList()).queryByText("Spanish")).not.toBeInTheDocument();
@@ -243,7 +242,9 @@ describe("WorkspaceProvider deleteDeck tab prune (AC-009 / TC-007)", () => {
     await user.click(screen.getByRole("button", { name: /delete capitals/i }));
 
     await waitFor(() =>
-      expect(within(decksList()).queryByText("Capitals")).not.toBeInTheDocument(),
+      expect(
+        within(decksList()).queryByText("Capitals"),
+      ).not.toBeInTheDocument(),
     );
     const tabIdsAfter = within(tabsList())
       .getAllByRole("listitem")

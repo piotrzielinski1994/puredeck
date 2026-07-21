@@ -27,9 +27,10 @@ npm install
 | `npm run tauri build` | Build the distributable desktop app. |
 | `npm test` | Run the Vitest suite once. |
 | `npm run test:watch` | Vitest in watch mode. |
-| `npm run lint` | ESLint over the repo. |
+| `npm run lint` | Biome check (lint + format + import sort). |
+| `npm run lint:fix` | Biome check with safe autofixes applied. |
 | `npm run typecheck` | `tsc --noEmit`. |
-| `npm run format` | Prettier write over `src`/`tests`. |
+| `npm run format` | Biome format write. |
 
 ## Repo layout
 

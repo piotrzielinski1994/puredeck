@@ -35,8 +35,9 @@ afterEach(() => {
 
 describe("createTauriSettingsStore keymap split (AC-009)", () => {
   it("should write shortcuts to keymap.json and the rest to settings.json", async () => {
-    const { createTauriSettingsStore } =
-      await import("@/lib/settings/tauri-store");
+    const { createTauriSettingsStore } = await import(
+      "@/lib/settings/tauri-store"
+    );
     const { DEFAULT_SETTINGS } = await import("@/lib/settings/settings");
     const store = createTauriSettingsStore();
 
@@ -55,8 +56,9 @@ describe("createTauriSettingsStore keymap split (AC-009)", () => {
   });
 
   it("should re-merge shortcuts from keymap.json back into the loaded Settings", async () => {
-    const { createTauriSettingsStore } =
-      await import("@/lib/settings/tauri-store");
+    const { createTauriSettingsStore } = await import(
+      "@/lib/settings/tauri-store"
+    );
     const { DEFAULT_SETTINGS } = await import("@/lib/settings/settings");
     const store = createTauriSettingsStore();
 

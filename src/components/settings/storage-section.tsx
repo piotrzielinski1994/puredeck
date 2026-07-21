@@ -1,7 +1,7 @@
 import { open } from "@tauri-apps/plugin-dialog";
-import { useSettings } from "@/lib/settings/settings-context";
-import { useIsMobile } from "@/lib/responsive/use-is-mobile";
 import { GoogleDriveSection } from "@/components/settings/google-drive-section";
+import { useIsMobile } from "@/lib/responsive/use-is-mobile";
+import { useSettings } from "@/lib/settings/settings-context";
 import { cn } from "@/lib/utils";
 
 export function StorageSection() {
@@ -59,8 +59,8 @@ export function StorageSection() {
         )}
         {!isMobile && (
           <p className="text-sm text-muted-foreground">
-            Decks reload from the new folder right away. An empty folder gets one
-            demo deck.
+            Decks reload from the new folder right away. An empty folder gets
+            one demo deck.
           </p>
         )}
         <GoogleDriveSection />

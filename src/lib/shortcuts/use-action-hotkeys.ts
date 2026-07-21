@@ -1,10 +1,10 @@
-import { useContext } from "react";
-import { useHotkeys, type UseHotkeyDefinition } from "@tanstack/react-hotkeys";
 import type { Hotkey } from "@tanstack/hotkeys";
-import { SettingsContext } from "@/lib/settings/settings-context";
+import { type UseHotkeyDefinition, useHotkeys } from "@tanstack/react-hotkeys";
+import { useContext } from "react";
 import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
-import { resolveShortcuts } from "@/lib/shortcuts/resolve";
+import { SettingsContext } from "@/lib/settings/settings-context";
 import type { ShortcutActionId } from "@/lib/shortcuts/registry";
+import { resolveShortcuts } from "@/lib/shortcuts/resolve";
 
 export function useActionHotkeys(
   handlers: Partial<Record<ShortcutActionId, () => void>>,

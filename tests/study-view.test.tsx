@@ -1,14 +1,14 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { StudyView } from "@/components/workspace/study-view";
-import type { Deck } from "@/lib/workspace/model";
 import {
-  newCard,
-  Rating,
   type Card as FsrsCard,
   type Grade,
+  newCard,
+  Rating,
   type ReviewMap,
 } from "@/lib/study/fsrs";
+import type { Deck } from "@/lib/workspace/model";
 
 const NOW = new Date("2026-07-19T12:00:00Z");
 const SAME_DAY_DUE = new Date("2026-07-19T12:06:00Z");
