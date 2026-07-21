@@ -1,6 +1,5 @@
-import { afterEach, describe, expect, it } from "vitest";
 import { render, waitFor } from "@testing-library/react";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it } from "vitest";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
@@ -8,6 +7,7 @@ import {
   type ThemeColors,
   type ThemeMode,
 } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 
 type MediaListener = (event: { matches: boolean }) => void;

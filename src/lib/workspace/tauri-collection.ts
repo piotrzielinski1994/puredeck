@@ -1,3 +1,4 @@
+import { appDataDir, join } from "@tauri-apps/api/path";
 import {
   exists,
   mkdir,
@@ -6,15 +7,14 @@ import {
   remove as removeFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
-import { appDataDir, join } from "@tauri-apps/api/path";
-import type { Deck } from "@/lib/workspace/model";
 import {
+  type CollectionStore,
   parseDeck,
   seedFileMap,
   serializeDeck,
-  type CollectionStore,
 } from "@/lib/workspace/collection";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
+import type { Deck } from "@/lib/workspace/model";
 import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 const COLLECTION_DIR = "collections";

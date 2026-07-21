@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
-  parseDeck,
-  serializeDeck,
-  seedFileMap,
   type CollectionStore,
+  parseDeck,
+  seedFileMap,
+  serializeDeck,
 } from "@/lib/workspace/collection";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
-import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
+import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 const deckA: Deck = {
   id: "a",

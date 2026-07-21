@@ -41,20 +41,14 @@ function diffMap<K extends string>(
   defaults: Partial<Record<K, string>>,
   known: Set<string>,
 ): Partial<Record<K, string>> {
-  return Object.entries(edited).reduce<Partial<Record<K, string>>>(
-    (acc, [key, value]) => {
-      const name = key as K;
-      if (
-        !known.has(key) ||
-        typeof value !== "string" ||
-        sameColor(value, defaults[name])
-      ) {
-        return acc;
-      }
-      return { ...acc, [name]: value };
-    },
-    {},
-  );
+  return Object.fromEntries(
+    Object.entries(edited).filter(
+      (entry): entry is [K, string] =>
+        known.has(entry[0]) &&
+        typeof entry[1] === "string" &&
+        !sameColor(entry[1], defaults[entry[0] as K]),
+    ),
+  ) as Partial<Record<K, string>>;
 }
 
 function diffSection(
@@ -62,7 +56,11 @@ function diffSection(
   defaults: ThemeColorOverrides,
 ): ThemeColorOverrides {
   return {
-    tokens: diffMap<AppTokenName>(edited.tokens, defaults.tokens, APP_TOKEN_SET),
+    tokens: diffMap<AppTokenName>(
+      edited.tokens,
+      defaults.tokens,
+      APP_TOKEN_SET,
+    ),
     editor: diffMap<EditorTokenName>(
       edited.editor,
       defaults.editor,

@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { default_w } from "ts-fsrs";
+import { describe, expect, it } from "vitest";
 import {
   createScheduler,
   gradeReview,

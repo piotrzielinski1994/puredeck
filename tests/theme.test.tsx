@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, it } from "vitest";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it } from "vitest";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { DEFAULT_SETTINGS, type ThemeMode } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { ThemeProvider, useTheme } from "@/lib/theme/theme-context";
 
 type MediaListener = (event: { matches: boolean }) => void;
@@ -33,7 +33,9 @@ function stubMatchMedia(initialMatches: boolean) {
   return {
     setPrefersDark(matches: boolean) {
       mql.matches = matches;
-      listeners.forEach((listener) => listener({ matches }));
+      listeners.forEach((listener) => {
+        listener({ matches });
+      });
     },
   };
 }

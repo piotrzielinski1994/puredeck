@@ -1,17 +1,17 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SettingsProvider } from "@/lib/settings/settings-context";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  WorkspaceProvider,
   useWorkspace,
+  WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
-import { serializeDeck } from "@/lib/workspace/collection";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import { Rating } from "@/lib/study/fsrs";
 import { createInMemoryReviewStore } from "@/lib/study/in-memory-review-store";
 import { createInMemoryRevlogStore } from "@/lib/study/in-memory-revlog-store";
-import { Rating } from "@/lib/study/fsrs";
+import { serializeDeck } from "@/lib/workspace/collection";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
 
 const deck: Deck = {

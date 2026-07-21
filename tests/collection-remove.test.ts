@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { serializeDeck, type CollectionStore } from "@/lib/workspace/collection";
+import {
+  type CollectionStore,
+  serializeDeck,
+} from "@/lib/workspace/collection";
 import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
 

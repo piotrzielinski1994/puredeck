@@ -1,4 +1,3 @@
-import { afterEach, describe, expect, it } from "vitest";
 import {
   cleanup,
   render,
@@ -7,19 +6,20 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it } from "vitest";
+import { ToastProvider } from "@/components/ui/toast";
+import { DeleteDeckDialog } from "@/components/workspace/delete-deck-dialog";
+import {
+  useWorkspace,
+  WorkspaceProvider,
+} from "@/components/workspace/workspace-context";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
-import { ToastProvider } from "@/components/ui/toast";
-import {
-  WorkspaceProvider,
-  useWorkspace,
-} from "@/components/workspace/workspace-context";
-import { DeleteDeckDialog } from "@/components/workspace/delete-deck-dialog";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createInMemoryReviewStore } from "@/lib/study/in-memory-review-store";
 import { createInMemoryRevlogStore } from "@/lib/study/in-memory-revlog-store";
 import { serializeDeck } from "@/lib/workspace/collection";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
 
 type DeleteSurface = ReturnType<typeof useWorkspace> & {
@@ -109,9 +109,7 @@ describe("DeleteDeckDialog (AC-007 / TC-005 / TC-006)", () => {
     await screen.findByText('Delete "Capitals"?');
 
     const dialog = screen.getByRole("dialog");
-    await user.click(
-      within(dialog).getByRole("button", { name: /^delete$/i }),
-    );
+    await user.click(within(dialog).getByRole("button", { name: /^delete$/i }));
 
     await waitFor(() =>
       expect(screen.queryByText("Capitals")).not.toBeInTheDocument(),
@@ -132,9 +130,7 @@ describe("DeleteDeckDialog (AC-007 / TC-005 / TC-006)", () => {
     await screen.findByText('Delete "Capitals"?');
 
     const dialog = screen.getByRole("dialog");
-    await user.click(
-      within(dialog).getByRole("button", { name: /cancel/i }),
-    );
+    await user.click(within(dialog).getByRole("button", { name: /cancel/i }));
 
     await waitFor(() =>
       expect(screen.queryByText('Delete "Capitals"?')).not.toBeInTheDocument(),

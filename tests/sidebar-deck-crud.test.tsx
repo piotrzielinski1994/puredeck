@@ -1,4 +1,3 @@
-import { afterEach, describe, expect, it } from "vitest";
 import {
   cleanup,
   fireEvent,
@@ -7,19 +6,20 @@ import {
   waitFor,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it } from "vitest";
+import { ToastProvider } from "@/components/ui/toast";
+import { Sidebar } from "@/components/workspace/sidebar";
+import {
+  useWorkspace,
+  WorkspaceProvider,
+} from "@/components/workspace/workspace-context";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { DEFAULT_SETTINGS } from "@/lib/settings/settings";
-import { ToastProvider } from "@/components/ui/toast";
-import {
-  WorkspaceProvider,
-  useWorkspace,
-} from "@/components/workspace/workspace-context";
-import { Sidebar } from "@/components/workspace/sidebar";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createInMemoryReviewStore } from "@/lib/study/in-memory-review-store";
 import { createInMemoryRevlogStore } from "@/lib/study/in-memory-revlog-store";
 import { serializeDeck } from "@/lib/workspace/collection";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
 
 const deckSpanish: Deck = {
@@ -77,7 +77,9 @@ describe("Sidebar New deck via deck-list context menu (AC-001 / TC-001)", () => 
     await screen.findByText("Spanish");
 
     fireEvent.contextMenu(screen.getByRole("navigation", { name: /decks/i }));
-    await user.click(await screen.findByRole("menuitem", { name: /new deck/i }));
+    await user.click(
+      await screen.findByRole("menuitem", { name: /new deck/i }),
+    );
 
     expect(await screen.findByDisplayValue("New Deck")).toBeInTheDocument();
   });

@@ -5,9 +5,9 @@ import {
   type ShortcutOverrides,
 } from "@/lib/shortcuts/registry";
 import {
-  safeNormalize,
-  resolveShortcuts,
   findConflict,
+  resolveShortcuts,
+  safeNormalize,
 } from "@/lib/shortcuts/resolve";
 
 const EXPECTED: Record<ShortcutActionId, string> = {

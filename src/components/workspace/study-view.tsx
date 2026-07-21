@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
-import type { Card, Deck } from "@/lib/workspace/model";
 import {
-  Rating,
   type Card as FsrsCard,
   type Grade,
+  Rating,
   type ReviewMap,
 } from "@/lib/study/fsrs";
 import { buildStudyQueue, nowDate } from "@/lib/study/queue";
+import type { Card, Deck } from "@/lib/workspace/model";
 
 const GRADES = [
   ["Again", Rating.Again],

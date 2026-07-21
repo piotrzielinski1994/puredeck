@@ -1,17 +1,16 @@
-import { afterEach, describe, it, expect, vi } from "vitest";
+import { formatForDisplay } from "@tanstack/hotkeys";
+import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { HotkeysProvider } from "@tanstack/react-hotkeys";
-import { formatForDisplay } from "@tanstack/hotkeys";
-
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { ShortcutsSection } from "@/components/settings/shortcuts-section";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
   type Settings,
   type SettingsStore,
 } from "@/lib/settings/settings";
-import { ShortcutsSection } from "@/components/settings/shortcuts-section";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import {
   SHORTCUT_ACTIONS,
   type ShortcutOverrides,
@@ -34,8 +33,16 @@ function renderSection(overrides: ShortcutOverrides = {}) {
   return { ...result, saveSpy };
 }
 
-const SIDEBAR = SHORTCUT_ACTIONS.find((a) => a.id === "toggle-sidebar")!;
-const PALETTE = SHORTCUT_ACTIONS.find((a) => a.id === "open-command-palette")!;
+function actionById(id: string): (typeof SHORTCUT_ACTIONS)[number] {
+  const action = SHORTCUT_ACTIONS.find((a) => a.id === id);
+  if (!action) {
+    throw new Error(`shortcut action not found: ${id}`);
+  }
+  return action;
+}
+
+const SIDEBAR = actionById("toggle-sidebar");
+const PALETTE = actionById("open-command-palette");
 
 afterEach(() => {
   cleanup();
@@ -95,7 +102,7 @@ describe("ShortcutsSection add (AC-004 / TC-010)", () => {
     await waitFor(() => {
       expect(saveSpy).toHaveBeenCalled();
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts["toggle-sidebar"]).toEqual(["Mod+B", "Mod+Y"]);
   });
 
@@ -143,7 +150,7 @@ describe("ShortcutsSection remove/disable (AC-004 / TC-011 / TC-012)", () => {
     await waitFor(() => {
       expect(saveSpy).toHaveBeenCalled();
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts["toggle-sidebar"]).toEqual(["Mod+B"]);
   });
 
@@ -171,7 +178,7 @@ describe("ShortcutsSection remove/disable (AC-004 / TC-011 / TC-012)", () => {
     await waitFor(() => {
       expect(saveSpy).toHaveBeenCalled();
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts["toggle-sidebar"]).toEqual([]);
   });
 });
@@ -211,7 +218,7 @@ describe("ShortcutsSection reset (AC-004 / TC-013)", () => {
     await waitFor(() => {
       expect(saveSpy).toHaveBeenCalled();
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts).not.toHaveProperty("toggle-sidebar");
 
     expect(
@@ -285,7 +292,7 @@ describe("ShortcutsSection edit/replace (AC-004 / AC-006 / TC-015)", () => {
     await waitFor(() => {
       expect(saveSpy).toHaveBeenCalled();
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts["toggle-sidebar"]).toEqual(["Mod+Y", "Mod+G"]);
   });
 

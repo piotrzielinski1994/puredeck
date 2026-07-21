@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
-import { useWorkspace } from "@/components/workspace/workspace-context";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { useWorkspace } from "@/components/workspace/workspace-context";
+import { cn } from "@/lib/utils";
 import type { Deck } from "@/lib/workspace/model";
 
 function RenameInput({
@@ -186,7 +186,9 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
             )}
           </nav>
         </ContextMenuTrigger>
-        <ContextMenuContent onCloseAutoFocus={(event) => event.preventDefault()}>
+        <ContextMenuContent
+          onCloseAutoFocus={(event) => event.preventDefault()}
+        >
           <ContextMenuItem onSelect={() => createDeck()}>
             New deck
           </ContextMenuItem>

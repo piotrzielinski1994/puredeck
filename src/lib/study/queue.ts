@@ -1,5 +1,5 @@
-import type { Card, Deck } from "@/lib/workspace/model";
 import type { Card as FsrsCard, ReviewMap } from "@/lib/study/fsrs";
+import type { Card, Deck } from "@/lib/workspace/model";
 
 export function nowDate(): Date {
   return new Date();

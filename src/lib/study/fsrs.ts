@@ -1,21 +1,21 @@
 import {
-  createEmptyCard,
-  fsrs,
-  generatorParameters,
-  GenSeedStrategyWithCardId,
-  Rating,
-  State,
-  StrategyMode,
-  default_w,
   type Card,
+  createEmptyCard,
+  default_w,
   type FSRS,
+  fsrs,
+  GenSeedStrategyWithCardId,
   type Grade,
+  generatorParameters,
+  Rating,
   type RecordLogItem,
   type ReviewLog,
+  State,
+  StrategyMode,
 } from "ts-fsrs";
 
-export { Rating, State };
 export type { Card, Grade, ReviewLog };
+export { Rating, State };
 export type ReviewMap = Record<string, Card>;
 
 const REQUEST_RETENTION = 0.9;

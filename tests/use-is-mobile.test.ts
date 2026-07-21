@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it } from "vitest";
 import { act, renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { useIsMobile } from "@/lib/responsive/use-is-mobile";
 
 type MediaListener = (event: { matches: boolean }) => void;
@@ -29,7 +29,9 @@ function stubMatchMedia(initialMatches: boolean) {
   return {
     setMatches(matches: boolean) {
       mql.matches = matches;
-      listeners.forEach((listener) => listener({ matches }));
+      listeners.forEach((listener) => {
+        listener({ matches });
+      });
     },
   };
 }

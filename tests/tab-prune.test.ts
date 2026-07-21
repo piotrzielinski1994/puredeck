@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  SETTINGS_TAB_ID,
   pruneTabsToDecks,
+  SETTINGS_TAB_ID,
   studyTabId,
 } from "@/lib/workspace/model";
 
@@ -26,9 +26,9 @@ describe("pruneTabsToDecks (AC-007 / E-6)", () => {
     const kept = studyTabId("spanish");
     const gone = studyTabId("verbs");
 
-    expect(
-      pruneTabsToDecks([kept, gone], new Set(["spanish"])),
-    ).toEqual([kept]);
+    expect(pruneTabsToDecks([kept, gone], new Set(["spanish"]))).toEqual([
+      kept,
+    ]);
   });
 
   it("should preserve the original order of the kept tabs", () => {

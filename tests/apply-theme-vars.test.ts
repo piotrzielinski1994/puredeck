@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { applyThemeVars } from "@/lib/theme/apply-vars";
 import type { ThemeColorOverrides } from "@/lib/settings/settings";
+import { applyThemeVars } from "@/lib/theme/apply-vars";
 
 const tokens = (
   partial: ThemeColorOverrides["tokens"],

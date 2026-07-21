@@ -1,17 +1,24 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { EditorView, runScopeHandlers } from "@codemirror/view";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
+import { ThemeSection } from "@/components/settings/theme-section";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
   type Settings,
   type ThemeColors,
 } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import { applyDefaults } from "@/lib/theme/overrides";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 import { DEFAULT_THEME_COLORS } from "@/lib/theme/theme-defaults";
-import { applyDefaults } from "@/lib/theme/overrides";
-import { ThemeSection } from "@/components/settings/theme-section";
 
 function stubMatchMedia(matches = false) {
   window.matchMedia = ((query: string) => {
@@ -29,7 +36,7 @@ function stubMatchMedia(matches = false) {
   }) as unknown as typeof window.matchMedia;
 }
 
-function liveDoc(): string {
+function liveView(): EditorView {
   const el = document.querySelector<HTMLElement>(".cm-editor");
   if (!el) {
     throw new Error(".cm-editor not found");
@@ -38,13 +45,15 @@ function liveDoc(): string {
   if (!view) {
     throw new Error("live EditorView not found");
   }
-  return view.state.doc.toString();
+  return view;
+}
+
+function liveDoc(): string {
+  return liveView().state.doc.toString();
 }
 
 async function setDoc(text: string) {
-  const view = EditorView.findFromDOM(
-    document.querySelector<HTMLElement>(".cm-editor")!,
-  )!;
+  const view = liveView();
   await act(async () => {
     view.dispatch({
       changes: { from: 0, to: view.state.doc.length, insert: text },
@@ -53,9 +62,7 @@ async function setDoc(text: string) {
 }
 
 async function pressModS() {
-  const view = EditorView.findFromDOM(
-    document.querySelector<HTMLElement>(".cm-editor")!,
-  )!;
+  const view = liveView();
   await act(async () => {
     runScopeHandlers(
       view,
@@ -167,7 +174,7 @@ describe("ThemeSection color editor (AC-009 / AC-010 / TC-012 / TC-013)", () => 
     await waitFor(() => {
       expect(saved.length).toBeGreaterThan(0);
     });
-    const persisted = saved.at(-1)!.theme.colors;
+    const persisted = saved[saved.length - 1].theme.colors;
     expect(persisted.light.tokens.primary).toBe("oklch(0.55 0.22 27)");
     expect(persisted.light.tokens.background).toBeUndefined();
     expect(persisted.dark.tokens).toEqual({});
@@ -197,7 +204,7 @@ describe("ThemeSection color editor (AC-009 / AC-010 / TC-012 / TC-013)", () => 
     await waitFor(() => {
       expect(saved.length).toBeGreaterThan(0);
     });
-    const persisted = saved.at(-1)!.theme.colors;
+    const persisted = saved[saved.length - 1].theme.colors;
     expect(persisted.light.tokens.primary).toBe("oklch(0.55 0.22 27)");
     expect(persisted.light.tokens.background).toBeUndefined();
   });
@@ -235,7 +242,9 @@ describe("ThemeSection color editor (AC-009 / AC-010 / TC-012 / TC-013)", () => 
     await waitFor(() => {
       expect(saved.length).toBeGreaterThan(0);
     });
-    expect(saved.at(-1)!.theme.colors.light.tokens.primary).toBeUndefined();
+    expect(
+      saved[saved.length - 1].theme.colors.light.tokens.primary,
+    ).toBeUndefined();
   });
 
   it("should disable Save if the editor holds invalid JSON", async () => {

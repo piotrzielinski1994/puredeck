@@ -1,22 +1,22 @@
-import { useMemo, useState } from "react";
-import CodeMirror from "@uiw/react-codemirror";
-import { keymap } from "@codemirror/view";
 import { Prec } from "@codemirror/state";
-import { cn } from "@/lib/utils";
+import { keymap } from "@codemirror/view";
+import CodeMirror from "@uiw/react-codemirror";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/lib/theme/theme-context";
-import { useSettings } from "@/lib/settings/settings-context";
 import type {
   ThemeColorOverrides,
   ThemeColors,
   ThemeMode,
 } from "@/lib/settings/settings";
-import { DEFAULT_THEME_COLORS } from "@/lib/theme/theme-defaults";
-import { applyDefaults, diffOverrides } from "@/lib/theme/overrides";
+import { useSettings } from "@/lib/settings/settings-context";
 import {
-  makeJsonEditorExtensions,
   type EditorColors,
+  makeJsonEditorExtensions,
 } from "@/lib/theme/editor-theme";
+import { applyDefaults, diffOverrides } from "@/lib/theme/overrides";
+import { useTheme } from "@/lib/theme/theme-context";
+import { DEFAULT_THEME_COLORS } from "@/lib/theme/theme-defaults";
+import { cn } from "@/lib/utils";
 
 const MODES: { id: ThemeMode; label: string }[] = [
   { id: "light", label: "Light" },
@@ -142,8 +142,8 @@ export function ThemeSection() {
         ))}
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
-        Customize colors per mode. Edit a value to override it, or set it back to
-        the default to clear the override, then Save.
+        Customize colors per mode. Edit a value to override it, or set it back
+        to the default to clear the override, then Save.
       </p>
       <ColorEditor />
     </section>

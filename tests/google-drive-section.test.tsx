@@ -1,18 +1,18 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { GoogleDriveSection } from "@/components/settings/google-drive-section";
+import { StorageSection } from "@/components/settings/storage-section";
+import type { GoogleAuth } from "@/lib/google/google-auth";
+import { createInMemoryGoogleAuth } from "@/lib/google/in-memory-google-auth";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
   type Settings,
   type SettingsStore,
 } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
-import { createInMemoryGoogleAuth } from "@/lib/google/in-memory-google-auth";
-import type { GoogleAuth } from "@/lib/google/google-auth";
-import { GoogleDriveSection } from "@/components/settings/google-drive-section";
-import { StorageSection } from "@/components/settings/storage-section";
 
 const mocks = vi.hoisted(() => ({ open: vi.fn(), isMobile: false }));
 
@@ -94,9 +94,13 @@ describe("GoogleDriveSection connect success (AC-003 / AC-004)", () => {
     });
     renderSection(auth, store);
 
-    await user.click(await screen.findByRole("button", { name: /connect google drive/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /connect google drive/i }),
+    );
 
-    expect(await screen.findByText(new RegExp(`connected as ${EMAIL}`, "i"))).toBeInTheDocument();
+    expect(
+      await screen.findByText(new RegExp(`connected as ${EMAIL}`, "i")),
+    ).toBeInTheDocument();
     expect(disconnectButton()).toBeInTheDocument();
     expect(connectButton()).not.toBeInTheDocument();
     expect((await store.load()).googleAccount).toEqual({ email: EMAIL });
@@ -110,7 +114,9 @@ describe("GoogleDriveSection disconnect (AC-005)", () => {
     const auth = createInMemoryGoogleAuth({ account: { email: EMAIL } });
     renderSection(auth, store);
 
-    await user.click(await screen.findByRole("button", { name: /disconnect/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /disconnect/i }),
+    );
 
     expect(await screen.findByText(/not connected/i)).toBeInTheDocument();
     expect(connectButton()).toBeInTheDocument();
@@ -125,14 +131,19 @@ describe("GoogleDriveSection restore on mount (AC-006)", () => {
       makeStore({ email: EMAIL }),
     );
 
-    expect(await screen.findByText(new RegExp(`connected as ${EMAIL}`, "i"))).toBeInTheDocument();
+    expect(
+      await screen.findByText(new RegExp(`connected as ${EMAIL}`, "i")),
+    ).toBeInTheDocument();
     expect(disconnectButton()).toBeInTheDocument();
     expect(connectButton()).not.toBeInTheDocument();
   });
 
   it("should cache the account once if status finds a connection while the cache is empty", async () => {
     const store = makeStore();
-    renderSection(createInMemoryGoogleAuth({ account: { email: EMAIL } }), store);
+    renderSection(
+      createInMemoryGoogleAuth({ account: { email: EMAIL } }),
+      store,
+    );
 
     await screen.findByText(new RegExp(`connected as ${EMAIL}`, "i"));
 
@@ -181,7 +192,9 @@ describe("GoogleDriveSection connect failure (AC-007)", () => {
     });
     renderSection(auth, store);
 
-    await user.click(await screen.findByRole("button", { name: /connect google drive/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /connect google drive/i }),
+    );
 
     expect(await screen.findByText(/couldn't connect/i)).toBeInTheDocument();
     expect(screen.getByText(/not connected/i)).toBeInTheDocument();
@@ -199,7 +212,9 @@ describe("GoogleDriveSection unconfigured (AC-011)", () => {
     });
     renderSection(auth, makeStore());
 
-    await user.click(await screen.findByRole("button", { name: /connect google drive/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /connect google drive/i }),
+    );
 
     expect(await screen.findByText(/isn't configured/i)).toBeInTheDocument();
     expect(connectButton()).toBeInTheDocument();
@@ -216,7 +231,9 @@ describe("GoogleDriveSection secret hygiene (AC-009 frontend)", () => {
     });
     renderSection(auth, store);
 
-    await user.click(await screen.findByRole("button", { name: /connect google drive/i }));
+    await user.click(
+      await screen.findByRole("button", { name: /connect google drive/i }),
+    );
 
     await screen.findByText(new RegExp(`connected as ${EMAIL}`, "i"));
     const persisted = (await store.load()).googleAccount;

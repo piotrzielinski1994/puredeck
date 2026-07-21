@@ -166,18 +166,21 @@ function mergeLayouts(
   if (!isRecord(persisted)) {
     return base;
   }
-  return GROUP_KEYS.reduce<Settings["layouts"]>((acc, key) => {
-    const group = persisted[key];
-    if (!isRecord(group)) {
-      return acc;
-    }
-    const sizes = Object.entries(group).filter(
-      (entry): entry is [string, number] => typeof entry[1] === "number",
-    );
-    return sizes.length > 0
-      ? { ...acc, [key]: Object.fromEntries(sizes) }
-      : acc;
-  }, base);
+  const parsed = Object.fromEntries(
+    GROUP_KEYS.flatMap((key) => {
+      const group = persisted[key];
+      if (!isRecord(group)) {
+        return [];
+      }
+      const sizes = Object.entries(group).filter(
+        (entry): entry is [string, number] => typeof entry[1] === "number",
+      );
+      return sizes.length > 0
+        ? [[key, Object.fromEntries(sizes)] as const]
+        : [];
+    }),
+  );
+  return { ...base, ...parsed };
 }
 
 function mergeTokenMap<K extends string>(
@@ -187,15 +190,12 @@ function mergeTokenMap<K extends string>(
   if (!isRecord(value)) {
     return {};
   }
-  return Object.entries(value).reduce<Partial<Record<K, string>>>(
-    (acc, [key, val]) => {
-      if (!known.has(key) || typeof val !== "string") {
-        return acc;
-      }
-      return { ...acc, [key]: val };
-    },
-    {},
-  );
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      (entry): entry is [K, string] =>
+        known.has(entry[0]) && typeof entry[1] === "string",
+    ),
+  ) as Partial<Record<K, string>>;
 }
 
 function mergeOverrides(value: unknown): ThemeColorOverrides {
@@ -252,17 +252,14 @@ function mergeShortcuts(persisted: unknown): ShortcutOverrides {
   if (!isRecord(persisted)) {
     return {};
   }
-  return Object.entries(persisted).reduce<ShortcutOverrides>(
-    (acc, [id, value]) => {
+  return Object.fromEntries(
+    Object.entries(persisted).flatMap(([id, value]) => {
       if (!ACTION_IDS.has(id)) {
-        return acc;
+        return [];
       }
       const merged = mergeShortcutValue(value);
-      return merged === null
-        ? acc
-        : { ...acc, [id as ShortcutActionId]: merged };
-    },
-    {},
+      return merged === null ? [] : [[id as ShortcutActionId, merged] as const];
+    }),
   );
 }
 

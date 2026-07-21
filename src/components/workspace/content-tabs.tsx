@@ -1,26 +1,26 @@
-import { Plus, X } from "lucide-react";
 import {
+  closestCenter,
   DndContext,
+  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
-  closestCenter,
   useSensor,
   useSensors,
-  type DragEndEvent,
 } from "@dnd-kit/core";
 import {
-  SortableContext,
   arrayMove,
   horizontalListSortingStrategy,
+  SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { cn } from "@/lib/utils";
+import { Plus, X } from "lucide-react";
 import {
-  useWorkspace,
   type Tab,
+  useWorkspace,
 } from "@/components/workspace/workspace-context";
+import { cn } from "@/lib/utils";
 
 function SortableTab({
   tab,
@@ -49,8 +49,15 @@ function SortableTab({
       {...attributes}
       {...listeners}
       role="tab"
+      tabIndex={0}
       aria-selected={isActive}
       onClick={onActivate}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onActivate();
+        }
+      }}
       className={cn(
         "group flex h-full cursor-grab touch-none items-center gap-1.5 border-r px-3 text-sm hover:bg-accent active:cursor-grabbing",
         isDragging && "opacity-50",

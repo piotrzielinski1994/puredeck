@@ -1,22 +1,22 @@
-import { afterEach, describe, expect, it } from "vitest";
 import {
   cleanup,
+  type RenderResult,
   render,
   screen,
   waitFor,
   within,
-  type RenderResult,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
+import { afterEach, describe, expect, it } from "vitest";
 import { AppProviders } from "@/app/providers";
-import { SettingsProvider } from "@/lib/settings/settings-context";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
-import { DEFAULT_SETTINGS, type Settings } from "@/lib/settings/settings";
-import { ThemeProvider } from "@/lib/theme/theme-context";
 import { WorkspaceProvider } from "@/components/workspace/workspace-context";
 import { WorkspaceLayout } from "@/components/workspace/workspace-layout";
 import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { DEFAULT_SETTINGS, type Settings } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
+import { ThemeProvider } from "@/lib/theme/theme-context";
 import { DEMO_DECKS } from "@/lib/workspace/demo-data";
 import { studyTabId } from "@/lib/workspace/model";
 

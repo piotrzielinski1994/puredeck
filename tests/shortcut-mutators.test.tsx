@@ -1,14 +1,13 @@
-import { afterEach, describe, it, expect, vi } from "vitest";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
-import { SettingsProvider, useSettings } from "@/lib/settings/settings-context";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
   type Settings,
   type SettingsStore,
 } from "@/lib/settings/settings";
+import { SettingsProvider, useSettings } from "@/lib/settings/settings-context";
 
 function ShortcutProbe() {
   const {
@@ -137,7 +136,7 @@ describe("SettingsProvider shortcut mutators (AC-006 / TC-016)", () => {
     await waitFor(() => {
       expect(saveSpy).toHaveBeenCalled();
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts["toggle-sidebar"]).toEqual(["Mod+B", "Mod+K"]);
   });
 
@@ -218,7 +217,7 @@ describe("SettingsProvider shortcut mutators (AC-006 / TC-016)", () => {
         JSON.stringify([]),
       );
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts["toggle-sidebar"]).toEqual([]);
   });
 
@@ -318,7 +317,7 @@ describe("SettingsProvider shortcut mutators (AC-006 / TC-016)", () => {
     await waitFor(() => {
       expect(saveSpy).toHaveBeenCalled();
     });
-    const persisted = saveSpy.mock.calls.at(-1)![0];
+    const persisted = saveSpy.mock.calls[saveSpy.mock.calls.length - 1][0];
     expect(persisted.shortcuts).not.toHaveProperty("toggle-sidebar");
   });
 });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import { createCollectionStore } from "@/lib/workspace/collection-store-factory";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
 
 function names(decks: Deck[]): string[] {

@@ -1,13 +1,13 @@
-import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { SettingsProvider } from "@/lib/settings/settings-context";
-import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { afterEach, describe, expect, it } from "vitest";
 import {
-  WorkspaceProvider,
   useWorkspace,
+  WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { serializeDeck } from "@/lib/workspace/collection";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import type { Deck } from "@/lib/workspace/model";
 
 const deckA: Deck = {

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import {
   act,
   cleanup,
@@ -7,20 +7,20 @@ import {
   screen,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { HotkeysProvider } from "@tanstack/react-hotkeys";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ToastProvider } from "@/components/ui/toast";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { Main } from "@/components/workspace/main";
+import { WorkspaceProvider } from "@/components/workspace/workspace-context";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { DEFAULT_SETTINGS, type Settings } from "@/lib/settings/settings";
+import { SettingsProvider } from "@/lib/settings/settings-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
-import { WorkspaceProvider } from "@/components/workspace/workspace-context";
-import { Main } from "@/components/workspace/main";
-import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 import {
-  serializeDeck,
   type CollectionStore,
+  serializeDeck,
 } from "@/lib/workspace/collection";
-import { SETTINGS_TAB_ID, type Deck } from "@/lib/workspace/model";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
+import { type Deck, SETTINGS_TAB_ID } from "@/lib/workspace/model";
 
 const deck: Deck = {
   id: "a",
