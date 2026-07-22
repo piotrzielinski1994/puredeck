@@ -1,7 +1,7 @@
+import { CommandPalette } from "@pziel/pureui";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { CommandPalette } from "@/components/command-palette";
 
 afterEach(() => {
   cleanup();
@@ -17,7 +17,7 @@ describe("command palette", () => {
       <CommandPalette
         open={true}
         onOpenChange={onOpenChange}
-        commands={[{ id: "open-settings", name: "Open Settings", run }]}
+        commands={[{ key: "open-settings", name: "Open Settings", run }]}
       />,
     );
 

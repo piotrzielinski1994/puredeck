@@ -1,6 +1,6 @@
+import { CommandPalette } from "@pziel/pureui";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { useState } from "react";
-import { CommandPalette } from "@/components/command-palette";
 import { ToastProvider } from "@/components/ui/toast";
 import { DeleteDeckDialog } from "@/components/workspace/delete-deck-dialog";
 import {
@@ -29,7 +29,7 @@ function ShellPalette() {
   });
 
   const deckCommands = decks.map((deck) => ({
-    id: `open-deck-${deck.id}`,
+    key: `open-deck-${deck.id}`,
     name: `Open deck: ${deck.name}`,
     run: () => openDeck(deck.id),
   }));
@@ -39,16 +39,16 @@ function ShellPalette() {
       open={isPaletteOpen}
       onOpenChange={setIsPaletteOpen}
       commands={[
-        { id: "new-deck", name: "New deck", run: () => createDeck() },
-        { id: "open-settings", name: "Open Settings", run: openSettings },
+        { key: "new-deck", name: "New deck", run: () => createDeck() },
+        { key: "open-settings", name: "Open Settings", run: openSettings },
         ...decks.map((deck) => ({
-          id: `study-${deck.id}`,
+          key: `study-${deck.id}`,
           name: `Study: ${deck.name}`,
           run: () => openStudy(deck.id),
         })),
         ...deckCommands,
         ...decks.map((deck) => ({
-          id: `delete-deck-${deck.id}`,
+          key: `delete-deck-${deck.id}`,
           name: `Delete deck: ${deck.name}`,
           run: () => requestDeleteDeck(deck.id),
         })),
