@@ -15,12 +15,12 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@pziel/pureui";
 import { Plus, X } from "lucide-react";
 import {
   type Tab,
   useWorkspace,
 } from "@/components/workspace/workspace-context";
-import { cn } from "@/lib/utils";
 
 function SortableTab({
   tab,

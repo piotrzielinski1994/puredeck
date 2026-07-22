@@ -1,7 +1,6 @@
+import { cn } from "@pziel/pureui";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import type * as React from "react";
-
-import { cn } from "@/lib/utils";
 
 function ContextMenu({
   ...props
