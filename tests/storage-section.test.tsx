@@ -24,7 +24,8 @@ vi.mock("@tauri-apps/api/core", () => ({
   isTauri: () => true,
   invoke: () => Promise.resolve(null),
 }));
-vi.mock("@/lib/responsive/use-is-mobile", () => ({
+vi.mock("@pziel/pureui", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@pziel/pureui")>()),
   useIsMobile: () => mocks.isMobile,
 }));
 

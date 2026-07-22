@@ -1,7 +1,6 @@
-import { cn } from "@pziel/pureui";
+import { cn, useIsMobile } from "@pziel/pureui";
 import { open } from "@tauri-apps/plugin-dialog";
 import { GoogleDriveSection } from "@/components/settings/google-drive-section";
-import { useIsMobile } from "@/lib/responsive/use-is-mobile";
 import { useSettings } from "@/lib/settings/settings-context";
 
 export function StorageSection() {
