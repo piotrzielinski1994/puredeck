@@ -1,5 +1,6 @@
 import { Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
+import { cn } from "@pziel/pureui";
 import CodeMirror from "@uiw/react-codemirror";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,6 @@ import {
 import { applyDefaults, diffOverrides } from "@/lib/theme/overrides";
 import { useTheme } from "@/lib/theme/theme-context";
 import { DEFAULT_THEME_COLORS } from "@/lib/theme/theme-defaults";
-import { cn } from "@/lib/utils";
 
 const MODES: { id: ThemeMode; label: string }[] = [
   { id: "light", label: "Light" },

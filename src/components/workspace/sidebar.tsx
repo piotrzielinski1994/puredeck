@@ -1,3 +1,4 @@
+import { cn } from "@pziel/pureui";
 import { useEffect, useRef, useState } from "react";
 import {
   ContextMenu,
@@ -6,7 +7,6 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { useWorkspace } from "@/components/workspace/workspace-context";
-import { cn } from "@/lib/utils";
 import type { Deck } from "@/lib/workspace/model";
 
 function RenameInput({

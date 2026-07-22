@@ -1,6 +1,6 @@
+import { cn } from "@pziel/pureui";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import type { Card } from "@/lib/workspace/model";
 
 const CELL = "border-r border-b border-border bg-background";
