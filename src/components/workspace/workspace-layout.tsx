@@ -2,13 +2,13 @@ import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
+  useIsMobile,
 } from "@pziel/pureui";
 import { useRef } from "react";
 import type { GroupImperativeHandle } from "react-resizable-panels";
 import { Main } from "@/components/workspace/main";
 import { MobileShell } from "@/components/workspace/mobile-shell";
 import { Sidebar } from "@/components/workspace/sidebar";
-import { useIsMobile } from "@/lib/responsive/use-is-mobile";
 import { useSettings } from "@/lib/settings/settings-context";
 import { useActionHotkeys } from "@/lib/shortcuts/use-action-hotkeys";
 import {
