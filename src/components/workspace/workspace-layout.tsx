@@ -1,10 +1,10 @@
-import { useRef } from "react";
-import type { GroupImperativeHandle } from "react-resizable-panels";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable";
+} from "@pziel/pureui";
+import { useRef } from "react";
+import type { GroupImperativeHandle } from "react-resizable-panels";
 import { Main } from "@/components/workspace/main";
 import { MobileShell } from "@/components/workspace/mobile-shell";
 import { Sidebar } from "@/components/workspace/sidebar";

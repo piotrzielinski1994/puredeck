@@ -4,7 +4,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from "@pziel/pureui";
 
 export type PaletteCommand = {
   id: string;
