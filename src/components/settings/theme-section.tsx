@@ -1,9 +1,8 @@
 import { Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
-import { cn } from "@pziel/pureui";
+import { Button, cn } from "@pziel/pureui";
 import CodeMirror from "@uiw/react-codemirror";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import type {
   ThemeColorOverrides,
   ThemeColors,
