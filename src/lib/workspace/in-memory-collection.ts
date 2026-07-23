@@ -1,3 +1,4 @@
+import { slugify, uniqueSlug } from "@pziel/pureui";
 import {
   type CollectionStore,
   decksFromFileMap,
@@ -7,7 +8,6 @@ import {
 } from "@/lib/workspace/collection";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
 import type { Deck } from "@/lib/workspace/model";
-import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 export function createInMemoryCollectionStore(
   files: Record<string, string> = {},
