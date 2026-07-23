@@ -1,5 +1,5 @@
+import { slugify, uniqueSlug } from "@pziel/pureui";
 import type { Card, Deck } from "@/lib/workspace/model";
-import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 export type CollectionStore = {
   load: () => Promise<Deck[]>;

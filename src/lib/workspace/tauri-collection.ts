@@ -1,3 +1,4 @@
+import { slugify, uniqueSlug } from "@pziel/pureui";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import {
   exists,
@@ -15,7 +16,6 @@ import {
 } from "@/lib/workspace/collection";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
 import type { Deck } from "@/lib/workspace/model";
-import { slugify, uniqueSlug } from "@/lib/workspace/slug";
 
 const COLLECTION_DIR = "collections";
 
