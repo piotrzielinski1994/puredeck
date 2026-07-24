@@ -1,11 +1,11 @@
-import { cn } from "@pziel/pureui";
-import { useEffect, useRef, useState } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+  cn,
+} from "@pziel/pureui";
+import { useEffect, useRef, useState } from "react";
 import { useWorkspace } from "@/components/workspace/workspace-context";
 import type { Deck } from "@/lib/workspace/model";
 
