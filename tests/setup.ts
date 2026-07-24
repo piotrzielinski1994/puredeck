@@ -1,17 +1,26 @@
 import "@testing-library/jest-dom/vitest";
 
+// A few tests opt into `@vitest-environment node` (build-level guards with no
+// DOM). The DOM stubs below reference jsdom globals, so skip them when there is
+// no document - guarding here keeps those node tests from crashing on import.
+const hasDom = typeof document !== "undefined";
+
 class ResizeObserverStub {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-globalThis.ResizeObserver =
-  ResizeObserverStub as unknown as typeof ResizeObserver;
+if (!("ResizeObserver" in globalThis)) {
+  globalThis.ResizeObserver =
+    ResizeObserverStub as unknown as typeof ResizeObserver;
+}
 
-Element.prototype.scrollIntoView = () => {};
+if (hasDom) {
+  Element.prototype.scrollIntoView = () => {};
+}
 
-if (!Range.prototype.getClientRects) {
+if (hasDom && !Range.prototype.getClientRects) {
   Range.prototype.getClientRects = () =>
     ({
       length: 0,
@@ -19,7 +28,7 @@ if (!Range.prototype.getClientRects) {
       [Symbol.iterator]: function* () {},
     }) as unknown as DOMRectList;
 }
-if (!Range.prototype.getBoundingClientRect) {
+if (hasDom && !Range.prototype.getBoundingClientRect) {
   Range.prototype.getBoundingClientRect = () =>
     ({
       top: 0,
@@ -34,13 +43,15 @@ if (!Range.prototype.getBoundingClientRect) {
     }) as DOMRect;
 }
 
-window.matchMedia = (query: string) => ({
-  matches: false,
-  media: query,
-  onchange: null,
-  addEventListener: () => {},
-  removeEventListener: () => {},
-  addListener: () => {},
-  removeListener: () => {},
-  dispatchEvent: () => false,
-});
+if (hasDom) {
+  window.matchMedia = (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  });
+}
