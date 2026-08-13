@@ -21,6 +21,32 @@ puredeck must be usable on mobile - **especially Android** - not just desktop. T
 - Always shut the app down when finished - never leave it running in the background.
 - `TaskStop` (or killing `npm start`) only stops the `npm`/`tauri dev`/`vite` node procs; the spawned native `target/debug/puredeck` window keeps running detached. Kill all: `pkill -f "target/debug/puredeck"` AND `pkill -f "node_modules/.bin/tauri"` AND `pkill -f "puredeck/node_modules/.bin/vite"`, then confirm with `pgrep -fl "tauri dev|target/debug/puredeck"`.
 
+## On-disk state
+
+All app state is JSON under the OS app-data dir (see README for the file list). Details to respect
+when touching persistence:
+
+- `settings.json` - panel layout, sidebar-collapsed, open tabs, theme mode + per-mode color
+  overrides (sparse: only tokens differing from the built-in default; customized in Settings >
+  Theme), the optional `collectionPath` (custom deck folder; unset = default app-data
+  `collections/`), and the optional `googleAccount` (`{ email }`; the display cache for a connected
+  Google Drive account - the OAuth refresh token is never stored here, only in the OS keychain).
+- `keymap.json` - `actionId -> hotkey[]` overrides; an action can hold several bindings, an empty
+  list disables it, a missing entry falls back to the registry default. Rebind/add/remove/reset in
+  Settings > Shortcuts.
+- `collections/<deck-slug>.json` - one JSON file per deck (id, name, cards). Read on launch;
+  hand-editable. Any empty deck folder is seeded with one demo deck on first load. On desktop the
+  deck folder is configurable in Settings > Storage (any path); picking a folder reloads decks in
+  place and the choice survives restarts. Cards are editable in-app (add / edit / delete); each
+  change rewrites the deck's file. Whole decks are also managed in-app (create / rename / delete,
+  with a confirm dialog); deleting removes the deck's file.
+- `review-state.json` - per-card SRS scheduling state (FSRS-6: stability, difficulty, due, state,
+  reps, lapses), keyed by card id, kept separate from deck content. Study grades
+  (Again/Hard/Good/Easy) reschedule the card via the `ts-fsrs` library; the study session shows
+  only due cards.
+- `review-log.json` - append-only review history (one entry per grade), the training input for a
+  future FSRS optimizer / stats.
+
 ## Learning from conversation
 
 If during a session you learn something project-specific that future-you would otherwise have to re-derive - a non-obvious convention the user prefers, a constraint that bit us, a gotcha worth recording - append it to [docs/learnings.md](docs/learnings.md). Examples: formatting rules the user repeated, gotchas that broke a hook/CI, naming conventions enforced via review.
@@ -56,8 +82,8 @@ Don't add: one-off task context, debugging notes, things obvious from the code i
   - New convention or gotcha that future-you would miss -> add to CLAUDE.md (or docs/learnings.md).
   - Removed feature or file referenced in either doc -> remove the reference.
 - No duplicates between README.md and CLAUDE.md. Each fact lives in exactly one place:
-  - README.md = onboarding facts a human needs to run the app: install steps, commands, repo layout sketch.
-  - CLAUDE.md = working rules for an agent editing this repo: conventions, gotchas, "how to add a feature", invariants.
+  - README.md = human onboarding: what the app is, install/run steps, commands, repo layout, a short data-location summary. No agent-facing internals.
+  - CLAUDE.md = working rules for an agent editing this repo: conventions, gotchas, architecture/format internals, "how to add a feature", invariants.
   - If a fact would fit both, put it in CLAUDE.md and link from README only if a human reader needs the pointer.
 - If neither doc needs to change, say so explicitly in the pre-commit summary so it's a deliberate decision, not an oversight.
 
