@@ -27,26 +27,8 @@ npm install
 
 | Command | Description |
 | --- | --- |
-| `npm start` | Launch the native desktop app (`tauri dev`). |
-| `npm run dev` | Vite dev server only (browser, no native shell). |
-| `npm run build` | Typecheck + build the frontend bundle. |
-| `npm run tauri build` | Build the distributable desktop app. |
-| `npm test` | Run the Vitest suite once. |
-| `npm run test:watch` | Vitest in watch mode. |
-| `npm run lint` | Biome check (lint + format + import sort). |
-| `npm run lint:fix` | Biome check with safe autofixes applied. |
-| `npm run typecheck` | `tsc --noEmit`. |
-| `npm run format` | Biome format write. |
-
-## Repo layout
-
-```
-src/                    React app: main entry, router, routes, components, lib
-src-tauri/              Tauri desktop shell (Rust backend, tauri.conf.json, commands)
-tests/                  Vitest setup + smoke specs
-public/                 static assets served by Vite
-docs/                   spec/plan per feature, ADR, learnings, glossary
-```
+| `npm start` | Run the app in development (`tauri dev`). |
+| `npm run tauri build` | Build the distributable desktop bundle. |
 
 ## Where your data lives
 
