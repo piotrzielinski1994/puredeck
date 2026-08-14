@@ -1,7 +1,19 @@
-import { CommandPalette, useActionHotkeys } from "@pziel/pureui";
+import {
+  CommandPalette,
+  createAppVersionGetter,
+  createNoopUpdateController,
+  createUpdateController,
+  UpdateChecker,
+  UpdaterProvider,
+  useActionHotkeys,
+} from "@pziel/pureui";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { getVersion } from "@tauri-apps/api/app";
+import { isTauri } from "@tauri-apps/api/core";
+import { relaunch } from "@tauri-apps/plugin-process";
+import { check } from "@tauri-apps/plugin-updater";
 import { useState } from "react";
-import { ToastProvider } from "@/components/ui/toast";
+import { ToastProvider, useToast } from "@/components/ui/toast";
 import { DeleteDeckDialog } from "@/components/workspace/delete-deck-dialog";
 import {
   useWorkspace,
@@ -12,6 +24,7 @@ import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createSettingsStore } from "@/lib/settings/store-factory";
 import { useEffectiveShortcuts } from "@/lib/shortcuts/use-effective-shortcuts";
 import { ThemeProvider } from "@/lib/theme/theme-context";
+import { createPuredeckUpdateToastSink } from "@/lib/updater/update-toast-sink";
 
 function ShellPalette() {
   const {
@@ -61,21 +74,51 @@ function ShellPalette() {
   );
 }
 
+// The Tauri updater/process bindings are injected here because pureui declares
+// no @tauri-apps dep; the dev-browser and jsdom (both non-Tauri) get the noop.
+function createUpdateControllerForEnv() {
+  return isTauri()
+    ? createUpdateController({ check, relaunch })
+    : createNoopUpdateController();
+}
+
+const getAppVersion = createAppVersionGetter({ isTauri, getVersion });
+
+// Bridges the injected controller into the ToastProvider's `show`, so the
+// startup checker drives puredeck's own toast presentation (the sink is the
+// app-owned half of the DI seam; pureui owns the flow).
+function UpdateCheckerBridge({
+  controller,
+}: {
+  controller: ReturnType<typeof createUpdateControllerForEnv>;
+}) {
+  const { show } = useToast();
+  const [sink] = useState(() => createPuredeckUpdateToastSink(show));
+  return <UpdateChecker controller={controller} sink={sink} />;
+}
+
 function RootLayout() {
   const [store] = useState(createSettingsStore);
+  const [updateController] = useState(createUpdateControllerForEnv);
 
   return (
     <SettingsProvider store={store}>
       <ThemeProvider>
         <PaletteProvider>
           <ToastProvider>
-            <WorkspaceProvider>
-              <div className="h-screen">
-                <Outlet />
-              </div>
-              <ShellPalette />
-              <DeleteDeckDialog />
-            </WorkspaceProvider>
+            <UpdaterProvider
+              controller={updateController}
+              getVersion={getAppVersion}
+            >
+              <WorkspaceProvider>
+                <div className="h-screen">
+                  <Outlet />
+                </div>
+                <ShellPalette />
+                <DeleteDeckDialog />
+              </WorkspaceProvider>
+              <UpdateCheckerBridge controller={updateController} />
+            </UpdaterProvider>
           </ToastProvider>
         </PaletteProvider>
       </ThemeProvider>

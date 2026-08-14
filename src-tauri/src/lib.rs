@@ -15,6 +15,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_oauth::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(tauri::generate_handler![
             greet,

@@ -10,6 +10,11 @@ customization). Below a 768px viewport it switches to a touch-first mobile layou
 a hamburger-opened deck drawer and a command-palette button - so it works on phones (Android/iOS),
 not just desktop.
 
+Desktop builds include an in-app auto-updater (Settings > Updates): on launch and via "Check for
+updates" the app checks `puredeck/releases/latest` for a newer version, downloads the signed
+update package and relaunches. The updater backend is desktop-only; mobile targets keep shipping
+through the normal store/app releases.
+
 ## Prerequisites
 
 - **Node.js** - version pinned in [mise.toml](mise.toml) (24). This machine manages node via `mise`; run `mise use` or `eval "$(mise activate bash)"` before npm.
@@ -29,6 +34,12 @@ npm install
 | --- | --- |
 | `npm start` | Run the app in development (`tauri dev`). |
 | `npm run tauri build` | Build the distributable desktop bundle. |
+
+Building a release bundle with updater artifacts requires the signing keypair:
+`TAURI_SIGNING_PRIVATE_KEY` (the private key string or `TAURI_SIGNING_PRIVATE_KEY_PATH`) and
+`TAURI_SIGNING_PRIVATE_KEY_PASSWORD`. The keypair lives in the private config dir
+(`programs/tauri/puredeck.key` + `.pub`), and CI reads the key from the GitHub repo secrets
+(`TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`).
 
 ## Where your data lives
 

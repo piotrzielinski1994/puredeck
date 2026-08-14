@@ -1,12 +1,19 @@
-import { cn, ShortcutsSection } from "@pziel/pureui";
+import {
+  cn,
+  ShortcutsSection,
+  UpdatesSection,
+  useUpdater,
+} from "@pziel/pureui";
 import { useState } from "react";
 import { StorageSection } from "@/components/settings/storage-section";
 import { ThemeSection } from "@/components/settings/theme-section";
+import { useToast } from "@/components/ui/toast";
 import { useSettings } from "@/lib/settings/settings-context";
 import { SHORTCUT_ACTIONS } from "@/lib/shortcuts/registry";
 import { findConflict, resolveShortcuts } from "@/lib/shortcuts/resolve";
+import { createPuredeckUpdateToastSink } from "@/lib/updater/update-toast-sink";
 
-type Section = "theme" | "shortcuts" | "storage";
+type Section = "theme" | "shortcuts" | "storage" | "updates";
 
 function ShortcutSettings() {
   const {
@@ -68,6 +75,22 @@ function SubTab({
   );
 }
 
+function UpdatesSettings() {
+  const { controller, getVersion } = useUpdater();
+  const { show } = useToast();
+  const [sink] = useState(() => createPuredeckUpdateToastSink(show));
+
+  return (
+    <UpdatesSection
+      className="p-6"
+      controller={controller}
+      getVersion={getVersion}
+      sink={sink}
+      notify={{ info: show, error: show }}
+    />
+  );
+}
+
 export function SettingsView() {
   const [section, setSection] = useState<Section>("theme");
 
@@ -96,11 +119,18 @@ export function SettingsView() {
         >
           Storage
         </SubTab>
+        <SubTab
+          isActive={section === "updates"}
+          onClick={() => setSection("updates")}
+        >
+          Updates
+        </SubTab>
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
         {section === "theme" && <ThemeSection />}
         {section === "shortcuts" && <ShortcutSettings />}
         {section === "storage" && <StorageSection />}
+        {section === "updates" && <UpdatesSettings />}
       </div>
     </div>
   );

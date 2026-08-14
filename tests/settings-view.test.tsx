@@ -66,6 +66,19 @@ describe("SettingsView (AC-007 / TC-007)", () => {
     expect(screen.getByRole("button", { name: /system/i })).toBeInTheDocument();
   });
 
+  it("should switch to the Updates section when its sub-tab is clicked", async () => {
+    renderSettings();
+
+    fireEvent.click(await screen.findByRole("tab", { name: /updates/i }));
+
+    expect(
+      await screen.findByRole("button", { name: /check for updates/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /system/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("should mark the current mode as active if the default mode is system", async () => {
     renderSettings();
 
