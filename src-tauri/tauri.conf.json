@@ -27,7 +27,7 @@
       "mobile": [{ "scheme": ["com.pzielinski.puredeck"], "appLink": false }]
     },
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVDMzVEREExQkIzM0FBOTEKUldTUnFqTzdvZDAxN0tUWjViaHVzK0lJbWRySk9OeGJOaVhrWTgrQnltaDVsK3YzQlB0S3dTQU0K",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDkwMzQ2REYyRTJFMDQ4NTEKUldSUlNPRGk4bTAwa1BDMUdJQ3NhUWl2VXFLK2VsaytnVWd3NjAzSnJNb2ttY1R1K2Y5dG91cngK",
       "endpoints": [
         "https://github.com/piotrzielinski1994/puredeck/releases/latest/download/latest.json"
       ]
