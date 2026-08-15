@@ -40,6 +40,8 @@ describe("DEFAULT_SETTINGS (AC-009)", () => {
         },
       },
       shortcuts: {},
+      logsPanelOpen: false,
+      logsPanelSize: 30,
     });
   });
 });

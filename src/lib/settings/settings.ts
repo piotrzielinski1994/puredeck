@@ -84,6 +84,8 @@ export type Settings = {
   activeTabId: string | null;
   theme: ThemeSettings;
   shortcuts: ShortcutOverrides;
+  logsPanelOpen: boolean;
+  logsPanelSize: number;
   collectionPath?: string;
   googleAccount?: { email: string };
 };
@@ -98,6 +100,8 @@ export const DEFAULT_SETTINGS: Settings = {
   activeTabId: null,
   theme: { mode: "system", colors: emptyThemeColors() },
   shortcuts: {},
+  logsPanelOpen: false,
+  logsPanelSize: 30,
 };
 
 const THEME_MODES: readonly ThemeMode[] = ["light", "dark", "system"];
@@ -280,6 +284,14 @@ export function mergeSettings(base: Settings, persisted: unknown): Settings {
         : base.activeTabId,
     theme: mergeTheme(base.theme, persisted.theme),
     shortcuts: mergeShortcuts(persisted.shortcuts),
+    logsPanelOpen:
+      typeof persisted.logsPanelOpen === "boolean"
+        ? persisted.logsPanelOpen
+        : base.logsPanelOpen,
+    logsPanelSize:
+      typeof persisted.logsPanelSize === "number"
+        ? persisted.logsPanelSize
+        : base.logsPanelSize,
     collectionPath:
       typeof persisted.collectionPath === "string"
         ? persisted.collectionPath

@@ -200,6 +200,8 @@ describe("workspace shell stale active tab (E-8)", () => {
         },
       },
       shortcuts: {},
+      logsPanelOpen: false,
+      logsPanelSize: 30,
     });
     renderShell(store);
 

@@ -26,6 +26,8 @@ type SettingsContextValue = {
   saveOpenTabs: (openTabIds: string[], activeTabId: string | null) => void;
   saveThemeMode: (mode: ThemeMode) => void;
   saveThemeColors: (colors: ThemeColors) => void;
+  saveLogsPanelOpen: (open: boolean) => void;
+  saveLogsPanelSize: (size: number) => void;
   saveCollectionPath: (path: string | undefined) => void;
   saveGoogleAccount: (account: { email: string } | undefined) => void;
   addShortcut: (id: ShortcutActionId, hotkey: string) => void;
@@ -104,8 +106,19 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
     [update],
   );
 
-  const saveCollectionPath = useCallback(
-    (path: string | undefined) =>
+  const saveLogsPanelOpen = useCallback(
+    (open: boolean) =>
+      update((base) => ({ ...base, logsPanelOpen: open })),
+    [update],
+  );
+
+  const saveLogsPanelSize = useCallback(
+    (size: number) =>
+      update((base) => ({ ...base, logsPanelSize: size })),
+    [update],
+  );
+
+  const saveCollectionPath = useCallback(    (path: string | undefined) =>
       update((base) => {
         const next = { ...base };
         if (path === undefined) {
@@ -217,6 +230,8 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
       saveOpenTabs,
       saveThemeMode,
       saveThemeColors,
+      saveLogsPanelOpen,
+      saveLogsPanelSize,
       saveCollectionPath,
       saveGoogleAccount,
       addShortcut,
@@ -231,6 +246,8 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
     saveOpenTabs,
     saveThemeMode,
     saveThemeColors,
+    saveLogsPanelOpen,
+    saveLogsPanelSize,
     saveCollectionPath,
     saveGoogleAccount,
     addShortcut,
