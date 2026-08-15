@@ -7,6 +7,7 @@ import {
 } from "@pziel/pureui";
 import { useRef } from "react";
 import type { GroupImperativeHandle } from "react-resizable-panels";
+import { LogsPanel } from "@/components/workspace/logs-panel";
 import { Main } from "@/components/workspace/main";
 import { MobileShell } from "@/components/workspace/mobile-shell";
 import { Sidebar } from "@/components/workspace/sidebar";
@@ -16,6 +17,39 @@ import {
   PANEL_RESIZE_STEP,
   stepSidebarLayout,
 } from "@/lib/workspace/panel-resize";
+
+function MainWithLogs() {
+  const { settings, saveLogsPanelSize } = useSettings();
+  const logsPanelOpen = settings.logsPanelOpen;
+  return (
+    <ResizablePanelGroup
+      orientation="vertical"
+      className="h-full"
+      defaultLayout={
+        logsPanelOpen
+          ? { content: 100 - settings.logsPanelSize, logs: settings.logsPanelSize }
+          : { content: 100 }
+      }
+      onLayoutChanged={(layout) => {
+        if (logsPanelOpen && typeof layout.logs === "number") {
+          saveLogsPanelSize(layout.logs);
+        }
+      }}
+    >
+      <ResizablePanel key="content" id="content" defaultSize="70%" minSize="30%">
+        <Main />
+      </ResizablePanel>
+      {logsPanelOpen
+        ? [
+            <ResizableHandle key="handle" />,
+            <ResizablePanel key="logs" id="logs" defaultSize="30%">
+              <LogsPanel />
+            </ResizablePanel>,
+          ]
+        : null}
+    </ResizablePanelGroup>
+  );
+}
 
 export function WorkspaceLayout() {
   const { settings, saveLayout } = useSettings();
@@ -46,7 +80,7 @@ export function WorkspaceLayout() {
   if (settings.sidebarCollapsed) {
     return (
       <div className="h-full w-full">
-        <Main />
+        <MainWithLogs />
       </div>
     );
   }
@@ -69,7 +103,7 @@ export function WorkspaceLayout() {
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel id="main" defaultSize="80%">
-        <Main />
+        <MainWithLogs />
       </ResizablePanel>
     </ResizablePanelGroup>
   );

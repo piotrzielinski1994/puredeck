@@ -1,6 +1,8 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { Menu, Search } from "lucide-react";
+import { cn } from "@pziel/pureui";
+import { Menu, ScrollText, Search } from "lucide-react";
 import { useState } from "react";
+import { LogsPanel } from "@/components/workspace/logs-panel";
 import { Main } from "@/components/workspace/main";
 import { Sidebar } from "@/components/workspace/sidebar";
 import { usePalette } from "@/lib/palette/palette-context";
@@ -8,6 +10,7 @@ import { usePalette } from "@/lib/palette/palette-context";
 export function MobileShell() {
   const { setOpen: setPaletteOpen } = usePalette();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isLogsOpen, setIsLogsOpen] = useState(false);
 
   return (
     <div className="flex h-full flex-col">
@@ -25,6 +28,17 @@ export function MobileShell() {
         </div>
         <button
           type="button"
+          aria-label="Logs"
+          onClick={() => setIsLogsOpen((open) => !open)}
+          className={cn(
+            "flex min-h-11 w-11 items-center justify-center border-l text-muted-foreground hover:bg-accent hover:text-foreground",
+            isLogsOpen && "bg-accent text-foreground",
+          )}
+        >
+          <ScrollText className="size-4" />
+        </button>
+        <button
+          type="button"
           aria-label="Open command palette"
           onClick={() => setPaletteOpen(true)}
           className="flex min-h-11 w-11 items-center justify-center border-l text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -33,7 +47,7 @@ export function MobileShell() {
         </button>
       </div>
       <div className="min-h-0 flex-1">
-        <Main />
+        {isLogsOpen ? <LogsPanel /> : <Main />}
       </div>
       <DialogPrimitive.Root open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DialogPrimitive.Portal>
