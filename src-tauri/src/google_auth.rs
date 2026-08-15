@@ -4,7 +4,9 @@ use rand::RngCore;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::sync::mpsc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
+
+use crate::logging;
 
 const AUTH_ENDPOINT: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const TOKEN_ENDPOINT: &str = "https://oauth2.googleapis.com/token";
@@ -215,6 +217,23 @@ pub fn google_status() -> Option<GoogleAccountDto> {
 
 #[tauri::command]
 pub fn google_connect() -> Result<GoogleAccountDto, String> {
+    let start = Instant::now();
+    let result = google_connect_inner();
+    match &result {
+        Ok(dto) => log::info!(
+            "{}",
+            logging::format_google_connect_ok(&dto.email, start.elapsed().as_millis())
+        ),
+        Err(error) if !logging::is_neutral_outcome(error) => log::error!(
+            "{}",
+            logging::format_google_connect_err(error, start.elapsed().as_millis())
+        ),
+        Err(_) => {}
+    }
+    result
+}
+
+fn google_connect_inner() -> Result<GoogleAccountDto, String> {
     let config = read_config()?;
     let tokens = run_oauth_flow(&config)?;
     let refresh_token = tokens.refresh_token.ok_or_else(|| ERR_FAILED.to_string())?;
@@ -225,6 +244,13 @@ pub fn google_connect() -> Result<GoogleAccountDto, String> {
 
 #[tauri::command]
 pub fn google_disconnect() -> Result<(), String> {
+    let start = Instant::now();
+    let result = google_disconnect_inner();
+    log::info!("{}", logging::format_google_disconnect(start.elapsed().as_millis()));
+    result
+}
+
+fn google_disconnect_inner() -> Result<(), String> {
     if let Some(refresh_token) = read_refresh_token() {
         let _ = reqwest::blocking::Client::new()
             .post(REVOKE_ENDPOINT)
@@ -237,6 +263,20 @@ pub fn google_disconnect() -> Result<(), String> {
 
 #[tauri::command]
 pub fn google_access_token() -> Result<String, String> {
+    let start = Instant::now();
+    let result = google_access_token_inner();
+    if let Err(error) = &result {
+        if !logging::is_neutral_outcome(error) {
+            log::error!(
+                "{}",
+                logging::format_google_token_err(error, start.elapsed().as_millis())
+            );
+        }
+    }
+    result
+}
+
+fn google_access_token_inner() -> Result<String, String> {
     let config = read_config()?;
     let refresh_token = read_refresh_token().ok_or_else(|| ERR_FAILED.to_string())?;
     refresh_access_token(&config, &refresh_token)

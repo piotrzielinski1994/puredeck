@@ -1,4 +1,5 @@
 mod google_auth;
+pub mod logging;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -17,12 +18,17 @@ pub fn run() {
         .plugin(tauri_plugin_oauth::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_deep_link::init())
+        .setup(|app| {
+            logging::init(app.handle());
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             google_auth::google_status,
             google_auth::google_connect,
             google_auth::google_disconnect,
-            google_auth::google_access_token
+            google_auth::google_access_token,
+            logging::log_message
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
