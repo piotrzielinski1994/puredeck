@@ -15,6 +15,7 @@ import {
   serializeDeck,
 } from "@/lib/workspace/collection";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
+import { logMessage } from "@/lib/logging/tauri-log-sink";
 import type { Deck } from "@/lib/workspace/model";
 
 const COLLECTION_DIR = "collections";
@@ -79,6 +80,7 @@ export function createTauriCollectionStore(
       return await readDecks(root, slugById);
     } catch (error) {
       console.error("Failed to load collections:", error);
+      void logMessage("error", "deck load failed");
       return SEED_DECKS;
     }
   };
@@ -94,6 +96,7 @@ export function createTauriCollectionStore(
       await writeTextFile(`${root}/${slug}.json`, serializeDeck(deck));
     } catch (error) {
       console.error("Failed to save deck:", error);
+      void logMessage("error", "deck save failed");
     }
   };
 
@@ -108,6 +111,7 @@ export function createTauriCollectionStore(
       slugById.delete(deckId);
     } catch (error) {
       console.error("Failed to remove deck:", error);
+      void logMessage("error", "deck remove failed");
     }
   };
 

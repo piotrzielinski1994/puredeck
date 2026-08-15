@@ -1,4 +1,5 @@
 import type { UpdateToastSink } from "@pziel/pureui";
+import { logMessage } from "@/lib/logging/tauri-log-sink";
 import type { ToastHandle } from "@/components/ui/toast";
 
 type ShowToast = (
@@ -29,8 +30,12 @@ export function createPuredeckUpdateToastSink(
           handle.clearAction();
           handle.update(label);
         },
-        installing: () => {},
-        failed: () => {},
+        installing: () => {
+          void logMessage("info", "updater installing");
+        },
+        failed: () => {
+          void logMessage("error", "updater failed");
+        },
       };
     },
   };
