@@ -9,7 +9,9 @@ import {
   useState,
 } from "react";
 import { useToast } from "@/components/ui/toast";
+import { createNoopLogStream, type LogStream } from "@/lib/logging/log-stream";
 import { useSettings } from "@/lib/settings/settings-context";
+import { type LogLine, parseLogLine } from "@/lib/workspace/log-line";
 import {
   createScheduler,
   type Card as FsrsCard,
@@ -79,6 +81,14 @@ type WorkspaceContextValue = {
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
+type LogLinesContextValue = {
+  logLines: LogLine[];
+  appendLogLine: (raw: string, level?: number) => void;
+  clearLogLines: () => void;
+};
+
+const LogLinesContext = createContext<LogLinesContextValue | null>(null);
+
 function neighbourAfterClose(
   openTabIds: string[],
   closedId: string,
@@ -97,12 +107,14 @@ export function WorkspaceProvider({
   store,
   reviewStore,
   revlogStore,
+  logStream,
 }: {
   children: ReactNode;
   decks?: Deck[];
   store?: CollectionStore;
   reviewStore?: ReviewStore;
   revlogStore?: RevlogStore;
+  logStream?: LogStream;
 }) {
   const { settings, saveOpenTabs } = useSettings();
   const { show } = useToast();
@@ -129,6 +141,7 @@ export function WorkspaceProvider({
   const [pendingDeleteDeckId, setPendingDeleteDeckId] = useState<string | null>(
     null,
   );
+  const [logLines, setLogLines] = useState<LogLine[]>([]);
 
   useEffect(() => {
     if (decksProp) {
@@ -342,6 +355,36 @@ export function WorkspaceProvider({
     setPendingDeleteDeckId(null);
   }, [pendingDeleteDeckId, deleteDeck]);
 
+  const appendLogLine = useCallback(
+    (raw: string, level?: number) =>
+      setLogLines((current) => [...current, parseLogLine(raw, level)]),
+    [],
+  );
+  const clearLogLines = useCallback(() => setLogLines([]), []);
+  const logLinesValue = useMemo<LogLinesContextValue>(
+    () => ({ logLines, appendLogLine, clearLogLines }),
+    [logLines, appendLogLine, clearLogLines],
+  );
+
+  useEffect(() => {
+    const stream = logStream ?? createNoopLogStream();
+    let disposed = false;
+    let unsubscribe: (() => void) | null = null;
+    stream.subscribe(appendLogLine).then((fn) => {
+      if (disposed) {
+        fn();
+        return;
+      }
+      unsubscribe = fn;
+    });
+    return () => {
+      disposed = true;
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [logStream, appendLogLine]);
+
   const value = useMemo<WorkspaceContextValue>(
     () => ({
       decks,
@@ -401,7 +444,9 @@ export function WorkspaceProvider({
 
   return (
     <WorkspaceContext.Provider value={value}>
-      {children}
+      <LogLinesContext.Provider value={logLinesValue}>
+        {children}
+      </LogLinesContext.Provider>
     </WorkspaceContext.Provider>
   );
 }
@@ -412,4 +457,14 @@ export function useWorkspace(): WorkspaceContextValue {
     throw new Error("useWorkspace must be used within a WorkspaceProvider");
   }
   return value;
+}
+
+export function useLogLines(): LogLinesContextValue {
+  return (
+    useContext(LogLinesContext) ?? {
+      logLines: [],
+      appendLogLine: () => {},
+      clearLogLines: () => {},
+    }
+  );
 }
