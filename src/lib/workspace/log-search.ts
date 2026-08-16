@@ -12,7 +12,9 @@ function tokenize(query: string): string[] {
 
 function isKnownField(field: string): boolean {
   return (
-    field === "level" || field === "message" || KV_FIELDS.some((f) => f === field)
+    field === "level" ||
+    field === "message" ||
+    KV_FIELDS.some((f) => f === field)
   );
 }
 

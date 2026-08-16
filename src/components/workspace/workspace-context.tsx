@@ -11,7 +11,6 @@ import {
 import { useToast } from "@/components/ui/toast";
 import { createNoopLogStream, type LogStream } from "@/lib/logging/log-stream";
 import { useSettings } from "@/lib/settings/settings-context";
-import { type LogLine, parseLogLine } from "@/lib/workspace/log-line";
 import {
   createScheduler,
   type Card as FsrsCard,
@@ -33,6 +32,7 @@ import {
   withDeckRemoved,
   withDeckUpserted,
 } from "@/lib/workspace/deck-ops";
+import { type LogLine, parseLogLine } from "@/lib/workspace/log-line";
 import {
   type Deck,
   isStudyTabId,

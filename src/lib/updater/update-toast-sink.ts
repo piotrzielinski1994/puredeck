@@ -1,6 +1,6 @@
 import type { UpdateToastSink } from "@pziel/pureui";
-import { logMessage } from "@/lib/logging/tauri-log-sink";
 import type { ToastHandle } from "@/components/ui/toast";
+import { logMessage } from "@/lib/logging/tauri-log-sink";
 
 type ShowToast = (
   message: string,

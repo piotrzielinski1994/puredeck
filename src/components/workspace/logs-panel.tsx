@@ -38,9 +38,11 @@ function LogLineRow({ line }: { line: LogLine }) {
       {parts.map((part, index) => {
         const kv = part.match(/^([A-Za-z_]+)=(\S+)$/);
         if (!kv) {
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed split-order fragments of one message
           return <span key={index}>{part}</span>;
         }
         return (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed split-order fragments of one message
           <span key={index}>
             <span className={KV_KEY_CLASS}>{kv[1]}=</span>
             <span className={KV_VALUE_CLASS}>{kv[2]}</span>
@@ -71,6 +73,7 @@ function LogSearchInput({
         )}
       >
         {segments.map((segment, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed split-order segments of one query
           <span key={index} className={SEARCH_SEGMENT_CLASS[segment.kind]}>
             {segment.text}
           </span>
@@ -108,6 +111,9 @@ export function LogsPanel() {
   const stickRef = useRef(true);
 
   useEffect(() => {
+    if (filteredLogs.length === 0) {
+      return;
+    }
     if (stickRef.current) {
       logsEndRef.current?.scrollIntoView({ block: "end" });
     }
@@ -133,7 +139,11 @@ export function LogsPanel() {
       className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/30 font-mono text-xs"
     >
       <div className="flex shrink-0 items-center gap-1 border-b px-1">
-        <LogSearchInput value={logSearch} onChange={setLogSearch} boxClass={boxClass} />
+        <LogSearchInput
+          value={logSearch}
+          onChange={setLogSearch}
+          boxClass={boxClass}
+        />
         {logLines.length > 0 ? (
           <button
             type="button"
@@ -159,7 +169,10 @@ export function LogsPanel() {
         ) : filteredLogs.length === 0 ? (
           <p className="text-muted-foreground">No matching log lines.</p>
         ) : (
-          filteredLogs.map((line, index) => <LogLineRow key={index} line={line} />)
+          filteredLogs.map((line, index) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: append-only log lines (no reorder)
+            <LogLineRow key={index} line={line} />
+          ))
         )}
         <li ref={logsEndRef} aria-hidden="true" />
       </ul>

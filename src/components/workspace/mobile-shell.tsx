@@ -1,5 +1,5 @@
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@pziel/pureui";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Menu, ScrollText, Search } from "lucide-react";
 import { useState } from "react";
 import { LogsPanel } from "@/components/workspace/logs-panel";

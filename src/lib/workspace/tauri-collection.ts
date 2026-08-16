@@ -8,6 +8,7 @@ import {
   remove as removeFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
+import { logMessage } from "@/lib/logging/tauri-log-sink";
 import {
   type CollectionStore,
   parseDeck,
@@ -15,7 +16,6 @@ import {
   serializeDeck,
 } from "@/lib/workspace/collection";
 import { SEED_DECKS } from "@/lib/workspace/demo-data";
-import { logMessage } from "@/lib/logging/tauri-log-sink";
 import type { Deck } from "@/lib/workspace/model";
 
 const COLLECTION_DIR = "collections";

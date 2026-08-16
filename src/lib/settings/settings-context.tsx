@@ -107,18 +107,17 @@ export function SettingsProvider({ store, children }: SettingsProviderProps) {
   );
 
   const saveLogsPanelOpen = useCallback(
-    (open: boolean) =>
-      update((base) => ({ ...base, logsPanelOpen: open })),
+    (open: boolean) => update((base) => ({ ...base, logsPanelOpen: open })),
     [update],
   );
 
   const saveLogsPanelSize = useCallback(
-    (size: number) =>
-      update((base) => ({ ...base, logsPanelSize: size })),
+    (size: number) => update((base) => ({ ...base, logsPanelSize: size })),
     [update],
   );
 
-  const saveCollectionPath = useCallback(    (path: string | undefined) =>
+  const saveCollectionPath = useCallback(
+    (path: string | undefined) =>
       update((base) => {
         const next = { ...base };
         if (path === undefined) {

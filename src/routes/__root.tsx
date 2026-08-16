@@ -19,11 +19,11 @@ import {
   useWorkspace,
   WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
-import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
 import {
   createNoopLogStream,
   createTauriLogStream,
 } from "@/lib/logging/log-stream";
+import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createSettingsStore } from "@/lib/settings/store-factory";
 import { useEffectiveShortcuts } from "@/lib/shortcuts/use-effective-shortcuts";

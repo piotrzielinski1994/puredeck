@@ -18,6 +18,7 @@ import {
   WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
 import { WorkspaceLayout } from "@/components/workspace/workspace-layout";
+import { PaletteProvider } from "@/lib/palette/palette-context";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import {
   DEFAULT_SETTINGS,
@@ -26,7 +27,6 @@ import {
   type SettingsStore,
 } from "@/lib/settings/settings";
 import { SettingsProvider } from "@/lib/settings/settings-context";
-import { PaletteProvider } from "@/lib/palette/palette-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 
 // F1 - RED: the Logs panel does not exist yet. `@/components/workspace/logs-panel`
@@ -202,7 +202,9 @@ describe("LogLinesContext isolation (AC-010 / TC-012)", () => {
       </>,
     );
 
-    const appendButton = await screen.findByRole("button", { name: "append log" });
+    const appendButton = await screen.findByRole("button", {
+      name: "append log",
+    });
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     });

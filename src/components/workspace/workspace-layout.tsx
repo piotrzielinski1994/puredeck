@@ -27,7 +27,10 @@ function MainWithLogs() {
       className="h-full"
       defaultLayout={
         logsPanelOpen
-          ? { content: 100 - settings.logsPanelSize, logs: settings.logsPanelSize }
+          ? {
+              content: 100 - settings.logsPanelSize,
+              logs: settings.logsPanelSize,
+            }
           : { content: 100 }
       }
       onLayoutChanged={(layout) => {
@@ -36,7 +39,12 @@ function MainWithLogs() {
         }
       }}
     >
-      <ResizablePanel key="content" id="content" defaultSize="70%" minSize="30%">
+      <ResizablePanel
+        key="content"
+        id="content"
+        defaultSize="70%"
+        minSize="30%"
+      >
         <Main />
       </ResizablePanel>
       {logsPanelOpen
