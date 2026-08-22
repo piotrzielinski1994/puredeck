@@ -19,16 +19,19 @@ import {
   useWorkspace,
   WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
+import { demoFiles } from "@/lib/collection/demo-seed";
 import {
   createNoopLogStream,
   createTauriLogStream,
 } from "@/lib/logging/log-stream";
 import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
+import { isDevBrowser } from "@/lib/runtime/environment";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createSettingsStore } from "@/lib/settings/store-factory";
 import { useEffectiveShortcuts } from "@/lib/shortcuts/use-effective-shortcuts";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 import { createPuredeckUpdateToastSink } from "@/lib/updater/update-toast-sink";
+import { createInMemoryCollectionStore } from "@/lib/workspace/in-memory-collection";
 
 function ShellPalette() {
   const {
@@ -107,6 +110,9 @@ function RootLayout() {
   const [logStream] = useState(() =>
     isTauri() ? createTauriLogStream() : createNoopLogStream(),
   );
+  const [collectionStore] = useState(() =>
+    isDevBrowser() ? createInMemoryCollectionStore(demoFiles()) : undefined,
+  );
 
   return (
     <SettingsProvider store={store}>
@@ -117,7 +123,7 @@ function RootLayout() {
               controller={updateController}
               getVersion={getAppVersion}
             >
-              <WorkspaceProvider logStream={logStream}>
+              <WorkspaceProvider logStream={logStream} store={collectionStore}>
                 <div className="h-screen">
                   <Outlet />
                 </div>
