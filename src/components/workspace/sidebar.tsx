@@ -6,7 +6,12 @@ import {
   cn,
 } from "@pziel/pureui";
 import { useEffect, useRef, useState } from "react";
+import { useToast } from "@/components/ui/toast";
 import { useWorkspace } from "@/components/workspace/workspace-context";
+import {
+  exportCollection,
+  importCollection,
+} from "@/lib/deck/import-export/collection-transfer";
 import type { Deck } from "@/lib/workspace/model";
 
 function RenameInput({
@@ -136,22 +141,65 @@ function DeckRow({
   );
 }
 
+function TransferFooterButton({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="min-h-11 w-full px-3 py-2 text-left text-[13px] whitespace-nowrap hover:bg-accent md:min-h-0 md:py-1.5"
+    >
+      {label}
+    </button>
+  );
+}
+
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const {
     decks,
     selectedDeckId,
     openDeck,
     createDeck,
+    importDecks,
     renamingDeckId,
     beginRename,
     renameDeck,
     cancelRename,
     requestDeleteDeck,
   } = useWorkspace();
+  const { show } = useToast();
 
   const handleOpen = (deckId: string): void => {
     openDeck(deckId);
     onNavigate?.();
+  };
+
+  const handleExport = async (): Promise<void> => {
+    const result = await exportCollection(decks);
+    if (result.kind === "done") {
+      show(`Exported ${result.count} decks.`);
+      return;
+    }
+    if (result.kind === "error") {
+      show(result.message);
+    }
+  };
+
+  const handleImport = async (): Promise<void> => {
+    const result = await importCollection();
+    if (result.kind === "cancelled") {
+      return;
+    }
+    if (result.kind === "error") {
+      show(result.message);
+      return;
+    }
+    importDecks(result.decks);
   };
 
   return (
@@ -194,6 +242,17 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
+      <div className="flex shrink-0 flex-col border-t py-1">
+        <TransferFooterButton label="+ New deck" onClick={() => createDeck()} />
+        <TransferFooterButton
+          label="Export collection..."
+          onClick={() => void handleExport()}
+        />
+        <TransferFooterButton
+          label="Import collection..."
+          onClick={() => void handleImport()}
+        />
+      </div>
     </div>
   );
 }
