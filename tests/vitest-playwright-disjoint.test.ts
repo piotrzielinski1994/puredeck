@@ -1,14 +1,38 @@
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import config from "../playwright.config";
 
-describe("vitest/playwright disjointness (AC-006 / TC-007)", () => {
-  it("should keep the vitest include and playwright testMatch patterns disjoint", () => {
-    const vitestInclude = ["tests/**/*.{test,spec}.{ts,tsx}"];
-    const playwrightMatch = String(config.testMatch);
+function walk(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory()
+      ? walk(`${dir}/${entry.name}`)
+      : [`${dir}/${entry.name}`],
+  );
+}
 
-    expect(playwrightMatch).toContain("\\.e2e\\.ts");
-    expect(vitestInclude.some((pattern) => pattern.includes("e2e"))).toBe(
-      false,
-    );
+const testMatch = config.testMatch as RegExp;
+const vitestSpecs = [...walk("tests"), ...walk("src")].filter((file) =>
+  /\.(test|spec)\.(ts|tsx)$/.test(file),
+);
+const e2eSpecs = walk("tests/e2e").filter((file) => file.endsWith(".e2e.ts"));
+
+describe("vitest/playwright disjointness (AC-006 / TC-007)", () => {
+  it("should have vitest specs that playwright never picks up", () => {
+    expect(vitestSpecs.length).toBeGreaterThan(0);
+    for (const file of vitestSpecs) {
+      expect(testMatch.test(file), file).toBe(false);
+    }
+  });
+
+  it("should match exactly the e2e specs on disk", () => {
+    expect(e2eSpecs.length).toBeGreaterThan(0);
+    for (const file of e2eSpecs) {
+      expect(testMatch.test(file), file).toBe(true);
+    }
+  });
+
+  it("should keep e2e out of the vitest include", () => {
+    const vitestConfigSrc = readFileSync("vitest.config.ts", "utf8");
+    expect(vitestConfigSrc).not.toMatch(/include[^\n]*e2e/);
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { demoFiles } from "@/lib/collection/demo-seed";
+import { demoFiles, demoSettings } from "@/lib/collection/demo-seed";
 import { decksFromFileMap } from "@/lib/workspace/collection";
 
 describe("demo-seed (AC-002 / TC-002)", () => {
@@ -22,5 +22,12 @@ describe("demo-seed (AC-002 / TC-002)", () => {
       front: "hola",
       back: "hello",
     });
+  });
+
+  it("should return a settings object", () => {
+    const settings = demoSettings();
+
+    expect(settings.version).toBe(1);
+    expect(settings.sidebarCollapsed).toBe(false);
   });
 });

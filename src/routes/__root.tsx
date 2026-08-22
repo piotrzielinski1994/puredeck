@@ -19,13 +19,14 @@ import {
   useWorkspace,
   WorkspaceProvider,
 } from "@/components/workspace/workspace-context";
-import { demoFiles } from "@/lib/collection/demo-seed";
+import { demoFiles, demoSettings } from "@/lib/collection/demo-seed";
 import {
   createNoopLogStream,
   createTauriLogStream,
 } from "@/lib/logging/log-stream";
 import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
 import { isDevBrowser } from "@/lib/runtime/environment";
+import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
 import { SettingsProvider } from "@/lib/settings/settings-context";
 import { createSettingsStore } from "@/lib/settings/store-factory";
 import { useEffectiveShortcuts } from "@/lib/shortcuts/use-effective-shortcuts";
@@ -105,7 +106,11 @@ function UpdateCheckerBridge({
 }
 
 function RootLayout() {
-  const [store] = useState(createSettingsStore);
+  const [store] = useState(() =>
+    isDevBrowser()
+      ? createInMemorySettingsStore(demoSettings())
+      : createSettingsStore(),
+  );
   const [updateController] = useState(createUpdateControllerForEnv);
   const [logStream] = useState(() =>
     isTauri() ? createTauriLogStream() : createNoopLogStream(),

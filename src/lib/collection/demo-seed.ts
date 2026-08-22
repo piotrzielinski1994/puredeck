@@ -1,3 +1,4 @@
+import { DEFAULT_SETTINGS, type Settings } from "@/lib/settings/settings";
 import { seedFileMap } from "@/lib/workspace/collection";
 import { DEMO_DECKS } from "@/lib/workspace/demo-data";
 
@@ -7,4 +8,8 @@ import { DEMO_DECKS } from "@/lib/workspace/demo-data";
 // so the seed can't drift from a shape the loader would reject.
 export function demoFiles(): Record<string, string> {
   return seedFileMap(DEMO_DECKS);
+}
+
+export function demoSettings(): Settings {
+  return { ...DEFAULT_SETTINGS, sidebarCollapsed: false };
 }
