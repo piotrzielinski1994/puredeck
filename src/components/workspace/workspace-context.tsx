@@ -31,6 +31,7 @@ import {
   uniqueDeckName,
   withDeckRemoved,
   withDeckUpserted,
+  withFreshIds,
 } from "@/lib/workspace/deck-ops";
 import { type LogLine, parseLogLine } from "@/lib/workspace/log-line";
 import {
@@ -60,6 +61,7 @@ type WorkspaceContextValue = {
   deckById: (id: string) => Deck | undefined;
   saveDeck: (deck: Deck) => void;
   createDeck: () => string;
+  importDecks: (incoming: Deck[]) => number;
   renameDeck: (id: string, name: string) => void;
   deleteDeck: (id: string) => void;
   renamingDeckId: string | null;
@@ -308,6 +310,28 @@ export function WorkspaceProvider({
     return created.id;
   }, [decks, collectionStore, openTab]);
 
+  const importDecks = useCallback(
+    (incoming: Deck[]): number => {
+      const takenIds = new Set(decks.map((deck) => deck.id));
+      const imported = incoming.map((deck) => {
+        if (takenIds.has(deck.id)) {
+          const copy = withFreshIds(deck);
+          takenIds.add(copy.id);
+          return copy;
+        }
+        takenIds.add(deck.id);
+        return deck;
+      });
+      setLoadedDecks((current) => [...current, ...imported]);
+      for (const deck of imported) {
+        collectionStore.save(deck);
+      }
+      show(`Imported ${imported.length} decks.`);
+      return imported.length;
+    },
+    [decks, collectionStore, show],
+  );
+
   const beginRename = useCallback((id: string) => setRenamingDeckId(id), []);
   const cancelRename = useCallback(() => setRenamingDeckId(null), []);
 
@@ -395,6 +419,7 @@ export function WorkspaceProvider({
       deckById,
       saveDeck,
       createDeck,
+      importDecks,
       renameDeck,
       deleteDeck,
       renamingDeckId,
@@ -422,6 +447,7 @@ export function WorkspaceProvider({
       deckById,
       saveDeck,
       createDeck,
+      importDecks,
       renameDeck,
       deleteDeck,
       renamingDeckId,
