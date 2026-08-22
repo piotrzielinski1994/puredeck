@@ -62,9 +62,7 @@ describe("exportCollection happy path (AC-001 / TC-001)", () => {
     expect(mocks.writeTextFile).toHaveBeenCalledTimes(1);
     const [path, contents] = mocks.writeTextFile.mock.calls[0];
     expect(path).toBe("/picked/puredeck-collection.json");
-    expect(contents).toBe(
-      serializeCollection([deckSpanish, deckCapitals]),
-    );
+    expect(contents).toBe(serializeCollection([deckSpanish, deckCapitals]));
   });
 
   it("should offer a json filter and the suggested default name in the save dialog", async () => {

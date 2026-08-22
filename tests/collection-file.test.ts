@@ -67,12 +67,14 @@ describe("serializeCollection envelope and order (AC-001 / TC-001)", () => {
     expect(parsed.format).toBe("puredeck-collection");
     expect(parsed.version).toBe(1);
     expect(parsed.decks).toHaveLength(2);
-    expect(
-      parsed.decks.map((deck: { id: string }) => deck.id),
-    ).toEqual(["spanish", "capitals"]);
-    expect(
-      parsed.decks.map((deck: { name: string }) => deck.name),
-    ).toEqual(["Spanish", "Capitals"]);
+    expect(parsed.decks.map((deck: { id: string }) => deck.id)).toEqual([
+      "spanish",
+      "capitals",
+    ]);
+    expect(parsed.decks.map((deck: { name: string }) => deck.name)).toEqual([
+      "Spanish",
+      "Capitals",
+    ]);
   });
 
   it("should keep every card carrying exactly id, front, and back inside the decks array", () => {

@@ -85,7 +85,9 @@ export function parseCollectionFile(raw: string): CollectionParseResult {
     return reject("File content is not a JSON object.");
   }
   if (parsed.format !== COLLECTION_FORMAT) {
-    return reject("File is not a puredeck collection export (format marker mismatch).");
+    return reject(
+      "File is not a puredeck collection export (format marker mismatch).",
+    );
   }
   if (
     typeof parsed.version !== "number" ||
