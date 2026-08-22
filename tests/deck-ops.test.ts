@@ -7,6 +7,7 @@ import {
   withCardRemoved,
   withDeckRemoved,
   withDeckUpserted,
+  withFreshIds,
 } from "@/lib/workspace/deck-ops";
 import type { Deck } from "@/lib/workspace/model";
 
@@ -211,5 +212,43 @@ describe("newDeck (AC-001)", () => {
     expect(typeof first.id).toBe("string");
     expect(first.id.length).toBeGreaterThan(0);
     expect(first.id).not.toBe(second.id);
+  });
+});
+
+describe("withFreshIds (AC-005 / TC-005)", () => {
+  it("should give the deck and every card fresh ids while keeping the original name and card contents byte-equal", () => {
+    const deck = makeDeck();
+
+    const copy = withFreshIds(deck);
+
+    expect(copy.id.length).toBeGreaterThan(0);
+    expect(copy.id).not.toBe(deck.id);
+    expect(copy.name).toBe("Spanish");
+    expect(copy.cards).toHaveLength(deck.cards.length);
+    for (let index = 0; index < deck.cards.length; index += 1) {
+      expect(copy.cards[index].id.length).toBeGreaterThan(0);
+      expect(copy.cards[index].id).not.toBe(deck.cards[index].id);
+      expect(copy.cards[index].front).toBe(deck.cards[index].front);
+      expect(copy.cards[index].back).toBe(deck.cards[index].back);
+    }
+  });
+
+  it("should produce distinct ids for separate duplications of the same deck", () => {
+    const deck = makeDeck();
+
+    const first = withFreshIds(deck);
+    const second = withFreshIds(deck);
+
+    expect(first.id).not.toBe(second.id);
+    expect(first.cards[0].id).not.toBe(second.cards[0].id);
+  });
+
+  it("should not mutate the input deck or its cards", () => {
+    const deck = makeDeck();
+    const pristine = makeDeck();
+
+    withFreshIds(deck);
+
+    expect(deck).toEqual(pristine);
   });
 });

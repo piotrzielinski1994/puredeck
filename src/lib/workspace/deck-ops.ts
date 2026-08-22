@@ -56,3 +56,14 @@ export function withCardRemoved(deck: Deck, cardId: string): Deck {
     cards: deck.cards.filter((card) => card.id !== cardId),
   };
 }
+
+export function withFreshIds(deck: Deck): Deck {
+  return {
+    ...deck,
+    id: crypto.randomUUID(),
+    cards: deck.cards.map((card) => ({
+      ...card,
+      id: crypto.randomUUID(),
+    })),
+  };
+}
