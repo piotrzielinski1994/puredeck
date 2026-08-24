@@ -43,6 +43,15 @@ export function CardGrid({
     setBack("");
   };
 
+  const handleAddKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ): void => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commitAdd();
+    }
+  };
+
   const commitEdit = (
     card: Card,
     field: "front" | "back",
@@ -100,6 +109,7 @@ export function CardGrid({
           value={front}
           onChange={(event) => setFront(event.target.value)}
           onBlur={commitAdd}
+          onKeyDown={handleAddKeyDown}
           className={INPUT}
           {...NO_AUTOFILL}
         />
@@ -111,6 +121,7 @@ export function CardGrid({
           value={back}
           onChange={(event) => setBack(event.target.value)}
           onBlur={commitAdd}
+          onKeyDown={handleAddKeyDown}
           className={INPUT}
           {...NO_AUTOFILL}
         />

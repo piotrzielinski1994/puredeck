@@ -125,3 +125,107 @@ describe("CardGrid controlled (TC-001..TC-005)", () => {
     expect(onAddCard).not.toHaveBeenCalled();
   });
 });
+
+describe("CardGrid Enter key (TC-001..TC-008)", () => {
+  it("should create a card if Enter is pressed in the front input when both fields are filled", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.type(screen.getByLabelText("New card front"), "Q1");
+    await user.type(screen.getByLabelText("New card back"), "A1");
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).toHaveBeenCalledTimes(1);
+    expect(onAddCard).toHaveBeenCalledWith("Q1", "A1");
+  });
+
+  it("should create a card if Enter is pressed in the back input when both fields are filled", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.type(screen.getByLabelText("New card front"), "Q2");
+    await user.type(screen.getByLabelText("New card back"), "A2");
+    await user.click(screen.getByLabelText("New card back"));
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).toHaveBeenCalledTimes(1);
+    expect(onAddCard).toHaveBeenCalledWith("Q2", "A2");
+  });
+
+  it("should not create a card if Enter is pressed in the front input and only front is filled", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.type(screen.getByLabelText("New card front"), "Q3");
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).not.toHaveBeenCalled();
+  });
+
+  it("should not create a card if Enter is pressed in the back input and only back is filled", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.type(screen.getByLabelText("New card back"), "A4");
+    await user.click(screen.getByLabelText("New card back"));
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).not.toHaveBeenCalled();
+  });
+
+  it("should not create a card if Enter is pressed in the front input and both fields are empty", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.click(screen.getByLabelText("New card front"));
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).not.toHaveBeenCalled();
+  });
+
+  it("should create a card with trimmed values if Enter is pressed and fields contain whitespace", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.type(screen.getByLabelText("New card front"), " Q ");
+    await user.type(screen.getByLabelText("New card back"), " A ");
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).toHaveBeenCalledTimes(1);
+    expect(onAddCard).toHaveBeenCalledWith("Q", "A");
+  });
+
+  it("should clear add-row inputs after Enter creates a card", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.type(screen.getByLabelText("New card front"), "Q1");
+    await user.type(screen.getByLabelText("New card back"), "A1");
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).toHaveBeenCalledTimes(1);
+    expect(
+      (screen.getByLabelText("New card front") as HTMLInputElement).value,
+    ).toBe("");
+    expect(
+      (screen.getByLabelText("New card back") as HTMLInputElement).value,
+    ).toBe("");
+  });
+
+  it("should not double-commit if Enter creates a card and then the back input is blurred", async () => {
+    const user = userEvent.setup();
+    const { onAddCard } = renderGrid();
+
+    await user.type(screen.getByLabelText("New card front"), "Q4");
+    await user.type(screen.getByLabelText("New card back"), "A4");
+    await user.keyboard("{Enter}");
+
+    expect(onAddCard).toHaveBeenCalledTimes(1);
+    expect(onAddCard).toHaveBeenCalledWith("Q4", "A4");
+
+    await user.click(screen.getByLabelText("New card back"));
+    await user.keyboard("{Tab}");
+
+    expect(onAddCard).toHaveBeenCalledTimes(1);
+  });
+});
