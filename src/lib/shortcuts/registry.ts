@@ -4,7 +4,8 @@ export type ShortcutActionId =
   | "toggle-sidebar"
   | "panel-expand"
   | "panel-shrink"
-  | "save-active-deck";
+  | "save-active-deck"
+  | "toggle-logs-panel";
 
 export type ShortcutAction = {
   id: ShortcutActionId;
@@ -51,5 +52,11 @@ export const SHORTCUT_ACTIONS: readonly ShortcutAction[] = [
     name: "Save",
     description: "Save the active deck.",
     defaultHotkey: "Mod+S",
+  },
+  {
+    id: "toggle-logs-panel",
+    name: "Toggle logs panel",
+    description: "Show or hide the bottom logs panel.",
+    defaultHotkey: "Mod+J",
   },
 ];

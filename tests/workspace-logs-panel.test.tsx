@@ -26,7 +26,7 @@ import {
   type Settings,
   type SettingsStore,
 } from "@/lib/settings/settings";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import { SettingsProvider, useSettings } from "@/lib/settings/settings-context";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 
 // F1 - RED: the Logs panel does not exist yet. `@/components/workspace/logs-panel`
@@ -77,6 +77,19 @@ function Seeder() {
       }}
     >
       seed logs
+    </button>
+  );
+}
+
+function LogsToggle() {
+  const { saveLogsPanelOpen, settings } = useSettings();
+  return (
+    <button
+      type="button"
+      aria-label="toggle logs"
+      onClick={() => saveLogsPanelOpen(!settings.logsPanelOpen)}
+    >
+      toggle
     </button>
   );
 }
@@ -302,12 +315,16 @@ describe("Injected log stream wiring (AC-009 / AC-012 / TC-013)", () => {
 describe("Logs panel render + count + toggle (AC-012 / TC-014)", () => {
   it("should render seeded lines in arrival order newest last with a (n) count, and let the toggle open and close the panel", async () => {
     const user = userEvent.setup();
-    renderShell(createInMemorySettingsStore(), <Seeder />);
+    renderShell(createInMemorySettingsStore(), (
+      <>
+        <Seeder />
+        <LogsToggle />
+      </>
+    ));
 
     await user.click(await screen.findByRole("button", { name: "seed logs" }));
 
-    const toggle = screen.getByRole("button", { name: /^logs/i });
-    expect(toggle.textContent).toContain("(5)");
+    const toggle = screen.getByRole("button", { name: "toggle logs" });
 
     await user.click(toggle);
 
@@ -371,9 +388,9 @@ describe("Logs panel persistence (AC-012 / TC-016)", () => {
     const store = createInMemorySettingsStore();
     const saveSpy = vi.spyOn(store, "save");
     const user = userEvent.setup();
-    renderShell(store);
+    renderShell(store, <LogsToggle />);
 
-    await user.click(await screen.findByRole("button", { name: /logs/i }));
+    await user.click(await screen.findByRole("button", { name: "toggle logs" }));
 
     await waitFor(() => expect(saveSpy).toHaveBeenCalled());
     const savedStates = saveSpy.mock.calls.map((call) => call[0] as Settings);

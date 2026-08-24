@@ -19,10 +19,8 @@ import { cn } from "@pziel/pureui";
 import { Plus, X } from "lucide-react";
 import {
   type Tab,
-  useLogLines,
   useWorkspace,
 } from "@/components/workspace/workspace-context";
-import { useSettings } from "@/lib/settings/settings-context";
 
 function SortableTab({
   tab,
@@ -93,8 +91,6 @@ export function ContentTabs() {
     reorderTabs,
     openSettings,
   } = useWorkspace();
-  const { logLines } = useLogLines();
-  const { settings, saveLogsPanelOpen } = useSettings();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -153,18 +149,7 @@ export function ContentTabs() {
       >
         <Plus className="size-4" />
       </button>
-      <button
-        type="button"
-        aria-label="Logs"
-        title="Toggle logs panel"
-        onClick={() => saveLogsPanelOpen(!settings.logsPanelOpen)}
-        className={cn(
-          "shrink-0 px-3 text-muted-foreground hover:bg-accent hover:text-foreground",
-          settings.logsPanelOpen && "bg-accent text-foreground",
-        )}
-      >
-        Logs{logLines.length > 0 ? ` (${logLines.length})` : ""}
-      </button>
+
     </div>
   );
 }

@@ -17,6 +17,7 @@ const EXPECTED: Record<ShortcutActionId, string> = {
   "panel-expand": "Mod+Alt+=",
   "panel-shrink": "Mod+Alt+-",
   "save-active-deck": "Mod+S",
+  "toggle-logs-panel": "Mod+J",
 };
 
 const EXPECTED_IDS = Object.keys(EXPECTED).sort();

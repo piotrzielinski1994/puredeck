@@ -27,7 +27,10 @@ import {
 import { PaletteProvider, usePalette } from "@/lib/palette/palette-context";
 import { isDevBrowser } from "@/lib/runtime/environment";
 import { createInMemorySettingsStore } from "@/lib/settings/in-memory-store";
-import { SettingsProvider } from "@/lib/settings/settings-context";
+import {
+  SettingsProvider,
+  useSettings,
+} from "@/lib/settings/settings-context";
 import { createSettingsStore } from "@/lib/settings/store-factory";
 import { useEffectiveShortcuts } from "@/lib/shortcuts/use-effective-shortcuts";
 import { ThemeProvider } from "@/lib/theme/theme-context";
@@ -44,10 +47,13 @@ function ShellPalette() {
     requestDeleteDeck,
   } = useWorkspace();
   const { isOpen: isPaletteOpen, setOpen: setIsPaletteOpen } = usePalette();
+  const { saveLogsPanelOpen, settings } = useSettings();
 
   useActionHotkeys(
     {
       "open-command-palette": () => setIsPaletteOpen(!isPaletteOpen),
+      "toggle-logs-panel": () =>
+        saveLogsPanelOpen(!settings.logsPanelOpen),
     },
     useEffectiveShortcuts(),
     { preventDefault: true },
@@ -66,6 +72,11 @@ function ShellPalette() {
       commands={[
         { key: "new-deck", name: "New deck", run: () => createDeck() },
         { key: "open-settings", name: "Open Settings", run: openSettings },
+        {
+          key: "toggle-logs-panel",
+          name: "Toggle logs panel",
+          run: () => saveLogsPanelOpen(!settings.logsPanelOpen),
+        },
         ...decks.map((deck) => ({
           key: `study-${deck.id}`,
           name: `Study: ${deck.name}`,

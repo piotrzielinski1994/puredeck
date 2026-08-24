@@ -138,7 +138,7 @@ export function LogsPanel() {
       aria-label="Logs"
       className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/30 font-mono text-xs"
     >
-      <div className="flex shrink-0 items-center gap-1 border-b px-1">
+      <div className="flex shrink-0 items-center gap-1 border-b">
         <LogSearchInput
           value={logSearch}
           onChange={setLogSearch}
